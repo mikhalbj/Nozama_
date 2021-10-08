@@ -34,7 +34,7 @@ CREATE TABLE Account (
 );
 
 CREATE TABLE Balance (
-    id INT NOT NULL REFERENCES Account(id),
+    id INT NOT NULL PRIMARY KEY REFERENCES Account(id),
     balance FLOAT(2) NOT NULL CHECK (balance >= 0)
 );
 
@@ -47,11 +47,12 @@ CREATE TABLE Product (
     name VARCHAR NOT NULL,
     description VARCHAR NOT NULL,
     price FLOAT(2) NOT NULL CHECK (price >= 0),
+    available BOOLEAN DEFAULT TRUE,
     seller INT NOT NULL REFERENCES Seller(id)
 );
 
 CREATE TABLE ProductInventory (
-    product INT NOT NULL REFERENCES Product(id),
+    product INT NOT NULL PRIMARY KEY REFERENCES Product(id),
     quantity INT NOT NULL CHECK (quantity >= 0)
 );
 
@@ -62,23 +63,26 @@ CREATE TABLE Tag (
 
 CREATE TABLE ProductTag(
     tag INT NOT NULL REFERENCES Tag(id),
-    product INT NOT NULL REFERENCES Product(id)   
+    product INT NOT NULL REFERENCES Product(id),
+    PRIMARY KEY (tag, product)   
 );
 
 CREATE TABLE ProductImage(
-    product INT NOT NULL REFERENCES Product(id),
+    product INT NOT NULL PRIMARY KEY REFERENCES Product(id),
     url VARCHAR NOT NULL
 );
 
 CREATE TABLE CartProduct(
     account INT NOT NULL REFERENCES Account(id),
     product INT NOT NULL REFERENCES Product(id),
-    quantity INT NOT NULL CHECK (quantity > 0)
+    quantity INT NOT NULL CHECK (quantity > 0),
+    PRIMARY KEY (account, product)
 );
 
 CREATE TABLE SavedProduct(
     account INT NOT NULL REFERENCES Account(id),
-    product INT NOT NULL REFERENCES Product(id)
+    product INT NOT NULL REFERENCES Product(id),
+    PRIMARY KEY (account, product)
 );
 
 CREATE TABLE AccountOrder(
@@ -88,13 +92,14 @@ CREATE TABLE AccountOrder(
 );
 
 CREATE TABLE AccountOrderProduct(
-    AccountOrder INT NOT NULL REFERENCES AccountOrder(id),
+    account_order INT NOT NULL REFERENCES AccountOrder(id),
     product INT NOT NULL REFERENCES Product(id),
     quantity INT NOT NULL CHECK (quantity > 0),
     price FLOAT(2) NOT NULL CHECK (price > 0),
     status VARCHAR(20) NOT NULL,
     shipped_at TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT (current_timestamp AT TIME ZONE 'UTC'),
-    delivered_at TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT (current_timestamp AT TIME ZONE 'UTC')
+    delivered_at TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT (current_timestamp AT TIME ZONE 'UTC'),
+    PRIMARY KEY (account_order, product)
 );
 
 CREATE TABLE Review(
@@ -108,22 +113,31 @@ CREATE TABLE Review(
 );
 
 CREATE TABLE ReviewImage(
-    review INT NOT NULL REFERENCES Review(id),
+    review INT NOT NULL PRIMARY KEY REFERENCES Review(id),
     url VARCHAR NOT NULL
 );
 
 CREATE TABLE ReviewVote(
     account INT NOT NULL REFERENCES Account(id),
     review INT NOT NULL REFERENCES Review(id),
-    rating SMALLINT NOT NULL CHECK (rating = -1 OR rating = 1)
+    rating SMALLINT NOT NULL CHECK (rating = -1 OR rating = 1),
+    PRIMARY KEY (account, review)
 );
 
 CREATE TABLE ProductReview(
-    review INT NOT NULL REFERENCES Review(id),
+    review INT NOT NULL PRIMARY KEY REFERENCES Review(id),
     product INT NOT NULL REFERENCES Product(id)
 );
 
 CREATE TABLE SellerReview(
-    review INT NOT NULL REFERENCES Review(id),
+    review INT NOT NULL PRIMARY KEY REFERENCES Review(id),
     seller INT NOT NULL REFERENCES Seller(id)
 );
+
+-- 
+-- View that maps new db design to template schema. Should be replaced once python code is rewritten
+-- 
+CREATE VIEW Purchase AS
+    SELECT AccountOrder.id AS id, AccountOrder.account AS uid, AccountOrderProduct.product AS pid, AccountOrder.placed_at AS time_purchased
+    FROM AccountOrder, AccountOrderProduct
+    WHERE AccountOrder.id = AccountOrderProduct.account_order;
