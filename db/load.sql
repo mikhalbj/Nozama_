@@ -1,3 +1,3 @@
-\COPY Users FROM 'data/Users.csv' WITH DELIMITER ',' NULL '' CSV
-\COPY Products FROM 'data/Products.csv' WITH DELIMITER ',' NULL '' CSV
-\COPY Purchases FROM 'data/Purchases.csv' WITH DELIMITER ',' NULL '' CSV
+\COPY Users FROM 'data/Account.csv' WITH DELIMITER ',' NULL '' CSV
+\COPY Products FROM 'data/Product.csv' WITH DELIMITER ',' NULL '' CSV
+\COPY Purchases FROM 'data/AccountOrder.csv' WITH DELIMITER ',' NULL '' CSV
