@@ -108,7 +108,7 @@ CREATE TABLE Review(
     title VARCHAR(50) NOT NULL,
     description VARCHAR NOT NULL,
     written_at TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT (current_timestamp AT TIME ZONE 'UTC'),
-    edited_at TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT (current_timestamp AT TIME ZONE 'UTC'),
+    edited_at TIMESTAMP WITHOUT TIME ZONE,
     rating SMALLINT NOT NULL CHECK (rating >= 1 AND rating <= 5)
 );
 
