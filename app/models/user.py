@@ -53,8 +53,8 @@ RETURNING id
                                   address="test address")
             id = rows[0][0]
             return User.get(id)
-        except Exception:
-            print(Exception)
+        except Exception as err:
+            print(err)
             # likely email already in use; better error checking and
             # reporting needed
             return None
