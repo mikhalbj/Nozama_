@@ -3,7 +3,7 @@ import csv
 import random
 import string
 
-
+# IN ORDER TO WORK, CSVs MUST END IN NEWLINE!
 def genUsers(n):
 
     with open('data/Account.csv', newline='') as csvfile:
