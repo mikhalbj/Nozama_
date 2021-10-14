@@ -39,6 +39,7 @@ def genUsers(n):
         for row in users:
             writer.writerow(row)
     
+    genSeller(users)
     return True
 
 
@@ -63,6 +64,15 @@ def genAddress():
     address = ''
     address = num + " " + random.choice(street) + " " + random.choice(end) + " " + random.choice(town)
     return address
+
+def genSeller(users):
+
+    with open('data/Seller.csv', 'a', newline='') as sellfile:
+        writer = csv.writer(sellfile)
+        for row in users:
+            if random.choice([True, False], p=[0.3, 0.7])
+                writer.writerow(row[0])
+
 
 if __name__ == "__main__":
     sizeOfUsers = 20
