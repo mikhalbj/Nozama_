@@ -32,8 +32,8 @@ def genUsers(n):
             writer.writerow(row)
     
     genSeller(users)
+    genBalance(users)
     return True
-
 
 
 def genEmail(firstname, lastname):
@@ -47,6 +47,7 @@ def genEmail(firstname, lastname):
     email += ends[random.randint(0,4)]
     return email
 
+
 def genAddress():
     end = ['Rd.', 'St.', 'Ln.', 'Blvd.']
     num = ''.join(random.choice(string.digits) for _ in range(4))
@@ -56,6 +57,7 @@ def genAddress():
     address = num + " " + random.choice(street) + " " + random.choice(end) + " " + random.choice(town)
     return address
 
+
 def genSeller(users):
    # print("PRINTING USERS")
    # print(users)
@@ -64,6 +66,15 @@ def genSeller(users):
         for row in users:
             if random.choices([True, False], weights=[0.3, 0.7]):
                 sellwriter.writerow([row[0]])
+    return True
+
+
+def genBalance(users):
+    with open('data/Balance.csv', 'a', newline='') as bfile:
+        bwriter = csv.writer(bfile)
+        for row in users:
+            bwriter.writerow([row[0], round(random.uniform(0, 150), 2)])
+    return True
 
 
 if __name__ == "__main__":

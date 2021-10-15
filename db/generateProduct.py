@@ -64,6 +64,7 @@ def genProductsAndTags(n):
     
     # write data to CSVs with helper method
     write(newProds, newTags, newProdTags)
+    genInventory(newProds)
     return True
 
 
@@ -117,6 +118,17 @@ def genImage():
     return True
 
 
+def genInventory(prods):
+    with open('data/ProductInventory.csv', 'a', newline='') as pifile:
+        piwriter = csv.writer(pifile)
+        for row in prods:
+            if row[4] == False:
+                piwriter.writerow([row[0], 0])
+            else:
+                piwriter.writerow([row[0], random.randint(1, 300)])
+    return True
+
+
 def write(prods, tags, prodtags):
     with open('data/Product.csv', 'a', newline='') as csvfile:
         writer = csv.writer(csvfile)
@@ -155,10 +167,7 @@ def readCSVs():
         sellreader = csv.reader(sellfile)
         sells = []
         for row in sellreader:
-            sells.append(row)
-        print("SELLERS ARE")
-        print(sells)
-    
+            sells.append(row) 
     return [existingTags, existingPTs, tagIndex, sells]
 
 
