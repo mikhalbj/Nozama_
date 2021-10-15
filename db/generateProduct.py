@@ -5,34 +5,73 @@ import string
 import uuid
 
 # IN ORDER TO WORK, CSVs MUST END IN NEWLINE!
-def genProducts(n):
+def genProductsAndTags(n):
 
+    # define adjectives for combinational product generation
     modifier = ['Lightly used', 'Handmade Italian', 'Free shipping', 'Blue', 'Red', 'Durable',
             'Award winning', 'Cheap', 'Walmart', 'Ikea']
-    prods = ['basketball hoop', 'iPhone 7S case', 'wire whisk', 'nail polish', 'shelf',
-            'leather briefcase', 'acrylic paint', 'posterboard', 'cutting board', 'soccer cleats']
+    
+    # define base products, with the tags to be associated
+    # (tags do not need to exist in database; they'll be added)
+    prods = {'basketball hoop': ['sports'], 
+    'iPhone 7S case': ['technology'], 
+    'wire whisk': ['food', 'cooking'], 
+    'nail polish': ['beauty'], 
+    'shelf': ['decor', 'furniture'], 
+    'leather briefcase': ['beauty'], 
+    'acrylic paint': ['art'], 
+    'posterboard': ['art'], 
+    'cutting board': ['food'], 
+    'soccer cleats': ['sports']}
+
+    # define cent cost of randomly generated prices
     ends = ['.00', '.49', '.99' '.95']
     newProds = []
+    newTags = []
+    newProdTags = []
+
+    #read data from other files with helper method
+    [existingTags, existingPTs, tagIndex, sellers] = readCSVs()
 
     while len(newProds) < n:
         newprod = []
         index = uuid.uuid4()
-        newprod.append(index)
-        prod = random.choice(modifier) + " " + random.choice(prods)
-        newprod.append(prod)
-        newprod.append('desc') # IDK WHAT THIS FIELD IS - GENERALIZE!!
-        newprod.append(str(random.randint(5,200)) + random.choice(ends))
-        newprod.append(True)
-        newprod.append(0) # ID OF SELLER - GENERALIZE!!
-        print(newprod)
+        newprod.append(index) # add UUID
+        mod = random.choice(modifier) 
+        prod = random.choice(list(prods.keys()))
+        
+        for v in prods[prod]:
+            # for each tag associated with the base product:
+            # check if the tag exists
+            # add it if not
+            if v not in existingTags.keys():
+                existingTags[v] = tagIndex
+                newTags.append([tagIndex, v])
+                tagIndex += 1
+            # then repeat for product tag
+            currPT = existingTags[v]
+            if [currPT, index] not in existingPTs and [currPT, index] not in newProdTags:
+                newProdTags.append([currPT, index])
+            
+        prodstring = mod + " " + prod
+        newprod.append(prodstring) # add product name
+        newprod.append(genDesc(prodstring)) # add product description with helper method
+        newprod.append(str(random.randint(5,200)) + random.choice(ends)) # add price
+        newprod.append(random.choices([True, False], weights=[0.8, 0.2])[0]) # add randomly generated availability
+        newprod.append(random.choice(sellers)[0]) # add ID of seller
+        # print(newprod)
         newProds.append(newprod)
     
-    with open('data/Product.csv', 'a', newline='') as csvfile:
-        writer = csv.writer(csvfile)
-        for row in newProds:
-            writer.writerow(row)
-    
+    # write data to CSVs with helper method
+    write(newProds, newTags, newProdTags)
     return True
+
+
+def genDesc(prodstring):
+    words = [" great reviewed product" " best" " highly-rated product" " e-commerce product" " you should purchase"
+    " comes with warranty" " enhance your life" " act fast"]
+    return "This beautiful " + prodstring + ' '.join(random.choices(words, k=(random.randint(0,4))))
+
 
 def genImage():
     other = "https://cdn.w600.comps.canstockphoto.com/pile-of-random-stuff-eps-vector_csp24436545.jpg"
@@ -75,12 +114,55 @@ def genImage():
         writer = csv.writer(imgfilew)
         for row in nextRows:
             writer.writerow(row)
-
     return True
 
+
+def write(prods, tags, prodtags):
+    with open('data/Product.csv', 'a', newline='') as csvfile:
+        writer = csv.writer(csvfile)
+        for row in prods:
+            writer.writerow(row)
+    
+    with open('data/Tag.csv', 'a', newline='') as tfile:
+        writer = csv.writer(tfile)
+        for row in tags:
+            writer.writerow(row)
+    
+    with open('data/ProductTag.csv', 'a', newline='') as writeptfile:
+        writer = csv.writer(writeptfile)
+        for row in prodtags:
+            writer.writerow(row)
+    return True
+
+
+def readCSVs():
+    with open('data/Tag.csv', newline='') as tagfile:
+        tagreader = csv.reader(tagfile)
+        existingTags = {}
+        tagIndex = 0
+        for row in tagreader:
+            existingTags[row[1]] = row[0]
+            tagIndex = int(row[0])
+        tagIndex += 1
+    
+    with open('data/ProductTag.csv', newline='') as ptfile:
+        ptreader = csv.reader(ptfile)
+        existingPTs = []
+        for row in ptreader:
+            existingPTs.append(row)
+    
+    with open('data/Seller.csv', newline='') as sellfile:
+        sellreader = csv.reader(sellfile)
+        sells = []
+        for row in sellreader:
+            sells.append(row)
+        print("SELLERS ARE")
+        print(sells)
+    
+    return [existingTags, existingPTs, tagIndex, sells]
 
 
 if __name__ == "__main__":
     numNewProducts = 20
-    genProducts(numNewProducts)
+    genProductsAndTags(numNewProducts)
     genImage()
