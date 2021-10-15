@@ -2,18 +2,11 @@ import numpy as np
 import csv
 import random
 import string
+import uuid
 
 # IN ORDER TO WORK, CSVs MUST END IN NEWLINE!
 def genProducts(n):
 
-    with open('data/Product.csv', newline='') as csvfile:
-        spamreader = csv.reader(csvfile)
-        lastrow = []
-        for row in spamreader:
-            lastrow = row
-        print(lastrow)
-
-    index = int(lastrow[0])
     modifier = ['Lightly used', 'Handmade Italian', 'Free shipping', 'Blue', 'Red', 'Durable',
             'Award winning', 'Cheap', 'Walmart', 'Ikea']
     prods = ['basketball hoop', 'iPhone 7S case', 'wire whisk', 'nail polish', 'shelf',
@@ -23,7 +16,7 @@ def genProducts(n):
 
     while len(newProds) < n:
         newprod = []
-        index += 1
+        index = uuid.uuid4()
         newprod.append(index)
         prod = random.choice(modifier) + " " + random.choice(prods)
         newprod.append(prod)
@@ -54,29 +47,29 @@ def genImage():
     'cutting board': "https://m.media-amazon.com/images/I/71rAPjgEJoL._AC_SX466_.jpg", 
     'soccer cleats': "https://static.nike.com/a/images/t_PDP_1280_v1/f_auto,q_auto:eco/309882d1-4ba4-4516-809e-3bac304ad450/phantom-gt-elite-3d-fg-firm-ground-soccer-cleats-2clxTj.png"}
 
-    goodid = []
+    gooduuid = []
     with open('data/ProductImage.csv', newline='') as imgfile:
         reader = csv.reader(imgfile)
         for row in reader:
-            goodid.append(row[0])
+            gooduuid.append(row[0])
     
     newRows = []
     with open('data/Product.csv', newline='') as prodfile:
         reader = csv.reader(prodfile)
         for row in reader:
-            if row[0] not in goodid:
+            if row[0] not in gooduuid:
                 newRows.append([row[0], row[1]])
     
     nextRows = []
 
-    for ids in newRows:
+    for uuid in newRows:
         flag = False
         for k,v in urls.items():
-            if k in ids[1]:
-                nextRows.append([ids[0], v])
+            if k in uuid[1]:
+                nextRows.append([uuid[0], v])
                 flag = True
         if flag == False:
-            nextRows.append([ids[0], other])
+            nextRows.append([uuid[0], other])
     
     with open('data/ProductImage.csv', 'a', newline='') as imgfilew:
         writer = csv.writer(imgfilew)

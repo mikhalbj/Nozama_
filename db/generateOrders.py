@@ -4,30 +4,25 @@ import random
 import string
 import time
 import math
+import uuid
 
 # IN ORDER TO WORK, CSVs MUST END IN NEWLINE!
 def genOrders(n):
 
-    with open('data/AccountOrder.csv', newline='') as csvfile:
-        spamreader = csv.reader(csvfile)
-        lastrow = []
-        for row in spamreader:
-            lastrow = row
 
-    index = int(lastrow[0])
-
+    # parse through existing Accounts to identify the UUIDs that exist and can have orders linked to them
     with open('data/Account.csv', newline='') as accfile:
         accreader = csv.reader(accfile)
-        accountids = []
+        accountuuids = []
         for row in accreader:
-            accountids.append(row[0])
+            accountuuids.append(row[0])
 
     newOrders = []
     while len(newOrders) < n:
         neword = []
-        index += 1
+        index = uuid.uuid4()
         neword.append(index)
-        neword.append(random.choice(accountids))
+        neword.append(random.choice(accountuuids))
         neword.append(genTimeStampDefault())
         newOrders.append(neword)
     
@@ -52,7 +47,7 @@ def genOrderProducts(ords):
         for _ in range(random.randint(1,4)): # each order includes 1-4 products
             aop = []
             prod = random.choice(data)
-            aop.append(order[0]) # add AccountOrder id to AccountOrderProduct record
+            aop.append(order[0]) # add AccountOrder UUID to AccountOrderProduct record
             aop.append(prod[0]) # add product id
             aop.append(random.randint(1,4)) # add quantity
             aop.append(prod[3]) # add price of a single item??
