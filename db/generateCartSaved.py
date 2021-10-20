@@ -59,8 +59,11 @@ def readCSVs():
     return [accs, prods, carts, saves]
 
 
+def genCartSaved(n):
+    [users, prods, carts, saved] = readCSVs()
+    genCart(n, users, prods, carts)
+    genSaved(n, users, prods, saved)
+
 if __name__ == "__main__":
     numProdPerAccount = 3
-    [users, prods, carts, saved] = readCSVs()
-    genCart(numProdPerAccount, users, prods, carts)
-    genSaved(numProdPerAccount, users, prods, saved)
+    genCartSaved(numProdPerAccount)
