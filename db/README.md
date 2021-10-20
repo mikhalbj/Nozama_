@@ -17,14 +17,13 @@ Run `./setup.sh` in your machine to create the SQL database. To get more data, g
 
 ## Troubleshooting
 1. Be sure the uuid pip package is installed on your machine or VM
-2. Be sure the CSV files end in newlines. This is a bug but necessary.
+2. The CSV files must NOT end in newlines. This is counter to common dialetcs of CSV but PSQL cannot parse the newlines.
 
 
 ## TO-DOs
-1. Edit scripts to add new lines themseleves
-2. Refactor for more universal pattern across scripts
-3. Refactor to reduce repetative reading of CSVs across scripts
-4. Refactor to add easier, more centralized access to raw data material
+1. Refactor for more universal pattern across scripts
+2. Refactor to reduce repetative reading of CSVs across scripts
+3. Refactor to add easier, more centralized access to raw data material
 
 
 ### author: luke evans
