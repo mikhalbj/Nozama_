@@ -10,11 +10,12 @@ def genCart(n, userIDs, prodIDs, currCarts):
     
     newCart = zip(random.choices(userIDs, k=(n * len(userIDs))), random.choices(prodIDs, k=(n * len(userIDs))))
     with open('data/CartProduct.csv', 'a', newline='') as cpfile:
-        writer = csv.writer(cpfile)
+        writer = csv.writer(cpfile, lineterminator='')
         for row in newCart:
             # elements stringified when read from file
             if [str(row[0]), str(row[1])] not in currCarts:
                 currCarts.append([str(row[0]), str(row[1])])
+                writer.writerow('\n')
                 writer.writerow([str(row[0]), str(row[1]), random.randint(1,4)])
     return True
 
@@ -23,11 +24,12 @@ def genSaved(n, userIDs, prodIDs, currSaved):
     
     newSaves = zip(random.choices(userIDs, k=(n * len(userIDs))), random.choices(prodIDs, k=(n * len(userIDs))))
     with open('data/SavedProduct.csv', 'a', newline='') as sfile:
-        writer = csv.writer(sfile)
+        writer = csv.writer(sfile, lineterminator='')
         for row in newSaves:
             # elements stringified when read from file
             if [str(row[0]), str(row[1])] not in currSaved:
                 currSaved.append([str(row[0]), str(row[1])])
+                writer.writerow('\n')
                 writer.writerow(row)
     return True
 

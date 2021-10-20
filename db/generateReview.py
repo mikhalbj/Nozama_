@@ -74,29 +74,34 @@ def genTimeStampDefault():
 
 def writereviews(newReview, newReviewVote, newSellerReview, newProductReview, newProductImg):
     with open('data/Review.csv', 'a', newline='') as csvfile:
-        writer = csv.writer(csvfile)
+        writer = csv.writer(csvfile, lineterminator='')
         for row in newReview:
+            writer.writerow('\n')
             writer.writerow(row)
     
     # should check if a review,vote tuple already exists in the file before writing?
     with open('data/ReviewVote.csv', 'a', newline='') as votefile:
-        writer = csv.writer(votefile)
+        writer = csv.writer(votefile, lineterminator='')
         for row in newReviewVote:
+            writer.writerow('\n')
             writer.writerow(row)
     
     with open('data/SellerReview.csv', 'a', newline='') as srfile:
-        writer = csv.writer(srfile)
+        writer = csv.writer(srfile, lineterminator='')
         for row in newSellerReview:
+            writer.writerow('\n')
             writer.writerow(row)
 
     with open('data/ProductReview.csv', 'a', newline='') as prfile:
-        writer = csv.writer(prfile)
+        writer = csv.writer(prfile, lineterminator='')
         for row in newProductReview:
+            writer.writerow('\n')
             writer.writerow(row)
     
     with open('data/ReviewImage.csv', 'a', newline='') as imgfile:
-        writer = csv.writer(imgfile)
+        writer = csv.writer(imgfile, lineterminator='')
         for row in newProductImg:
+            writer.writerow('\n')
             writer.writerow(row)
     return True
 
