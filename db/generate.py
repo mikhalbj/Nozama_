@@ -1,7 +1,7 @@
 from generateAccount import genUsers
 from generateProduct import genProductsAndTags, genImage
 from generateOrders import genOrders
-from generateCartSaved import genCart, genSaved
+from generateCartSaved import genCartSaved
 from generateReview import genReview
 import numpy as np
 import csv

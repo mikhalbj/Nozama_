@@ -4,9 +4,10 @@ import random
 import string
 import time
 import math
+import uuid
 
 
-def genReview(n);
+def genReview(n):
     accountuuids, produuids, selluuids = readreviews()
     imgurls = urls()
     sellerstarter = ['This shop', 'This seller', 'This account']
@@ -46,16 +47,17 @@ def genReview(n);
         t1 = genTimeStampDefault()
         t2 = genTimeStampDefault()
         review.append(min(t1, t2)) 
-        random.choice(review.append(max(t1, t2), '') # some reviews shouldn't be edited
+        review.append(random.choice([max(t1, t2), ''])) # some reviews shouldn't be edited
         review.append(random.randint(1,5))
         numvotes = random.randint(0,5)
         accounts = random.sample(accountuuids, k=numvotes) # can accounts vote on their own reviews?
-            for i in range(numvotes): # add 0-5 votes for each review
-                vote.append(accounts[i])
-                vote.append(index)
-                vote.append(random.choice([-1, 1]))
+        for i in range(numvotes): # add 0-5 votes for each review
+            vote = []
+            vote.append(accounts[i])
+            vote.append(index)
+            vote.append(random.choice([-1, 1]))
+            newReviewVote.append(vote)
         print(review)
-        newReviewVote.append(vote)
         newReview.append(review)
     
     writereviews(newReview, newReviewVote, newSellerReview, newProductReview, newProductImg)
@@ -71,7 +73,7 @@ def genTimeStampDefault():
 
 
 def writereviews(newReview, newReviewVote, newSellerReview, newProductReview, newProductImg):
-        with open('data/Review.csv', 'a', newline='') as csvfile:
+    with open('data/Review.csv', 'a', newline='') as csvfile:
         writer = csv.writer(csvfile)
         for row in newReview:
             writer.writerow(row)
