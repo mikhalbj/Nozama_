@@ -21,3 +21,8 @@ position: absolute;
 right: 0px;
 width: 50%;
 }
+
+.link-unstyled, .link-unstyled:link, .link-unstyled:hover {
+    color: inherit;
+    text-decoration: inherit;
+  }
