@@ -27,3 +27,15 @@ WHERE available = :available
 ''',
                               available=available)
         return [Product(*row) for row in rows]
+    
+    #ONLY HANDLES EXACT MATCHES
+    @staticmethod
+    def search(strng):
+        rows = app.db.execute('''
+SELECT id, name, price, available
+FROM Product
+WHERE name LIKE :strng
+''',
+                              strng=strng)
+        return [Product(*row) for row in rows]
+
