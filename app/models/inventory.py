@@ -9,14 +9,13 @@ class Inventory:
             self.quantity = quantity
             self.seller = seller
 
-    @staticmethod
-    def get(seller)
-        rows = app.db.execute('''
- SELECT id, name, quantity, seller
+        @staticmethod
+        def get(strng):
+            rows = app.db.execute('''
+    SELECT id, name, quantity, seller
     FROM Product, ProductInventory
     WHERE Product.id = ProductInventory.id
-        AND Product.seller LIKE %s', ('%a%',)
-''',
-                                    seller = seller)       
-        return [ProductInventory(*row) for row in rows]
-
+        AND Product.seller LIKE :strng
+    ''',
+                                  strng = strng)       
+            return [ProductInventory(*row) for row in rows]
