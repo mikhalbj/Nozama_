@@ -20,3 +20,8 @@ def inventory(seller):
     seller = current_user
     inventory = Inventory.get(seller)
     return render_template('inventory.html', title='See Inventory', inventory=inventory)
+
+@bp.route('/inventory/<seller>/add-product', methods=['ADD'])
+def add_prod(prod_id, name, description, price, available, seller):
+        inventory = Inventory.add(seller)
+        return render_template('inventory.html', title='See Updated Inventory', inventory=inventory)
