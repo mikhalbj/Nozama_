@@ -24,12 +24,10 @@ def create_app():
     from .users import bp as user_bp
     app.register_blueprint(user_bp)
 
-<<<<<<< HEAD
     from .inventory import bp as inventory_bp
     app.register_blueprint(inventory_bp)
-=======
+    
     from .accounts import bp as account_bp
     app.register_blueprint(account_bp)
->>>>>>> origin/main
 
     return app
