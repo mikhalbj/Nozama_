@@ -26,3 +26,13 @@ width: 50%;
     color: inherit;
     text-decoration: inherit;
   }
+
+.account-balance {
+  border: none;
+  width: 150px;
+}
+
+.account-balance:focus {
+  outline: none;
+  /* border-bottom: 1px solid #0d6efd; */
+}
