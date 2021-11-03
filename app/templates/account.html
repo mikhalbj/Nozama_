@@ -18,7 +18,7 @@
               <div class="container-fluid">
                 <div class="row">
                     <div class="col-md-auto">
-                        <p class="card-text"><h1>${{account.balance}}</h1></p>
+                        <p class="card-text"><h1>${{'%0.2f'| format(account.balance|float)}}</h1></p>
                     </div>
                 </div>
                 <div class="row">

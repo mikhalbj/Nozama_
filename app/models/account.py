@@ -31,7 +31,8 @@ class Account:
             ''',
             id=id)
 
-        return rows[0] if rows is not None else False
+
+        return rows[0] if len(rows) is not 0 else 0
 
     @staticmethod
     def get_orders(id):
@@ -47,7 +48,7 @@ class Account:
     @staticmethod
     def get(id):
 
-        balance = Account.get_balance(id)[0]
+        balance = Account.get_balance(id)
 
         seller = Account.is_seller(id)
 
