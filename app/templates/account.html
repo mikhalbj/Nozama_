@@ -199,12 +199,12 @@
                 <h4 class="card-title">Vendor Information</h4>
                 <container>
                     <div class="row g-4 pt-3">
-                        {% if account.vendor %}
+                        {% if not account.vendor %}
                             <div class="col-5"><button type="button" class="btn btn-outline-primary"  data-bs-toggle="modal" data-bs-target="#vendorModal">Become a vendor</button></div>
                         {% else %}
                             <div class="col-5"><a href="/inventory" class="btn btn-outline-primary" role="button">View inventory</a></div>
                         {% endif %}
-                        <div class="col-5"><a href="/account/{{account.id}}" class="btn btn-outline-secondary" role="button">View public profile</a></div>
+                        <div class="col-5"><a href="{{url_for('accounts.public', id=user.id)}}" class="btn btn-outline-secondary" role="button">View public profile</a></div>
                     </div>
                 </container>
               </div>

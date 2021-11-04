@@ -41,12 +41,15 @@ class PasswordForm(FlaskForm):
                                            EqualTo('pass_newpass')])
     pass_submit = SubmitField("Submit")
 
+@bp.route('/account/<id>', methods=['GET', 'POST'])
+def public(id):
+    return '<html><body>Hello</body></html>'
 
 @bp.route('/account', methods=['GET', 'POST'])
 def account():
     if not current_user.is_authenticated:
         return redirect(url_for('index.index'))
-    
+
     deposit_form = DepositForm()
     withdraw_form = WithdrawForm()
     vendor_form = VendorForm()
@@ -54,13 +57,14 @@ def account():
     pass_form = PasswordForm()
 
     if deposit_form.deposit_submit.data and deposit_form.validate():
-        print("try to deposit", deposit_form.deposit_amount.data)
+        Account.increase_balance(current_user.id, deposit_form.deposit_amount.data)
 
     if withdraw_form.withdraw_submit.data and withdraw_form.validate():
-        print("try to withdraw", withdraw_form.withdraw_amount.data)
+        Account.decrease_balance(current_user.id, withdraw_form.withdraw_amount.data)
 
     if vendor_form.vendor_submit.data and vendor_form.validate():
-        print("try to become vendor", vendor_form.vendor_confirm.data)
+        if (vendor_form.vendor_confirm.data):
+            Account.become_vendor(current_user.id)
 
     if info_form.info_submit.data and info_form.validate():
         print("try to update info", info_form.info_email.data)

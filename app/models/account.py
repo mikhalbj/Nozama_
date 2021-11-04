@@ -20,7 +20,7 @@ class Account:
             ''',
             id=id)
 
-        return True if rows is not None else False
+        return True if len(rows) != 0 else False
 
     @staticmethod
     def get_balance(id):
@@ -32,7 +32,39 @@ class Account:
             id=id)
 
 
-        return rows[0] if len(rows) is not 0 else 0
+        return rows[0][0] if len(rows) != 0 else 0
+
+    @staticmethod
+    def increase_balance(id, amount):
+        try:
+            rows = app.db.execute('''
+                UPDATE Balance
+                SET balance = balance + :amount
+                WHERE id = :id
+            ''', id=id, amount=amount)
+        except Exception as err:
+            print(err)
+        
+
+    @staticmethod
+    def decrease_balance(id, amount):
+        try:
+            rows = app.db.execute('''
+                UPDATE Balance
+                SET balance = balance - :amount
+                WHERE id = :id
+            ''', id=id, amount=amount)
+        except Exception as err:
+            print(err)
+
+    @staticmethod
+    def become_vendor(id):
+        try:
+            rows = app.db.execute('''
+                INSERT INTO Seller (id) VALUES (:id)
+            ''', id=id)
+        except Exception as err:
+            print(err)
 
     @staticmethod
     def get_orders(id):
