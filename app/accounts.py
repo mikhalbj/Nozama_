@@ -1,3 +1,4 @@
+from logging import info
 from flask import render_template, redirect, url_for, flash, request
 from werkzeug.urls import url_parse
 from flask_login import login_user, logout_user, current_user
@@ -67,10 +68,10 @@ def account():
             Account.become_vendor(current_user.id)
 
     if info_form.info_submit.data and info_form.validate():
-        print("try to update info", info_form.info_email.data)
+        Account.update_information(current_user.id, info_form.info_firstname.data, info_form.info_lastname.data, info_form.info_email.data, info_form.info_address.data)
 
     if pass_form.pass_submit.data and pass_form.validate():
-        print("try to update password", pass_form.pass_newpass.data)
+        Account.update_password(current_user.id, pass_form.pass_currpass.data, pass_form.pass_newpass.data)
 
     account = Account.get(current_user.id)
 
