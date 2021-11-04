@@ -21,7 +21,26 @@ def inventory(seller):
     inventory = Inventory.get(seller)
     return render_template('inventory.html', title='See Inventory', inventory=inventory)
 
-@bp.route('/inventory/<seller>/add-product', methods=['ADD'])
-def add_prod(prod_id, name, description, price, available, seller):
-        inventory = Inventory.add(seller)
+
+class NewProdForm(FlaskForm):
+    name = StringField(_l('Product Name'), validators=[DataRequired()])
+    description = StringField(_l('Description'), validators=[DataRequired()])
+        # I had an issue with Price being an integer field
+    price = StringField(_l('Price'), validators=[DataRequired()])
+    available = BooleanField(_l('Available'), validators=[DataRequired()])
+      # this needs to be changed to quantity eventually
+      # we will also need to change the schema for this to work
+    seller = StringField(_l('Seller'), validators=[DataRequired()])
+    submit = SubmitField(_l('Add Product'))
+
+@bp.route('/inventory/<seller>/add-product', methods=['GET', 'POST'])
+def add_prod():
+    FORM = NewProdForm()
+    if form.validate_on_submit():
+        name = form.name.data
+        description = form.description.data
+        price = form.price.data
+        available = form.available.data
+        seller = form.seller.data
+        inventory = Inventory.add_prod(name, description, price, available, seller)
         return render_template('inventory.html', title='See Updated Inventory', inventory=inventory)

@@ -46,19 +46,18 @@ class Inventory:
                                   prod = prod)       
             return [ProductInventory(*row) for row in rows]
 
-#commenting this out at least makes the website run!
+# commenting this out at least makes the website run!
 
-       # @staticmethod
-        # def add(name, description, price, available, seller)
-          # rows = app.db.execute("""
-# INSERT INTO Inventory(id, name, description, price, quantity, seller)
-# VALUES(:id, :name, :description, :price, :quantity, :seller)
-# # RETURNING id
-# """,
-#                                   id=gen_random_uuid(id),
-#                                   name=name,
-#                                   description=description,
-#                                   price=price,
-#                                   available=available
-#                                   seller = seller)
-#             return Inventory.get(prod_id, name, description, price, available, seller)
+        @staticmethod
+        def add_prod(name, description, price, available, seller):
+            rows = app.db.execute('''
+    INSERT INTO Product(id, name, description, price, quantity, seller)
+    VALUES(:id, :name, :description, :price, :quantity, :seller)
+    ''',
+                                  prod_id=gen_random_uuid(),
+                                  name=name,
+                                  description=description,
+                                  price=price,
+                                  available=available,
+                                  seller = seller)
+            return Inventory.get(seller)
