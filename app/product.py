@@ -39,7 +39,7 @@ def advanced_search():
     print(request.args)
     s = request.args.get("argterm")
     a = request.args.get("avail")
-    t = request.args.get("t")
+    t = request.args.get("tag")
     p = request.args.get("maxprice")
     d = request.args.get("searchdesc")
     products = Product.advanced_search(strng=s, tag=t, priceMax=p, availOnly=a, searchDesc=d)

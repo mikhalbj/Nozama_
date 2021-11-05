@@ -103,7 +103,7 @@ WHERE name LIKE :strng
         if priceMax:
             where += " AND Product.price < :pricemax"
         if tag:
-            where += " AND ProductTag.tag = Tag.id AND Tag.name = :tag"
+            where += " AND ProductTag.tag = Tag.id AND Tag.name = :tag AND ProductTag.product = Product.id"
             frm += ", Tag, ProductTag"
         
         qry = sel + "\n" + frm + "\n" + where + "\n" + gby
