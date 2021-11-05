@@ -4,19 +4,32 @@
 
 <br><br>
 {% if presearch %}
-<p> Search!;</p>
 <form action="" method="post">
   <p>
-    {{ form.searchterm(size=32, placeholder='Search here') }}<br/>
-    {{ url_for('product.search', argterm=form.searchterm.value) }}
+    <p>Search for items with keyword:</p>
+    {{ form.searchterm(size=32, placeholder='Search for...') }}<br/>
+    <p>Only search for items in category:</p>
+    {{ form.tag() }} <br/>
+    <p>Only search for available items:</p>
+    {{ form.avail() }} <br/>
+    <p>Only search for items cheaper than:</p>
+    {{ form.maxprice() }} <br/>
+    <p>Only search keyword in field:</p>
+    {{ form.searchin(size=5) }} <br/>
+    
     {% for error in form.searchterm.errors %}
     <span style="color: red;">[{{ error }}]</span>
     {% endfor %}
+    
     {{ form.submit() }}
   </p>
 </form>
+
+
 {% elif products|length == 0 %}
 <p> Your search for "{{term}}" returned no products on Nozama</p>
+
+
 {% else %}
 <h2>Products matching your search for "{{term}}":</h2>
 <table class='table table-hover table-bordered container'>
@@ -38,5 +51,6 @@
   </tbody>
 </table>
 {% endif %}
+
 
 {% endblock %}
