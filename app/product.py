@@ -17,13 +17,15 @@ class SearchForm(FlaskForm):
     tag = RadioField('Filter by category')
     avail = BooleanField('Only find available items')
     maxprice = DecimalField('Only find items cheaper than:')
-    searchin = SelectMultipleField('Match ketwords in:', choices=[("description", "description"), ("description", "description")])
+    searchdesc = BooleanField('Match ketwords in description:')
     submit = SubmitField()
 
 @bp.route('/product_details/<uuid:id>', methods=['GET'])
 def product(id):
-    product = Product.get(id)
-    return render_template('product_details.html', title='See Product', product=product)
+    product = Product.fullget(id)
+    image = Product.get_img(id)[0][1]
+    quantity = Product.get_inventory(id)[0]
+    return render_template('product_details.html', title='See Product', product=product, imgurl=image, num=quantity)
 
 @bp.route('/search/<argterm>', methods=['GET', 'POST'])
 def search(argterm):
@@ -34,6 +36,7 @@ def search(argterm):
 
 @bp.route('/advanced_search/', methods=['GET', 'POST'])
 def advanced_search():
+    print(request.args)
     s = request.args.get("argterm")
     a = request.args.get("avail")
     t = request.args.get("t")
@@ -49,6 +52,6 @@ def presearch():
     form.tag.choices = Product.get_categories()
     if form.is_submitted():
         print(request.form)
-        return redirect(url_for('product.advanced_search', argterm=form.searchterm.data, tag=form.tag.data, maxprice=form.maxprice.data, avail=form.avail.data))
+        return redirect(url_for('product.advanced_search', argterm=form.searchterm.data, tag=form.tag.data, maxprice=form.maxprice.data, avail=form.avail.data, searchdesc=form.searchdesc.data))
     return render_template('search.html', title='Search for Products', presearch=True, form=form)
 

@@ -14,8 +14,8 @@
     {{ form.avail() }} <br/>
     <p>Only search for items cheaper than:</p>
     {{ form.maxprice() }} <br/>
-    <p>Only search keyword in field:</p>
-    {{ form.searchin(size=5) }} <br/>
+    <p>Search for keyword in descriptions:</p>
+    {{ form.searchdesc() }} <br/>
     
     {% for error in form.searchterm.errors %}
     <span style="color: red;">[{{ error }}]</span>
@@ -38,6 +38,8 @@
       <th scope="col">Product ID</th>
       <th scope="col">Product Name</th>
       <th scope="col">Price</th>
+      <th scope="col">Thumbnail</th>
+      <th scope="col">Rating</th>
     </tr>
   </thead>
   <tbody>
@@ -46,6 +48,8 @@
         <th scope="row">{{product.id}}</th>
         <td><a href="{{ url_for('product.product', id=product.id) }}">{{product.name}}</a></td>
         <td>{{product.price}}</td>
+        <td><img src={{product.url}} class="img-fluid rounded-start" alt="..."></td>
+        <td>{{product.rating}}</td>
       </tr>
     {% endfor %}
   </tbody>

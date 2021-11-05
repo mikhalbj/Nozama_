@@ -11,6 +11,10 @@
       <th scope="col">Product ID</th>
       <th scope="col">Product Name</th>
       <th scope="col">Price</th>
+      <th scope="col">Rating</th>
+      <th scope="col">Desc</th>
+      <th scope="col">Seller</th>
+      <th scope="col">Inventory</th>
     </tr>
   </thead>
   <tbody>
@@ -18,8 +22,13 @@
         <th scope="row">{{product.id}}</th>
         <td>{{product.name}}</td>
         <td>{{product.price}}</td>
+        <td>{{product.rating}}</td>
+        <td>{{product.description}}</td>
+        <td>{{product.seller}}</td>
+        <td>{{num}}</td>
       </tr>
   </tbody>
 </table>
+<img src={{imgurl}} class="img-fluid rounded-start" alt="...">
 
 {% endblock %}
