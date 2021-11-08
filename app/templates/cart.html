@@ -9,9 +9,30 @@
 
     <ul class="list-group list-group-horizontal nav nav-pills">
         <li class="nav-item">
-          <a class="nav-link active" aria-current="page" href="#">Keep Shopping</a>
+          <a class="nav-link active" aria-current="page" href="/">Keep Shopping</a>
         </li>
       </ul>
+
+  <div class="row">
+    <!-- Balance Info -->
+    <div class="col-sm-6">
+    <div class="card">
+        <div class="card-body">
+          <h4 class="card-title">Order Total</h4>
+          
+          <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-auto">
+                    <p class="card-text"><h1>${{'%0.2f'| format(cart.total|float)}}</h1></p>
+                </div>
+            </div>
+            <div class="row">
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 
 <table class='table table-hover table-bordered container'>
   <thead class="thead-dark">
@@ -23,7 +44,7 @@
     </tr>
   </thead>
   <tbody>
-    {% for product in carts%}
+    {% for product in cartProduct%}
       <tr>
         <th scope="row">{{product.id}}</th>
         <td>{{product.name}}</td>

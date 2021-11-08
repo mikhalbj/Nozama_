@@ -12,14 +12,12 @@ from .models.cart import Cart
 
 
 from flask import Blueprint
-bp = Blueprint('carts', __name__)
-
+bp = Blueprint('carts', __name__,)
 
 @bp.route('/cart', methods=['GET'])
 def cart():
     if not current_user.is_authenticated:
         return redirect(url_for('index.index'))
-    
-    cart = CartProduct.get(current_user.id)
 
-    return render_template('cart.html', title='Cart', user=current_user, cart=cart)
+    cart = CartProduct.get(current_user.id)
+    return render_template('cart.html', title='Cart', cart=cart)
