@@ -19,5 +19,5 @@ def cart():
     if not current_user.is_authenticated:
         return redirect(url_for('index.index'))
 
-    cart = CartProduct.get(current_user.id)
+    cart = Cart.get(current_user.id)
     return render_template('cart.html', title='Cart', cart=cart)
