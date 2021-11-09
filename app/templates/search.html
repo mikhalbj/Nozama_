@@ -4,19 +4,32 @@
 
 <br><br>
 {% if presearch %}
-<p> Search!;</p>
 <form action="" method="post">
   <p>
-    {{ form.searchterm(size=32, placeholder='Search here') }}<br/>
-    {{ url_for('product.search', argterm=form.searchterm.value) }}
+    <p>Search for items with keyword:</p>
+    {{ form.searchterm(size=32, placeholder='Search for...') }}<br/>
+    <p>Only search for items in category:</p>
+    {{ form.tag() }} <br/>
+    <p>Only search for available items:</p>
+    {{ form.avail() }} <br/>
+    <p>Only search for items cheaper than:</p>
+    {{ form.maxprice() }} <br/>
+    <p>Search for keyword in descriptions:</p>
+    {{ form.searchdesc() }} <br/>
+    
     {% for error in form.searchterm.errors %}
     <span style="color: red;">[{{ error }}]</span>
     {% endfor %}
+    
     {{ form.submit() }}
   </p>
 </form>
+
+
 {% elif products|length == 0 %}
 <p> Your search for "{{term}}" returned no products on Nozama</p>
+
+
 {% else %}
 <h2>Products matching your search for "{{term}}":</h2>
 <table class='table table-hover table-bordered container'>
@@ -25,6 +38,8 @@
       <th scope="col">Product ID</th>
       <th scope="col">Product Name</th>
       <th scope="col">Price</th>
+      <th scope="col">Thumbnail</th>
+      <th scope="col">Rating</th>
     </tr>
   </thead>
   <tbody>
@@ -33,10 +48,13 @@
         <th scope="row">{{product.id}}</th>
         <td><a href="{{ url_for('product.product', id=product.id) }}">{{product.name}}</a></td>
         <td>{{product.price}}</td>
+        <td><img src={{product.url}} class="img-fluid rounded-start" alt="..."></td>
+        <td>{{product.rating}}</td>
       </tr>
     {% endfor %}
   </tbody>
 </table>
 {% endif %}
+
 
 {% endblock %}
