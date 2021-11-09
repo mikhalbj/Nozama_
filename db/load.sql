@@ -1,5 +1,6 @@
 \COPY Account FROM 'data/Account.csv' WITH DELIMITER ',' NULL '' CSV
 \COPY Seller FROM 'data/Seller.csv' WITH DELIMITER ',' NULL '' CSV
+-- \COPY Balance FROM 'data/Balance.csv' WITH DELIMITER ',' NULL '' CSV
 
 \COPY Product FROM 'data/Product.csv' WITH DELIMITER ',' NULL '' CSV
 \COPY ProductInventory FROM 'data/ProductInventory.csv' WITH DELIMITER ',' NULL '' CSV
