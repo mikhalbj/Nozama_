@@ -27,8 +27,9 @@ def genOrders(n):
         newOrders.append(neword)
     
     with open('data/AccountOrder.csv', 'a', newline='') as csvfile:
-        writer = csv.writer(csvfile)
+        writer = csv.writer(csvfile, lineterminator='')
         for row in newOrders:
+            writer.writerow('\n')
             writer.writerow(row)
     
     genOrderProducts(newOrders)
@@ -61,8 +62,9 @@ def genOrderProducts(ords):
             newAOPs.append(aop)
     
     with open('data/AccountOrderProduct.csv', 'a', newline='') as aopfile:
-        aopwriter = csv.writer(aopfile)
+        aopwriter = csv.writer(aopfile, lineterminator='')
         for row in newAOPs:
+            aopwriter.writerow('\n')
             aopwriter.writerow(row)
     
     return True

@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<br><br>
+{% if presearch %}
+<p> Search!;</p>
+<form action="" method="post">
+  <p>
+    {{ form.searchterm(size=32, placeholder='Search here') }}<br/>
+    {{ url_for('product.search', argterm=form.searchterm.value) }}
+    {% for error in form.searchterm.errors %}
+    <span style="color: red;">[{{ error }}]</span>
+    {% endfor %}
+    {{ form.submit() }}
+  </p>
+</form>
+{% elif products|length == 0 %}
+<p> Your search for "{{term}}" returned no products on Nozama</p>
+{% else %}
+<h2>Products matching your search for "{{term}}":</h2>
+<table class='table table-hover table-bordered container'>
+  <thead class="thead-dark">
+    <tr>
+      <th scope="col">Product ID</th>
+      <th scope="col">Product Name</th>
+      <th scope="col">Price</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for product in products%}
+      <tr>
+        <th scope="row">{{product.id}}</th>
+        <td><a href="{{ url_for('product.product', id=product.id) }}">{{product.name}}</a></td>
+        <td>{{product.price}}</td>
+      </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endif %}
+
+{% endblock %}
