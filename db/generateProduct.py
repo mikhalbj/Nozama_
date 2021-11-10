@@ -70,7 +70,7 @@ def genProductsAndTags(n):
             if [currPT, index] not in existingPTs and [currPT, index] not in newProdTags:
                 newProdTags.append([currPT, index])
             
-        prodstring = mod + " " + prod
+        prodstring = mod + ' ' + prod
         newprod.append(prodstring) # add product name
         newprod.append(genDesc(prodstring)) # add product description with helper method
         newprod.append(str(random.randint(5,200)) + random.choice(ends)) # add price
@@ -86,9 +86,9 @@ def genProductsAndTags(n):
 
 
 def genDesc(prodstring):
-    words = [' great reviewed product' ' best' ' highly-rated product' ' e-commerce product' ' you should purchase'
-    ' comes with warranty' ' enhance your life' ' act fast' ' hand made' ' tried and tested' ' patended' ' lifetime warrenty'
-    ' batteries not included' ' great as a gift' ' and' ' lowest price' ' match any price' ' Also!' ' great']
+    words = [' great reviewed product', ' best', ' highly-rated product', ' e-commerce product', ' you should purchase',
+    ' comes with warranty', ' enhance your life', ' act fast', ' hand made', ' tried and tested', ' patended', ' lifetime warrenty',
+    ' batteries not included', ' great as a gift', ' and', ' lowest price', ' match any price', ' Also!', ' great']
     return 'This beautiful ' + prodstring + ' '.join(random.choices(words, k=(random.randint(0,3))))
 
 
