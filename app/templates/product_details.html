@@ -31,4 +31,32 @@
 </table>
 <img src={{imgurl}} class="img-fluid rounded-start" alt="...">
 
+<h2>Reviews:</h2> 
+
+<table class='table table-hover table-bordered container'></table>
+<thead class="thead-dark">
+  <tr>
+    <th scope="col">Review ID</th>
+    <th scope="col">Title</th>
+    <th scope="col">Author</th>
+    <th scope="col">Rating</th>
+    <th scope="col">Description</th>
+    <th scope="col">Time</th>
+    <th scope="col">Edited</th>
+  </tr>
+</thead>
+<tbody>
+  <tr>
+    <th scope="row">{{reviews.id}}</th>
+    <td>{{reviews.title}}</td>
+    <td>{{reviews.author}}</td>
+    <td>{{reviews.rating}}</td>
+    <td>{{reviews.description}}</td>
+    <td>{{reviews.time}}</td>
+    <td>{{reviews.edited}}</td>
+    <td>{{num}}</td>
+  </tr>
+</tbody>
+</table>
+
 {% endblock %}
