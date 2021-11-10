@@ -42,7 +42,7 @@ def genProductsAndTags(n):
     }
 
     # define cent cost of randomly generated prices
-    ends = ['.00', '.49', '.99' '.95', '.45' '.89']
+    ends = ['.00', '.49', '.99', '.95', '.45', '.89']
     newProds = []
     newTags = []
     newProdTags = []
@@ -89,7 +89,7 @@ def genDesc(prodstring):
     words = [" great reviewed product" " best" " highly-rated product" " e-commerce product" " you should purchase"
     " comes with warranty" " enhance your life" " act fast" " hand made" " tried and tested" " patended" " lifetime warrenty"
     " batteries not included" " great as a gift" " and" " lowest price" " match any price" " Also!" " great"]
-    return "This beautiful " + prodstring + ' '.join(random.choices(words, k=(random.randint(0,4))))
+    return "This beautiful " + prodstring + ' '.join(random.choices(words, k=(random.randint(0,3))))
 
 
 def genImage():
@@ -148,7 +148,7 @@ def genImage():
     with open('data/ProductImage.csv', 'a', newline='') as imgfilew:
         writer = csv.writer(imgfilew, lineterminator='')
         for row in nextRows:
-            writer.writerow('\n')
+            writer.writerow("\n")
             writer.writerow(row)
     return True
 
@@ -157,7 +157,7 @@ def genInventory(prods):
     with open('data/ProductInventory.csv', 'a', newline='') as pifile:
         piwriter = csv.writer(pifile, lineterminator='')
         for row in prods:
-            piwriter.writerow('\n')
+            piwriter.writerow("\n")
             if row[4] == False:
                 piwriter.writerow([row[0], 0])
             else:
@@ -169,19 +169,19 @@ def write(prods, tags, prodtags):
     with open('data/Product.csv', 'a', newline='') as csvfile:
         writer = csv.writer(csvfile, lineterminator='')
         for row in prods:
-            writer.writerow('\n')
+            writer.writerow("\n")
             writer.writerow(row)
     
     with open('data/Tag.csv', 'a', newline='') as tfile:
         writer = csv.writer(tfile, lineterminator='')
         for row in tags:
-            writer.writerow('\n')
+            writer.writerow("\n")
             writer.writerow(row)
     
     with open('data/ProductTag.csv', 'a', newline='') as writeptfile:
         writer = csv.writer(writeptfile, lineterminator='')
         for row in prodtags:
-            writer.writerow('\n')
+            writer.writerow("\n")
             writer.writerow(row)
     return True
 

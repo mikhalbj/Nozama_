@@ -29,7 +29,7 @@ def genUsers(n):
     with open('data/Account.csv', 'a', newline='') as csvfile:
         writer = csv.writer(csvfile, lineterminator='')
         for row in users:
-            writer.writerow('\n')
+            writer.writerow("\n")
             writer.writerow(row)
     
     genSeller(users)
@@ -66,7 +66,7 @@ def genSeller(users):
         sellwriter = csv.writer(sellfile, lineterminator='')
         for row in users:
             if random.choices([True, False], weights=[0.3, 0.7]):
-                sellwriter.writerow('\n')
+                sellwriter.writerow("\n")
                 sellwriter.writerow([row[0]])
     return True
 
@@ -75,7 +75,7 @@ def genBalance(users):
     with open('data/Balance.csv', 'a', newline='') as bfile:
         bwriter = csv.writer(bfile, lineterminator='')
         for row in users:
-            bwriter.writerow('\n')
+            bwriter.writerow("\n")
             bwriter.writerow([row[0], round(random.uniform(0, 150), 2)])
     return True
 
