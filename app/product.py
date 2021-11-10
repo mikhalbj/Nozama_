@@ -18,12 +18,17 @@ class SearchForm(FlaskForm):
     avail = BooleanField('Only find available items')
     maxprice = DecimalField('Only find items cheaper than:')
     searchdesc = BooleanField('Match ketwords in description:')
+    sort = RadioField('Sort by price or rating:', choices=['price', 'rating'])
     submit = SubmitField()
 
 @bp.route('/product_details/<uuid:id>', methods=['GET'])
 def product(id):
     product = Product.fullget(id)
-    image = Product.get_img(id)[0][1]
+    image = Product.get_img(id)
+    if image:
+        image = image[0][1]
+    else:
+        image = "https://cdn.w600.comps.canstockphoto.com/pile-of-random-stuff-eps-vector_csp24436545.jpg"
     quantity = Product.get_inventory(id)[0]
     return render_template('product_details.html', title='See Product', product=product, imgurl=image, num=quantity)
 
@@ -42,8 +47,12 @@ def advanced_search():
     t = request.args.get("tag")
     p = request.args.get("maxprice")
     d = request.args.get("searchdesc")
-    products = Product.advanced_search(strng=s, tag=t, priceMax=p, availOnly=a, searchDesc=d)
-    return render_template('search.html', title='Search for Products', products=products, term=s)
+    sby = request.args.get("sort")
+    pg = request.args.get("page")
+    products = Product.advanced_search(strng=s, tag=t, priceMax=p, availOnly=a, searchDesc=d, sortBy=sby, page=pg)
+    paginateBool = bool(len(products)==25)
+    currUrl = request.url
+    return render_template('search.html', title='Search for Products', products=products, term=s, pages=paginateBool, page=pg, curr=currUrl)
 
 
 @bp.route('/search/', methods=['GET', 'POST'])
@@ -52,6 +61,6 @@ def presearch():
     form.tag.choices = Product.get_categories()
     if form.is_submitted():
         print(request.form)
-        return redirect(url_for('product.advanced_search', argterm=form.searchterm.data, tag=form.tag.data, maxprice=form.maxprice.data, avail=form.avail.data, searchdesc=form.searchdesc.data))
+        return redirect(url_for('product.advanced_search', argterm=form.searchterm.data, tag=form.tag.data, maxprice=form.maxprice.data, avail=form.avail.data, searchdesc=form.searchdesc.data, sort=form.sort.data))
     return render_template('search.html', title='Search for Products', presearch=True, form=form)
 

@@ -84,14 +84,16 @@ WHERE name LIKE :strng
         return [Product(*row) for row in rows]
 
     @staticmethod
-    def advanced_search(strng="", searchName=True, searchDesc=False, sortbyPrice=False, availOnly=False, priceMax=False, tag=False):
+    def advanced_search(strng="", searchName=True, searchDesc=False, sortBy=False, availOnly=False, priceMax=False, tag=False, page=1):
 
     
-        sel = "SELECT Product.id, Product.name, Product.price, Product.available, COALESCE(AVG(T.rating), NULL) AS rating"
+        sel = "SELECT Product.id, Product.name, Product.price, Product.available, COALESCE(AVG(T.rating), NULL) AS rate"
         gby = "GROUP BY Product.id"
         where = "WHERE "
         frm = "FROM Product LEFT OUTER JOIN (SELECT * FROM Review, ProductReview WHERE Review.id = ProductReview.review) AS T ON Product.id = T.product"
-        
+        lo = "LIMIT 25"
+        sby = ""
+
         if searchName and searchDesc:
             where += "(Product.name LIKE :strng OR Product.description LIKE :strng)"
         elif searchDesc:
@@ -105,10 +107,18 @@ WHERE name LIKE :strng
         if tag:
             where += " AND ProductTag.tag = Tag.id AND Tag.name = :tag AND ProductTag.product = Product.id"
             frm += ", Tag, ProductTag"
+        if sortBy == 'price':
+            sby = "ORDER BY price" + "\n"
+        elif sortBy == 'rating':
+            sby = "ORDER BY rate DESC NULLS LAST" + "\n"
+        if page and int(page) > 1:
+            lo += " OFFSET "
+            lo += str(25*(int(page)-1))
         
         qry = sel + "\n" + frm + "\n" + where + "\n" + gby
         print(qry)
-        qry = "SELECT * FROM ProductImage RIGHT OUTER JOIN (" + qry + ") AS SUB ON ProductImage.product = SUB.id"
+        qry = "SELECT * FROM ProductImage RIGHT OUTER JOIN (" + qry + ") AS SUB ON ProductImage.product = SUB.id" + "\n" + sby + "\n" + lo
+        print(qry)
         rows = app.db.execute(qry, strng="%"+strng+"%", tag=tag, pricemax=priceMax)
         print(rows)
         return rows

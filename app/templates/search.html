@@ -16,6 +16,8 @@
     {{ form.maxprice() }} <br/>
     <p>Search for keyword in descriptions:</p>
     {{ form.searchdesc() }} <br/>
+    <p>Sort by price or rating:</p>
+    {{ form.sort() }}
     
     {% for error in form.searchterm.errors %}
     <span style="color: red;">[{{ error }}]</span>
@@ -49,11 +51,17 @@
         <td><a href="{{ url_for('product.product', id=product.id) }}">{{product.name}}</a></td>
         <td>{{product.price}}</td>
         <td><img src={{product.url}} class="img-fluid rounded-start" alt="..."></td>
-        <td>{{product.rating}}</td>
+        <td>{{product.rate}}</td>
       </tr>
     {% endfor %}
   </tbody>
 </table>
+
+{% if pages %}
+<button type="button"><a href="tag_br.asp">❮Previous Page</a></button>
+<button type="button"> <a href="tag_br.asp"> Next Page❯</a></button>
+{% endif %}
+
 {% endif %}
 
 
