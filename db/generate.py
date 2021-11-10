@@ -13,11 +13,11 @@ import math
 
 def generate():
 
-    numNewUser = 10
-    numNewProduct = 20
-    numNewOrder = 20
-    numNewReview = 20
-    numProdPerAccount = 3
+    numNewUser = 100
+    numNewProduct = 200
+    numNewOrder = 200
+    numNewReview = 200
+    numProdPerAccount = 4
 
     genUsers(numNewUser)
     genProductsAndTags(numNewProduct)
