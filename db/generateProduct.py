@@ -86,10 +86,10 @@ def genProductsAndTags(n):
 
 
 def genDesc(prodstring):
-    words = [" great reviewed product" " best" " highly-rated product" " e-commerce product" " you should purchase"
-    " comes with warranty" " enhance your life" " act fast" " hand made" " tried and tested" " patended" " lifetime warrenty"
-    " batteries not included" " great as a gift" " and" " lowest price" " match any price" " Also!" " great"]
-    return "This beautiful " + prodstring + ' '.join(random.choices(words, k=(random.randint(0,3))))
+    words = [' great reviewed product' ' best' ' highly-rated product' ' e-commerce product' ' you should purchase'
+    ' comes with warranty' ' enhance your life' ' act fast' ' hand made' ' tried and tested' ' patended' ' lifetime warrenty'
+    ' batteries not included' ' great as a gift' ' and' ' lowest price' ' match any price' ' Also!' ' great']
+    return 'This beautiful ' + prodstring + ' '.join(random.choices(words, k=(random.randint(0,3))))
 
 
 def genImage():
