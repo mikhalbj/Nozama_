@@ -10,18 +10,45 @@
     <tr>
       <th scope="col">Product ID</th>
       <th scope="col">Product Name</th>
-      <th scope="col">Quantity</th>
+      <th scope="col">Quantity Available</th>
     </tr>
   </thead>
   <tbody>
-    {% for product in products%}
+    {% for inventory in inventory%}
       <tr>
-        <th scope="row">{{product.id}}</th>
-        <td>{{product.name}}</td>
-        <td>{{product.quantity}}</td>
+        <th scope="row">{{inventory.id}}</th>
+        <td>{{inventory.name}}</td>
+        <td>{{inventory.quantity}}</td>
       </tr>
     {% endfor %}
   </tbody>
 </table>
+
+<h1>Add new product!</h1>
+
+<form action="" method="post">
+  {{form.csrf_token}}
+  <p>
+    {{ form.name.label() }}<br/>
+    {{ form.name(size=32) }}<br/>
+  </p>
+  <p>
+    {{ form.description.label }}<br/>
+    {{ form.description(size=100) }}<br/>
+  </p>
+  <p>
+    {{ form.price.label }} <br/>
+    {{ form.price(size=64) }}<br/>
+  </p>
+  <p>
+    {{ form.quantity.label }}<br/>
+    {{ form.quantity(size=64) }}<br/>
+  </p>
+  <p>
+    {{ form.seller.label }}<br/>
+    {{ form.seller(size=100) }}<br/>
+  </p>
+  <p>{{ form.submit() }}</p>
+</form>
 
 {% endblock %}
