@@ -54,7 +54,7 @@
         {% if current_user.is_authenticated %}
           Hello {{current_user.firstname}}! <a href="{{ url_for('users.logout') }}" type="button" class="btn btn-light">Log out</a>
         {% else %}
-          <a href="{{ url_for('users.login') }}" type="button" class="btn" style= "margin-right: 5%; display: inline-flex; float: right; color: coral; border-color: coral;>Log in</a>
+          <a href="{{ url_for('users.login') }}" type="button" class="btn" style= "margin-right: 5%; display: inline-flex; float: right; color: coral; border-color: coral;">Log in</a>
         {% endif %}
       </div>
     {% endblock %}
