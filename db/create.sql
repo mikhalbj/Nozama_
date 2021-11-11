@@ -113,6 +113,24 @@ CREATE TABLE SellerReview(
     seller UUID NOT NULL REFERENCES Seller(id)
 );
 
+-- Trigger to create Balance on Account creation
+CREATE FUNCTION TF_InitBalance() RETURNS TRIGGER AS $$
+BEGIN
+  IF (SELECT id FROM Balance WHERE id = NEW.id) IS NOT NULL THEN
+    RAISE EXCEPTION 'A balance already exists for account %.', NEW.id;
+  END IF;
+
+  INSERT INTO Balance (id, balance) VALUES(NEW.id, 0);
+
+  RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER TG_InitBalance
+AFTER INSERT ON Account
+FOR EACH ROW
+EXECUTE PROCEDURE TF_InitBalance();
+
 -- 
 -- View that maps new db design to template schema. Should be replaced once python code is rewritten
 -- 

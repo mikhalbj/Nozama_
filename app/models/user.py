@@ -6,16 +6,17 @@ from .. import login
 
 
 class User(UserMixin):
-    def __init__(self, id, email, firstname, lastname):
+    def __init__(self, id, email, firstname, lastname, address):
         self.id = id
         self.email = email
         self.firstname = firstname
         self.lastname = lastname
+        self.address = address
 
     @staticmethod
     def get_by_auth(email, password):
         rows = app.db.execute("""
-SELECT password, id, email, firstname, lastname
+SELECT password, id, email, firstname, lastname, address
 FROM Account
 WHERE email = :email
 """,
@@ -39,7 +40,7 @@ WHERE email = :email
         return len(rows) > 0
 
     @staticmethod
-    def register(email, password, firstname, lastname):
+    def register(email, password, firstname, lastname, address):
         try:
             rows = app.db.execute("""
 INSERT INTO Account(email, password, firstname, lastname, address)
@@ -50,7 +51,7 @@ RETURNING id
                                   password=generate_password_hash(password),
                                   firstname=firstname,
                                   lastname=lastname,
-                                  address="test address")
+                                  address=address)
             id = rows[0][0]
             return User.get(id)
         except Exception as err:
@@ -63,7 +64,7 @@ RETURNING id
     @login.user_loader
     def get(id):
         rows = app.db.execute("""
-SELECT id, email, firstname, lastname
+SELECT id, email, firstname, lastname, address
 FROM Account
 WHERE id = :id
 """,
