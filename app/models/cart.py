@@ -31,9 +31,23 @@ class Cart:
         rows = app.db.execute('''
         DELETE FROM CartProduct WHERE account = :account_id;
         ''',
+        account_id = account_id
         )
-        return rows[0][0] if rows else 0
+        return True
 
+    @staticmethod
+    def add_cart(account_id, quantity, id):
+        print("hi")
+        rows = app.db.execute('''
+        INSERT INTO CartProduct(account, product, quantity)
+        VALUES(:account_id, :prod_id, :quantity)
+        RETURNING account
+        ''',
+            account_id = account_id,
+            prod_id = id,
+            quantity = quantity)
+        return True
+    
     @staticmethod
     def cart_total(account_id):
         rows = app.db.execute('''
