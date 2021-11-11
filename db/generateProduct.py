@@ -48,7 +48,10 @@ def genProductsAndTags(n):
     newProdTags = []
 
     #read data from other files with helper method
-    [existingTags, existingPTs, tagIndex, sellers] = readCSVs()
+    sellers = readCSVs()
+    existingTags = {}
+    tagIndex = 0
+    existingPTs = []
 
     while len(newProds) < n:
         newprod = []
@@ -202,7 +205,7 @@ def readCSVs():
         sells = []
         for row in sellreader:
             sells.append(row) 
-    return [existingTags, existingPTs, tagIndex, sells]
+    return sells
 
 
 if __name__ == "__main__":
