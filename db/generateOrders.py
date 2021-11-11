@@ -26,10 +26,9 @@ def genOrders(n):
         neword.append(genTimeStampDefault())
         newOrders.append(neword)
     
-    with open('data/AccountOrder.csv', 'a', newline='') as csvfile:
-        writer = csv.writer(csvfile, lineterminator='')
+    with open('data/AccountOrder.csv', 'w') as csvfile:
+        writer = csv.writer(csvfile, dialect='unix')
         for row in newOrders:
-            writer.writerow('\n')
             writer.writerow(row)
     
     genOrderProducts(newOrders)
@@ -61,10 +60,9 @@ def genOrderProducts(ords):
             aop.append(max(a, b)) # add delivered at
             newAOPs.append(aop)
     
-    with open('data/AccountOrderProduct.csv', 'a', newline='') as aopfile:
-        aopwriter = csv.writer(aopfile, lineterminator='')
+    with open('data/AccountOrderProduct.csv', 'w') as aopfile:
+        aopwriter = csv.writer(aopfile, dialect='unix')
         for row in newAOPs:
-            aopwriter.writerow('\n')
             aopwriter.writerow(row)
     
     return True
