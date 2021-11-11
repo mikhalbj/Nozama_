@@ -18,8 +18,8 @@ class Review:
     @staticmethod
     def get(id):
         rows = app.db.execute('''
-        SELECT id, title, author UUID, description, written_at, edited_at, rating
-        FROM Review
-        WHERE id = :id
+        SELECT id, title, author, description, written_at, edited_at, rating
+        FROM Review, ProductReview
+        WHERE ProductReview.product = :id AND ProductReview.review = Review.id
         ''', id=id)
         return rows if rows is not None else None

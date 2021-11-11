@@ -29,33 +29,31 @@
       </tr>
   </tbody>
 </table>
-<img src={{imgurl}} class="img-fluid rounded-start" alt="...">
+<img style= "width: 15%; margin-left: 40%; margin-right: 40%;"src={{imgurl}} class="img-fluid rounded-start" alt="...">
 
 <h2>Reviews:</h2> 
 
-<table class='table table-hover table-bordered container'></table>
-<thead class="thead-dark">
-  <tr>
-    <th scope="col">Review ID</th>
-    <th scope="col">Title</th>
-    <th scope="col">Author</th>
-    <th scope="col">Rating</th>
-    <th scope="col">Description</th>
-    <th scope="col">Time</th>
-    <th scope="col">Edited</th>
-  </tr>
-</thead>
-<tbody>
-  <tr>
-    <th scope="row">{{reviewsmod.id}}</th>
-    <td>{{reviews.title}}</td>
-    <td>{{review.author}}</td>
-    <td>{{review.rating}}</td>
-    <td>{{review.description}}</td>
-    <td>{{review.time}}</td>
-    <td>{{review.edited}}</td>
-  </tr>
-</tbody>
-</table>
+<table class='table table-hover table-bordered container'>
+  <thead><tr>
+    <th>Review ID</th>
+    <th>Title</th>
+    <th>Author</th>
+    <th>Rating</th>
+    <th>Description</th>
+    <th>Time</th>
+    <th>Edited</th>
+  </tr></thead>
+  <tbody>
+    <tr>
+      <td scope="row">{{review.id}}</td>
+      <td>{{review.title}}</td>
+      <td>{{review.author}}</td>
+      <td>{{review.rating}}</td>
+      <td>{{review.description}}</td>
+      <td>{{review.time}}</td>
+      <td>{{review.edited}}</td>
+    </tr>
+  </tbody>
+  </table>
 
 {% endblock %}
