@@ -8,6 +8,7 @@ from flask_babel import _, lazy_gettext as _l
 
 from .models.product import Product
 from .models.reviewsmod import Review
+from .models.cart import Cart
 
 
 from flask import Blueprint
@@ -27,7 +28,7 @@ def product(id):
     image = Product.get_img(id)[0][1]
     quantity = Product.get_inventory(id)[0]
     reviews = Review.get(id)
-    return render_template('product_details.html', title='See Product', product=product, imgurl=image, num=quantity, review=reviews)
+    return render_template('product_details.html', title='See Product', product=product, imgurl=image, num=quantity,, cartform=form review=reviews)
 
 @bp.route('/search/<argterm>', methods=['GET', 'POST'])
 def search(argterm):
