@@ -21,3 +21,18 @@ position: absolute;
 right: 0px;
 width: 50%;
 }
+
+.link-unstyled, .link-unstyled:link, .link-unstyled:hover {
+    color: inherit;
+    text-decoration: inherit;
+  }
+
+.account-balance {
+  border: none;
+  width: 150px;
+}
+
+.account-balance:focus {
+  outline: none;
+  /* border-bottom: 1px solid #0d6efd; */
+}

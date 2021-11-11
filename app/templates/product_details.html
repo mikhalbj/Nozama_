@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<br><br>
+
+<!-- Cart Modal -->
+<div class="modal fade" id="cartModal" tabindex="-1" aria-labelledby="cartModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+  <div class="modal-content">
+      <div class="modal-header">
+      <h5 class="modal-title" id="cartModalLabel">Add to Cart</h5>
+      <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      
+      <div class="modal-body">
+          <form action="" method="post">
+              <div class="d-flex justify-content-left mb-3">
+                  <p><h1>{{cartform.quantity(placeholder='1')}}</h1></p>
+              </div>
+
+              <div class="d-grid gap-2">
+                  {{cartform.submit(class_='btn btn-success btn-large')}}
+              </div>
+          </form>
+      </div>
+  </div>
+  </div>
+</div>
+
+<h2>Product you clicked on:</h2>
+<table class='table table-hover table-bordered container'>
+  <thead class="thead-dark">
+    <tr>
+      <th scope="col">Product ID</th>
+      <th scope="col">Product Name</th>
+      <th scope="col">Price</th>
+      <th scope="col">Rating</th>
+      <th scope="col">Desc</th>
+      <th scope="col">Seller</th>
+      <th scope="col">Inventory</th>
+    </tr>
+  </thead>
+  <tbody>
+      <tr>
+        <th scope="row">{{product.id}}</th>
+        <td>{{product.name}}</td>
+        <td>{{product.price}}</td>
+        <td>{{product.rate}}</td>
+        <td>{{product.description}}</td>
+        <td>{{product.seller}}</td>
+        <td>{{num}}</td>
+      </tr>
+  </tbody>
+</table>
+<img src={{imgurl}} class="img-fluid rounded-start" alt="...">
+<button type="button" class="btn btn-primary mr-2" data-bs-toggle="modal" data-bs-target="#cartModal"> Add to Cart</button>
+
+{% endblock %}
