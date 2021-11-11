@@ -45,14 +45,14 @@ def genOrderProducts(ords):
     newAOPs = []
     for order in ords:
         prodnum = random.randint(1,4) # each order includes 1-4 products
-        prods = random.sample(data[:,0], k=prodnum)
+        prods = random.sample([prod[0] for prod in data], k=prodnum)
         for i in range(prodnum): 
             aop = []
             prod = random.choice(data)
             aop.append(order[0]) # add AccountOrder UUID to AccountOrderProduct record
             aop.append(prods[i]) # add product id
             aop.append(random.randint(1,4)) # add quantity
-            aop.append(prod[3]) # add price of a single item??
+            aop.append("3.99") # add price of a single item??
             aop.append("in stock")
             start = time.mktime(time.strptime(order[2], "%x %X"))
             end = math.floor(time.time())
