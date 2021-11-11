@@ -28,4 +28,5 @@ def cart():
     order_form = MakeOrder()
     cart = Cart.get_all(current_user.id)
     total = Cart.cart_total(current_user.id)
-    return render_template('cart.html', title='Cart', cart=cart, total=total)
+    saved = Cart.saved(current_user.id)
+    return render_template('cart.html', title='Cart', cart=cart, total=total, saved=saved)

@@ -13,8 +13,7 @@ class Cart:
             FROM CartProduct, Product
             WHERE cartProduct.account = :account_id AND Product.id = CartProduct.product
             ''',
-            account_id=account_id)
-        print(rows)      
+            account_id=account_id)     
         return rows if rows is not None else None
 
 
@@ -39,5 +38,13 @@ class Cart:
             account_id=account_id)
         return rows[0][0] if rows else 0.0
 
-
+    @staticmethod
+    def saved(account_id):
+        rows = app.db.execute('''
+            SELECT Product.id, Product.name
+            FROM SavedProduct, Product
+            WHERE SavedProduct.account = :account_id AND Product.id = SavedProduct.product
+            ''',
+            account_id=account_id)     
+        return rows if rows is not None else None
 

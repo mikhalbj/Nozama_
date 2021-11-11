@@ -54,7 +54,7 @@
         <th scope="row">{{cart.id}}</th>
         <td>{{cart.name}}</td>
         <td>{{cart.quantity}}</td>
-        <td>{{cart.price}}</td>
+        <td>{{cart.totalPrice}}</td>
       </tr>
     {% endfor %}
   </tbody>
@@ -69,11 +69,10 @@
     </tr>
   </thead>
   <tbody>
-    {% for product in cartProduct%}
+    {% for product in saved%}
       <tr>
-        <td scope="row"><a href="/product/{{product.id}}" class="link-unstyled" style="text-decoration: underline;">{{product.id}}</a>{{product.id}}</th>
+        <td scope="row"><a href="/product/{{product.id}}" class="link-unstyled" style="text-decoration: underline;">{{product.id}}</a></th>
         <td>{{product.name}}</td>
-        <td>{{product.quantity}}</td>
       </tr>
     {% endfor %}
   </tbody>
