@@ -14,9 +14,9 @@ import math
 def generate():
 
     numNewUser = 100
-    numNewProduct = 400
-    numNewOrder = 200
-    numNewReview = 200
+    numNewProduct = 1000
+    numNewOrder = 400
+    numNewReview = 2000
     numProdPerAccount = 4
 
     genUsers(numNewUser)

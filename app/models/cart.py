@@ -29,11 +29,11 @@ class Cart:
         id = rows[0][0]
 
         rows = app.db.execute('''
-        DELETE FROM CartProduct WHERE account = :account_id;
+        DELETE FROM CartProduct WHERE account = :account_id RETURNING account
         ''',
         account_id = account_id
         )
-        return True
+        return rows if rows is not None else None
 
     @staticmethod
     def add_cart(account_id, quantity, id):
