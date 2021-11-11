@@ -42,18 +42,19 @@
         background-color: #000 !important;
         color: #fff;
     }
+
   </style>
 </head>
 
 <body>
   <div class="sidenav">
     {% block msg %}
-      <h1 style="color:aliceblue; font-family: 'Times New Roman', Times, serif;">Nozama</h1>
+      <h1 style="color:aliceblue; font-family: 'Times New Roman', Times, serif; margin-left: 5%; display: inline-flex; flex-direction: row; float:left">Nozama</h1>
       <div style="color: aliceblue; text-align: right; margin-bottom: 25px">
         {% if current_user.is_authenticated %}
           Hello {{current_user.firstname}}! <a href="{{ url_for('users.logout') }}" type="button" class="btn btn-light">Log out</a>
         {% else %}
-          <a href="{{ url_for('users.login') }}" type="button" class="btn btn-light">Log in</a>
+          <a href="{{ url_for('users.login') }}" type="button" class="btn" style= "margin-right: 5%; display: inline-flex; float: right; color: coral; border-color: coral;>Log in</a>
         {% endif %}
       </div>
     {% endblock %}
