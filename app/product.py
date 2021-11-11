@@ -28,7 +28,7 @@ def product(id):
     image = Product.get_img(id)[0][1]
     quantity = Product.get_inventory(id)[0]
     reviews = Review.get(id)
-    return render_template('product_details.html', title='See Product', product=product, imgurl=image, num=quantity, cartform=form review=reviews)
+    return render_template('product_details.html', title='See Product', product=product, imgurl=image, num=quantity, cartform=form, review=reviews)
 
 @bp.route('/search/<argterm>', methods=['GET', 'POST'])
 def search(argterm):
