@@ -21,7 +21,6 @@ def generate():
 
     genUsers(numNewUser)
     genProductsAndTags(numNewProduct)
-    genImage()
     genOrders(numNewOrder)
     genCartSaved(numProdPerAccount)
     genReview(numNewReview)
