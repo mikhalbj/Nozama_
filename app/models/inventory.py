@@ -22,7 +22,7 @@ class Inventory:
             return rows if rows is not None else None
 
         @staticmethod
-        def add_prod(name, description, price, quantity, seller):
+        def add_prod(name, description, price, quantity, seller, url):
             rows = app.db.execute('''
     INSERT INTO Product(name, description, price, available, seller)
     VALUES(:name, :description, :price, true, :seller)
@@ -40,7 +40,13 @@ class Inventory:
     ''',
                                   id = id, 
                                   quantity = quantity)
-            print()
+            rows = app.db.execute('''
+    INSERT INTO ProductImage(product, url)
+    VALUES(:id, :url)
+    RETURNING product
+    ''',
+                                  id = id, 
+                                  url = url)
             return Inventory.get(seller)
 
             
