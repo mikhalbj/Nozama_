@@ -7,37 +7,38 @@
 <div class="col-lg-8 mx-auto">
     <header class="d-flex align-items-center pb-3 mb-3"><h2>Your Cart:</h2></header>
 
-  <div class="row">
-    <div class="col-sm-6">
-      <ul class="list-group list-group-horizontal nav nav-pills">
-        <li class="nav-item">
-          <a class="nav-link active" aria-current="page" href="/account">View Account</a>
-        </li>
-      </ul>
-      <ul class="list-group list-group-horizontal nav nav-pills">
-        <li class="nav-item">
-          <a class="nav-link active" aria-current="page" href="/">Keep Shopping</a>
-        </li>
-      </ul>
-    </div>
-    <div class="col-sm-6">
-    <div class="card">
-        <div class="card-body">
-          <h4 class="card-title">Order Total</h4>
-          <div class="container-fluid">
-            <div class="row">
-                <div class="col-md-auto">
-                    <p class="card-text"><h1>${{'%0.2f'| format(cart.total|float)}}</h1></p>
-                </div>
-            </div>
-            <div class="row">
+    <div class="row">
+      <div class="col-sm-6">
+        <ul class="list-group list-group-horizontal nav nav-pills">
+          <li class="nav-item">
+            <a class="nav-link active" aria-current="page" href="/account">View Account</a>
+          </li>
+        </ul>
+        <ul class="list-group list-group-horizontal nav nav-pills">
+          <li class="nav-item">
+            <a class="nav-link active" aria-current="page" href="/">Keep Shopping</a>
+          </li>
+        </ul>
+      </div>
+      <div class="col-sm-6">
+      <div class="card">
+          <div class="card-body">
+            <h4 class="card-title">Order Total</h4>
+            <div class="container-fluid">
+              <div class="row">
+                  <div class="col-md-auto">
+                      <p class="card-text"><h1>${{'%0.2f'| format(total|float)}}</h1></p>
+                  </div>
+              </div>
+              <div class="row">
+              </div>
             </div>
           </div>
         </div>
       </div>
     </div>
-  </div>
-
+  
+ 
 <table class="table table-hover table-bordered container">
   <thead class="thread-muted text-muted">
     <tr>
@@ -48,11 +49,12 @@
     </tr>
   </thead>
   <tbody>
-    {% for product in cartProduct%}
+    {% for cart in cart%}
       <tr>
-        <th scope="row">{{product.id}}</th>
-        <td>{{product.name}}</td>
-        <td>{{product.quantity}}</td>
+        <th scope="row">{{cart.id}}</th>
+        <td>{{cart.name}}</td>
+        <td>{{cart.quantity}}</td>
+        <td>{{cart.price}}</td>
       </tr>
     {% endfor %}
   </tbody>
