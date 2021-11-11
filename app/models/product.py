@@ -94,13 +94,13 @@ WHERE name LIKE :strng
         lo = "LIMIT 25"
         sby = ""
 
-        if searchName and searchDesc:
+        if searchName and eval(searchDesc):
             where += "(Product.name LIKE :strng OR Product.description LIKE :strng)"
-        elif searchDesc:
+        elif eval(searchDesc):
             where += " Product.description LIKE :strng"
         elif searchName:
             where += " Product.name LIKE :strng"
-        if availOnly:
+        if eval(availOnly):
             where += " AND Product.available = True"
         if priceMax:
             where += " AND Product.price < :pricemax"
@@ -115,12 +115,9 @@ WHERE name LIKE :strng
             lo += " OFFSET "
             lo += str(25*(int(page)-1))
         
-        print("\n\nPRINTING DATABASE QUERY")
         qry = sel + "\n" + frm + "\n" + where + "\n" + gby
-        print(qry)
-        qry = "SELECT * FROM ProductImage RIGHT OUTER JOIN (" + qry + ") AS SUB ON ProductImage.product = SUB.id" + "\n" + sby + "\n" + lo
+        qry = "SELECT * FROM ProductImage RIGHT OUTER JOIN (" + qry + ") AS SUB ON ProductImage.product = SUB.id" + "\n" + sby + lo
         print(qry)
         rows = app.db.execute(qry, strng="%"+strng+"%", tag=tag, pricemax=priceMax)
-        #print(rows)
         return rows
 
