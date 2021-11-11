@@ -26,6 +26,12 @@ class Cart:
             ''',
             account_id = account_id,
             time = datetime.datetime.now())
+        id = rows[0][0]
+
+        rows = app.db.execute('''
+        DELETE FROM CartProduct WHERE account = :account_id;
+        ''',
+        )
         return rows[0][0] if rows else 0
 
     @staticmethod

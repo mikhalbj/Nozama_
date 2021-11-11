@@ -15,12 +15,10 @@ from flask import Blueprint
 bp = Blueprint('carts', __name__,)
 
 class MakeOrder(FlaskForm):
-    info_email = StringField("Email", validators=[DataRequired(), Email()])
     info_address = StringField("Address", validators=[DataRequired()])
-    info_address = StringField("Payement Info", validators=[DataRequired()])
     info_submit = SubmitField("Submit")
 
-@bp.route('/cart', methods=['GET'])
+@bp.route('/cart', methods=['GET', 'POST'])
 def cart():
     if not current_user.is_authenticated:
         return redirect(url_for('index.index'))
@@ -29,4 +27,8 @@ def cart():
     cart = Cart.get_all(current_user.id)
     total = Cart.cart_total(current_user.id)
     saved = Cart.saved(current_user.id)
-    return render_template('cart.html', title='Cart', cart=cart, total=total, saved=saved)
+    
+    if orfer_form.submit.data and order_form.validate():
+        Cart.place_order(current_user.id)
+
+    return render_template('cart.html', title='Cart', cart=cart, total=total, saved=saved, order_form=order_form)
