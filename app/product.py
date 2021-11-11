@@ -7,6 +7,7 @@ from wtforms.validators import ValidationError, DataRequired, Email, EqualTo
 from flask_babel import _, lazy_gettext as _l
 
 from .models.product import Product
+from .models.reviewsmod import Review
 from .models.cart import Cart
 
 
@@ -45,7 +46,8 @@ def product(id):
     else:
         image = "https://cdn.w600.comps.canstockphoto.com/pile-of-random-stuff-eps-vector_csp24436545.jpg"
     quantity = Product.get_inventory(id)[0]
-    return render_template('product_details.html', title='See Product', product=product, imgurl=image, num=quantity, cartform=form)
+    reviews = Review.get(id)
+    return render_template('product_details.html', title='See Product', product=product, imgurl=image, num=quantity, cartform=form review=reviews)
 
 @bp.route('/search/<argterm>', methods=['GET', 'POST'])
 def search(argterm):
@@ -81,4 +83,6 @@ def presearch():
         print(request.form)
         return redirect(url_for('product.advanced_search', argterm=form.searchterm.data, tag=form.tag.data, maxprice=form.maxprice.data, avail=form.avail.data, searchdesc=form.searchdesc.data, sort=form.sort.data))
     return render_template('search.html', title='Search for Products', presearch=True, form=form)
+
+
 
