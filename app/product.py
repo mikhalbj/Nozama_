@@ -2,7 +2,7 @@ from flask import render_template, redirect, url_for, flash, request
 from werkzeug.urls import url_parse
 from flask_login import login_user, logout_user, current_user
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, BooleanField, SubmitField, RadioField, DecimalField, SelectMultipleField
+from wtforms import StringField, PasswordField, BooleanField, SubmitField, RadioField, DecimalField, SelectMultipleField, IntegerField
 from wtforms.validators import ValidationError, DataRequired, Email, EqualTo
 from flask_babel import _, lazy_gettext as _l
 
@@ -21,16 +21,24 @@ class SearchForm(FlaskForm):
     sort = RadioField('Sort by price or rating:', choices=['price', 'rating'])
     submit = SubmitField()
 
+class CartAddForm(FlaskForm):
+    quantity = IntegerField('How many of this item?', validators=[DataRequired()])
+    submit = SubmitField()
+
 @bp.route('/product_details/<uuid:id>', methods=['GET'])
 def product(id):
+    form = CartAddForm()
     product = Product.fullget(id)
     image = Product.get_img(id)
+    if form.submit.data and form.validate():
+       # Cart.increase_balance(current_user.id, form.quantity.data, id)
+       print("YAY")
     if image:
         image = image[0][1]
     else:
         image = "https://cdn.w600.comps.canstockphoto.com/pile-of-random-stuff-eps-vector_csp24436545.jpg"
     quantity = Product.get_inventory(id)[0]
-    return render_template('product_details.html', title='See Product', product=product, imgurl=image, num=quantity)
+    return render_template('product_details.html', title='See Product', product=product, imgurl=image, num=quantity, cartform=form)
 
 @bp.route('/search/<argterm>', methods=['GET', 'POST'])
 def search(argterm):
