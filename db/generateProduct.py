@@ -84,6 +84,7 @@ def genProductsAndTags(n):
     
     # write data to CSVs with helper method
     write(newProds, newTags, newProdTags)
+    genImage(newProds)
     genInventory(newProds)
     return True
 
@@ -95,7 +96,7 @@ def genDesc(prodstring):
     return 'This beautiful ' + prodstring + ' '.join(random.choices(words, k=(random.randint(0,3))))
 
 
-def genImage():
+def genImage(newprods):
     other = "https://cdn.w600.comps.canstockphoto.com/pile-of-random-stuff-eps-vector_csp24436545.jpg"
     urls = {'basketball hoop': "https://cdn.shopify.com/s/files/1/0184/0106/7072/products/1_6_hoop_white_1024x1024.jpg?v=1597653738", 
     'iPhone 7S case': "https://store.storeimages.cdn-apple.com/4982/as-images.apple.com/is/MKTT3?wid=1144&hei=1144&fmt=jpeg&qlt=80&.v=1623349387000", 
@@ -124,29 +125,17 @@ def genImage():
     'lightning charger' : "https://m.media-amazon.com/images/I/51dK6Od0J2L._AC_SL1500_.jpg"
     }
 
-    gooduuid = []
-    with open('data/ProductImage.csv', newline='') as imgfile:
-        reader = csv.reader(imgfile)
-        for row in reader:
-            gooduuid.append(row[0])
-    
-    newRows = []
-    with open('data/Product.csv', newline='') as prodfile:
-        reader = csv.reader(prodfile)
-        for row in reader:
-            if row[0] not in gooduuid:
-                newRows.append([row[0], row[1]])
     
     nextRows = []
-
-    for uuid in newRows:
+    for prod in newprods:
         flag = False
         for k,v in urls.items():
-            if k in uuid[1]:
-                nextRows.append([uuid[0], v])
+            if k in prod[1] and not flag:
+                nextRows.append([prod[0], v])
                 flag = True
         if flag == False:
-            nextRows.append([uuid[0], other])
+            nextRows.append([prod[0], other])
+
     
     with open('data/ProductImage.csv', 'w') as imgfilew:
         writer = csv.writer(imgfilew, dialect='unix')
@@ -211,4 +200,3 @@ def readCSVs():
 if __name__ == "__main__":
     numNewProducts = 20
     genProductsAndTags(numNewProducts)
-    genImage()

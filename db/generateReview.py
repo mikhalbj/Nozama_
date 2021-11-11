@@ -48,7 +48,7 @@ def genReview(n):
         t1 = genTimeStampDefault()
         t2 = genTimeStampDefault()
         review.append(min(t1, t2)) 
-        review.append(random.choice([max(t1, t2), ''])) # some reviews shouldn't be edited
+        review.append(max(t1, t2)) # some reviews shouldn't be edited # <- removed bc it was ruining SQL
         review.append(random.randint(1,5))
         numvotes = random.randint(0,5)
         accounts = random.sample(accountuuids, k=numvotes) # can accounts vote on their own reviews?
