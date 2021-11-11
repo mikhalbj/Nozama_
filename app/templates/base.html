@@ -2,7 +2,7 @@
 <html lang="en">
 
 <head>
-  <title>Mini Amazon</title>
+  <title>Nozama</title>
   <script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
@@ -19,7 +19,7 @@
 
     .sidenav {
         height: 100%;
-        background-color: #000;
+        background-color: #261f8c;
         overflow-x: hidden;
         padding-top: 20px;
     }
@@ -42,18 +42,19 @@
         background-color: #000 !important;
         color: #fff;
     }
+
   </style>
 </head>
 
 <body>
   <div class="sidenav">
     {% block msg %}
-      <h1 style="color:aliceblue">Welcome to CompSci 316 Mini Amazon!</h1>
+      <h1 style="color:aliceblue; font-family: 'Times New Roman', Times, serif; margin-left: 5%; display: inline-flex; flex-direction: row; float:left">Nozama</h1>
       <div style="color: aliceblue; text-align: right; margin-bottom: 25px">
         {% if current_user.is_authenticated %}
           Hello {{current_user.firstname}}! <a href="{{ url_for('users.logout') }}" type="button" class="btn btn-light">Log out</a>
         {% else %}
-          <a href="{{ url_for('users.login') }}" type="button" class="btn btn-light">Log in</a>
+          <a href="{{ url_for('users.login') }}" type="button" class="btn" style= "margin-right: 5%; display: inline-flex; float: right; color: coral; border-color: coral;">Log in</a>
         {% endif %}
         <a href="{{ url_for('product.presearch') }}" type="button" class="btn btn-light">Search</a>
         <a href="{{ url_for('carts.cart') }}" type="button" class="btn btn-light">Cart</a>
