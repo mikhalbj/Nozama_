@@ -27,7 +27,7 @@ WHERE id = :id
     @staticmethod
     def fullget(id):
         rows = app.db.execute('''
-SELECT Product.id, name, price, available, Product.description, COALESCE(AVG(T.rating), NULL) AS rating, Product.seller
+SELECT Product.id, name, price, available, Product.description, COALESCE(ROUND(AVG(T.rating), 2), NULL) AS rate, Product.seller
 FROM Product LEFT OUTER JOIN (SELECT * FROM Review, ProductReview WHERE Review.id = ProductReview.review) AS T ON Product.id = T.product
 WHERE Product.id = :id
 GROUP BY Product.id
@@ -87,7 +87,7 @@ WHERE name LIKE :strng
     def advanced_search(strng="", searchName=True, searchDesc=False, sortBy=False, availOnly=False, priceMax=False, tag=False, page=1):
 
     
-        sel = "SELECT Product.id, Product.name, Product.price, Product.available, COALESCE(AVG(T.rating), NULL) AS rate"
+        sel = "SELECT Product.id, Product.name, Product.price, Product.available, COALESCE(ROUND(AVG(T.rating),2), NULL) AS rate"
         gby = "GROUP BY Product.id"
         where = "WHERE "
         frm = "FROM Product LEFT OUTER JOIN (SELECT * FROM Review, ProductReview WHERE Review.id = ProductReview.review) AS T ON Product.id = T.product"
@@ -115,11 +115,12 @@ WHERE name LIKE :strng
             lo += " OFFSET "
             lo += str(25*(int(page)-1))
         
+        print("\n\nPRINTING DATABASE QUERY")
         qry = sel + "\n" + frm + "\n" + where + "\n" + gby
         print(qry)
         qry = "SELECT * FROM ProductImage RIGHT OUTER JOIN (" + qry + ") AS SUB ON ProductImage.product = SUB.id" + "\n" + sby + "\n" + lo
         print(qry)
         rows = app.db.execute(qry, strng="%"+strng+"%", tag=tag, pricemax=priceMax)
-        print(rows)
+        #print(rows)
         return rows
 

@@ -25,6 +25,12 @@ class CartAddForm(FlaskForm):
     quantity = IntegerField('How many of this item?', validators=[DataRequired()])
     submit = SubmitField()
 
+class NextPageForm(FlaskForm):
+    submit = SubmitField(_l('Next Page'), validators=[DataRequired()])
+
+class PrevPageForm(FlaskForm):
+    submit = SubmitField(_l('Previous Page'), validators=[DataRequired()])
+
 @bp.route('/product_details/<uuid:id>', methods=['GET'])
 def product(id):
     form = CartAddForm()
@@ -49,7 +55,6 @@ def search(argterm):
 
 @bp.route('/advanced_search/', methods=['GET', 'POST'])
 def advanced_search():
-    print(request.args)
     s = request.args.get("argterm")
     a = request.args.get("avail")
     t = request.args.get("tag")
@@ -58,9 +63,14 @@ def advanced_search():
     sby = request.args.get("sort")
     pg = request.args.get("page")
     products = Product.advanced_search(strng=s, tag=t, priceMax=p, availOnly=a, searchDesc=d, sortBy=sby, page=pg)
-    paginateBool = bool(len(products)==25)
-    currUrl = request.url
-    return render_template('search.html', title='Search for Products', products=products, term=s, pages=paginateBool, page=pg, curr=currUrl)
+    if not pg:
+        pg = 1
+    
+    pp = url_for('product.advanced_search',argterm=s, tag=t, maxprice=p, avail=a, searchdesc=d, sort=sby, page=(int(pg)-1))
+    
+    np = url_for('product.advanced_search',argterm=s, tag=t, maxprice=p, avail=a, searchdesc=d, sort=sby, page=(int(pg)+1))
+    
+    return render_template('search.html', title='Search for Products', products=products, term=s, page=int(pg), pages=bool(len(products)==25), np=np, pp=pp)
 
 
 @bp.route('/search/', methods=['GET', 'POST'])

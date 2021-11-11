@@ -57,9 +57,11 @@
   </tbody>
 </table>
 
+{% if page and page > 1 %}
+<button type="button"><a href={{pp}}>❮Previous Page</a></button>
+{% endif %}
 {% if pages %}
-<button type="button"><a href="tag_br.asp">❮Previous Page</a></button>
-<button type="button"> <a href="tag_br.asp"> Next Page❯</a></button>
+<button type="button"> <a href={{np}}> Next Page❯</a></button>
 {% endif %}
 
 {% endif %}
