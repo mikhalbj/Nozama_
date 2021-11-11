@@ -23,10 +23,11 @@ def genReview(n):
     newReviewVote = []
     newProductImg = []
 
+    index = 0
     while len(newReview) < n:
         vote = []
         review = []
-        index = uuid.uuid4()
+        index += 1
         review.append(index)
         review.append(random.choice(accountuuids))
         if random.choice([True, False]): # add image for half of reviews
@@ -47,7 +48,7 @@ def genReview(n):
         t1 = genTimeStampDefault()
         t2 = genTimeStampDefault()
         review.append(min(t1, t2)) 
-        review.append(random.choice([max(t1, t2), ''])) # some reviews shouldn't be edited
+        review.append(max(t1, t2)) # some reviews shouldn't be edited # <- removed bc it was ruining SQL
         review.append(random.randint(1,5))
         numvotes = random.randint(0,5)
         accounts = random.sample(accountuuids, k=numvotes) # can accounts vote on their own reviews?
@@ -73,35 +74,30 @@ def genTimeStampDefault():
 
 
 def writereviews(newReview, newReviewVote, newSellerReview, newProductReview, newProductImg):
-    with open('data/Review.csv', 'a', newline='') as csvfile:
-        writer = csv.writer(csvfile, lineterminator='')
+    with open('data/Review.csv', 'w') as csvfile:
+        writer = csv.writer(csvfile, dialect='unix')
         for row in newReview:
-            writer.writerow('\n')
             writer.writerow(row)
     
     # should check if a review,vote tuple already exists in the file before writing?
-    with open('data/ReviewVote.csv', 'a', newline='') as votefile:
-        writer = csv.writer(votefile, lineterminator='')
+    with open('data/ReviewVote.csv', 'w') as votefile:
+        writer = csv.writer(votefile, dialect='unix')
         for row in newReviewVote:
-            writer.writerow('\n')
             writer.writerow(row)
     
-    with open('data/SellerReview.csv', 'a', newline='') as srfile:
-        writer = csv.writer(srfile, lineterminator='')
+    with open('data/SellerReview.csv', 'w') as srfile:
+        writer = csv.writer(srfile, dialect='unix')
         for row in newSellerReview:
-            writer.writerow('\n')
             writer.writerow(row)
 
-    with open('data/ProductReview.csv', 'a', newline='') as prfile:
-        writer = csv.writer(prfile, lineterminator='')
+    with open('data/ProductReview.csv', 'w') as prfile:
+        writer = csv.writer(prfile, dialect='unix')
         for row in newProductReview:
-            writer.writerow('\n')
             writer.writerow(row)
     
-    with open('data/ReviewImage.csv', 'a', newline='') as imgfile:
-        writer = csv.writer(imgfile, lineterminator='')
+    with open('data/ReviewImage.csv', 'w') as imgfile:
+        writer = csv.writer(imgfile, dialect='unix')
         for row in newProductImg:
-            writer.writerow('\n')
             writer.writerow(row)
     return True
 

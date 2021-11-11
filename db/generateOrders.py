@@ -26,10 +26,9 @@ def genOrders(n):
         neword.append(genTimeStampDefault())
         newOrders.append(neword)
     
-    with open('data/AccountOrder.csv', 'a', newline='') as csvfile:
-        writer = csv.writer(csvfile, lineterminator='')
+    with open('data/AccountOrder.csv', 'w') as csvfile:
+        writer = csv.writer(csvfile, dialect='unix')
         for row in newOrders:
-            writer.writerow('\n')
             writer.writerow(row)
     
     genOrderProducts(newOrders)
@@ -45,13 +44,15 @@ def genOrderProducts(ords):
 
     newAOPs = []
     for order in ords:
-        for _ in range(random.randint(1,4)): # each order includes 1-4 products
+        prodnum = random.randint(1,4) # each order includes 1-4 products
+        prods = random.sample([prod[0] for prod in data], k=prodnum)
+        for i in range(prodnum): 
             aop = []
             prod = random.choice(data)
             aop.append(order[0]) # add AccountOrder UUID to AccountOrderProduct record
-            aop.append(prod[0]) # add product id
+            aop.append(prods[i]) # add product id
             aop.append(random.randint(1,4)) # add quantity
-            aop.append(prod[3]) # add price of a single item??
+            aop.append("3.99") # add price of a single item??
             aop.append("in stock")
             start = time.mktime(time.strptime(order[2], "%x %X"))
             end = math.floor(time.time())
@@ -61,10 +62,9 @@ def genOrderProducts(ords):
             aop.append(max(a, b)) # add delivered at
             newAOPs.append(aop)
     
-    with open('data/AccountOrderProduct.csv', 'a', newline='') as aopfile:
-        aopwriter = csv.writer(aopfile, lineterminator='')
+    with open('data/AccountOrderProduct.csv', 'w') as aopfile:
+        aopwriter = csv.writer(aopfile, dialect='unix')
         for row in newAOPs:
-            aopwriter.writerow('\n')
             aopwriter.writerow(row)
     
     return True
