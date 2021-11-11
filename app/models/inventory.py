@@ -12,7 +12,7 @@ class Inventory:
         @staticmethod
         def get(id):
             rows = app.db.execute('''
-    SELECT Product.id, name, quantity, seller
+    SELECT Product.id, name, quantity, seller, description
     FROM Product, ProductInventory
     WHERE Product.id = ProductInventory.product
         AND Product.seller = :id

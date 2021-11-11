@@ -10,6 +10,7 @@
     <tr>
       <th scope="col">Product ID</th>
       <th scope="col">Product Name</th>
+      <th scope="col">Description</th>
       <th scope="col">Quantity Available</th>
     </tr>
   </thead>
@@ -18,6 +19,7 @@
       <tr>
         <th scope="row">{{inventory.id}}</th>
         <td>{{inventory.name}}</td>
+        <td>{{inventory.description}}</td>
         <td>{{inventory.quantity}}</td>
       </tr>
     {% endfor %}
@@ -44,10 +46,10 @@
     {{ form.quantity.label }}<br/>
     {{ form.quantity(size=64) }}<br/>
   </p>
-  <p>
-    {{ form.seller.label }}<br/>
-    {{ form.seller(size=100) }}<br/>
-  </p>
+  {# <p>
+    {{ form.URL.label }}<br/>
+    {{ form.quantity(size=64) }}<br/>
+  </p> #}
   <p>{{ form.submit() }}</p>
 </form>
 
