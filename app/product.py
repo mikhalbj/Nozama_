@@ -7,6 +7,7 @@ from wtforms.validators import ValidationError, DataRequired, Email, EqualTo
 from flask_babel import _, lazy_gettext as _l
 
 from .models.product import Product
+from .models.cart import Cart
 
 
 from flask import Blueprint
@@ -31,14 +32,14 @@ class NextPageForm(FlaskForm):
 class PrevPageForm(FlaskForm):
     submit = SubmitField(_l('Previous Page'), validators=[DataRequired()])
 
-@bp.route('/product_details/<uuid:id>', methods=['GET'])
+@bp.route('/product_details/<uuid:id>', methods=['GET', 'POST'])
 def product(id):
     form = CartAddForm()
     product = Product.fullget(id)
     image = Product.get_img(id)
     if form.submit.data and form.validate():
-       # Cart.increase_balance(current_user.id, form.quantity.data, id)
-       print("YAY")
+        Cart.add_cart(current_user.id, form.quantity.data, id)
+        print("YAY")
     if image:
         image = image[0][1]
     else:

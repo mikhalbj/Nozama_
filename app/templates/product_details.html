@@ -15,6 +15,7 @@
       
       <div class="modal-body">
           <form action="" method="post">
+            {{cartform.csrf_token}}
               <div class="d-flex justify-content-left mb-3">
                   <p><h1>{{cartform.quantity(placeholder='1')}}</h1></p>
               </div>
