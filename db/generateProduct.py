@@ -145,19 +145,17 @@ def genImage():
         if flag == False:
             nextRows.append([uuid[0], other])
     
-    with open('data/ProductImage.csv', 'a', newline='') as imgfilew:
-        writer = csv.writer(imgfilew, lineterminator='')
+    with open('data/ProductImage.csv', 'w') as imgfilew:
+        writer = csv.writer(imgfilew, dialect='unix')
         for row in nextRows:
-            writer.writerow("\n")
             writer.writerow(row)
     return True
 
 
 def genInventory(prods):
-    with open('data/ProductInventory.csv', 'a', newline='') as pifile:
-        piwriter = csv.writer(pifile, lineterminator='')
+    with open('data/ProductInventory.csv', 'w') as pifile:
+        piwriter = csv.writer(pifile, dialect='unix')
         for row in prods:
-            piwriter.writerow("\n")
             if row[4] == False:
                 piwriter.writerow([row[0], 0])
             else:
@@ -166,22 +164,19 @@ def genInventory(prods):
 
 
 def write(prods, tags, prodtags):
-    with open('data/Product.csv', 'a', newline='') as csvfile:
-        writer = csv.writer(csvfile, lineterminator='')
+    with open('data/Product.csv', 'w') as csvfile:
+        writer = csv.writer(csvfile, dialect='unix')
         for row in prods:
-            writer.writerow("\n")
             writer.writerow(row)
     
-    with open('data/Tag.csv', 'a', newline='') as tfile:
-        writer = csv.writer(tfile, lineterminator='')
+    with open('data/Tag.csv', 'w') as tfile:
+        writer = csv.writer(tfile, dialect='unix')
         for row in tags:
-            writer.writerow("\n")
             writer.writerow(row)
     
-    with open('data/ProductTag.csv', 'a', newline='') as writeptfile:
-        writer = csv.writer(writeptfile, lineterminator='')
+    with open('data/ProductTag.csv', 'w') as writeptfile:
+        writer = csv.writer(writeptfile, dialect='unix')
         for row in prodtags:
-            writer.writerow("\n")
             writer.writerow(row)
     return True
 
