@@ -1,20 +1,20 @@
-97e299a9-5aaf-43e8-8cbf-9f0ccc6bfff0,vanilla ice cream,desc,2.99,TRUE,12144178-8e6a-4c5e-9423-f3dab7508c4a
-ed878d62-0704-400e-8dc8-a867787f044b,chocolate ice cream,desc,2.99,TRUE,3f0fc80f-afab-40b2-9d32-4017a32e577c
-380b1e22-58f8-4d08-ab81-e0caf8443789,strawberry ice cream,desc,2.99,TRUE,7a9e5f31-bb55-467e-9029-a28c30121935
-be288c67-87b9-4bd7-a71c-7729aff1cc81,6-pack of paycheck pilsners,desc,11.49,TRUE,59b03f86-1b2e-463e-9eb3-25f788683870
-87cec8fa-afe4-48bc-93dd-559ffee923ac,seven fabergé easter eggs,desc,1199000,TRUE,993931c6-d12a-402d-a3d7-396d2d4a8a85
-8958dda0-c2d1-4b4f-ba02-2bc0b5774952,painting - the storm on the sea of galilee,desc,44000000,TRUE,12144178-8e6a-4c5e-9423-f3dab7508c4a
-387f46d7-e303-4598-a809-9ede042eb9c6,toy pony,desc,4.99,TRUE,3f0fc80f-afab-40b2-9d32-4017a32e577c
-b5debd66-1c9f-4e1f-9a50-14022c7928a1,mirror,desc,10.05,TRUE,7a9e5f31-bb55-467e-9029-a28c30121935
-d5a0c79c-526f-41ed-95d3-c999595459ef,iPhone 10,desc,799.99,TRUE,59b03f86-1b2e-463e-9eb3-25f788683870
-9dbe6dd5-14d0-41c2-90bb-23c88494203a,Balenciaga purse,desc,320,TRUE,993931c6-d12a-402d-a3d7-396d2d4a8a85
-b748692c-bc8c-4927-8225-edabd4d8e5fd,blue nail polish,desc,5.99,TRUE,12144178-8e6a-4c5e-9423-f3dab7508c4a
-2370eb5a-fabe-4fe7-a3fd-e5901e066464,pink nail polish,desc,5.99,TRUE,3f0fc80f-afab-40b2-9d32-4017a32e577c
-062618d8-9bc1-4d3f-8928-b2858265defa,white nail polish,desc,5.99,TRUE,7a9e5f31-bb55-467e-9029-a28c30121935
-9ea7be1c-8611-42c2-ae22-2e4f0f0a9cc1,black nail polish,desc,5.99,TRUE,59b03f86-1b2e-463e-9eb3-25f788683870
-603b442c-210a-471d-a1bb-f68ac0c72ab0,red nail polish,desc,5.99,TRUE,993931c6-d12a-402d-a3d7-396d2d4a8a85
-163dc72f-731d-4334-a7f4-73dd5561d9ac,iPad mini,desc,4.99,TRUE,12144178-8e6a-4c5e-9423-f3dab7508c4a
-9d629ccd-d060-4d1f-bb19-84452f5971fa,iPad pro,desc,799,TRUE,3f0fc80f-afab-40b2-9d32-4017a32e577c
-c2ae4602-4395-4c48-a130-2c249cdd78ba,airpods,desc,159,TRUE,7a9e5f31-bb55-467e-9029-a28c30121935
-6f9e15a8-ee5e-40f8-88fa-048ef73c3cb0,iPhone 13,desc,1099.99,TRUE,59b03f86-1b2e-463e-9eb3-25f788683870
-c4ef8d0c-2f9e-4563-8c6a-c19048e36d9a,iPhone 12,desc,729,TRUE,993931c6-d12a-402d-a3d7-396d2d4a8a85
+97e299a9-5aaf-43e8-8cbf-9f0ccc6bfff0,vanilla ice cream,desc,2.99,TRUE
+ed878d62-0704-400e-8dc8-a867787f044b,chocolate ice cream,desc,2.99,TRUE
+380b1e22-58f8-4d08-ab81-e0caf8443789,strawberry ice cream,desc,2.99,TRUE
+be288c67-87b9-4bd7-a71c-7729aff1cc81,6-pack of paycheck pilsners,desc,11.49,TRUE
+87cec8fa-afe4-48bc-93dd-559ffee923ac,seven fabergé easter eggs,desc,1199000,TRUE
+8958dda0-c2d1-4b4f-ba02-2bc0b5774952,painting - the storm on the sea of galilee,desc,44000000,TRUE
+387f46d7-e303-4598-a809-9ede042eb9c6,toy pony,desc,4.99,TRUE
+b5debd66-1c9f-4e1f-9a50-14022c7928a1,mirror,desc,10.05,TRUE
+d5a0c79c-526f-41ed-95d3-c999595459ef,iPhone 10,desc,799.99,TRUE
+9dbe6dd5-14d0-41c2-90bb-23c88494203a,Balenciaga purse,desc,320,TRUE
+b748692c-bc8c-4927-8225-edabd4d8e5fd,blue nail polish,desc,5.99,TRUE
+2370eb5a-fabe-4fe7-a3fd-e5901e066464,pink nail polish,desc,5.99,TRUE
+062618d8-9bc1-4d3f-8928-b2858265defa,white nail polish,desc,5.99,TRUE
+9ea7be1c-8611-42c2-ae22-2e4f0f0a9cc1,black nail polish,desc,5.99,TRUE
+603b442c-210a-471d-a1bb-f68ac0c72ab0,red nail polish,desc,5.99,TRUE
+163dc72f-731d-4334-a7f4-73dd5561d9ac,iPad mini,desc,4.99,TRUE
+9d629ccd-d060-4d1f-bb19-84452f5971fa,iPad pro,desc,799,TRUE
+c2ae4602-4395-4c48-a130-2c249cdd78ba,airpods,desc,159,TRUE
+6f9e15a8-ee5e-40f8-88fa-048ef73c3cb0,iPhone 13,desc,1099.99,TRUE
+c4ef8d0c-2f9e-4563-8c6a-c19048e36d9a,iPhone 12,desc,729,TRUE
