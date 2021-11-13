@@ -74,12 +74,13 @@ CREATE TABLE AccountOrder(
 CREATE TABLE AccountOrderProduct(
     account_order UUID NOT NULL REFERENCES AccountOrder(id),
     product UUID NOT NULL REFERENCES Product(id),
+    seller UUID NOT NULL REFERENCES Seller(id),
     quantity INT NOT NULL CHECK (quantity > 0),
     price FLOAT(2) NOT NULL CHECK (price > 0),
     status VARCHAR(20) NOT NULL,
     shipped_at TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT (current_timestamp AT TIME ZONE 'UTC'),
     delivered_at TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT (current_timestamp AT TIME ZONE 'UTC'),
-    PRIMARY KEY (account_order, product)
+    PRIMARY KEY (account_order, product, seller)
 );
 
 CREATE TABLE Review(
