@@ -41,26 +41,38 @@ def genOrderProducts(ords):
         data = []
         for row in prodreader:
             data.append(row)
+    
+    with open('data/ProductInventory.csv', newline='') as invfile:
+        invreader = csv.reader(invfile)
+        inv = []
+        for row in invreader:
+            inv.append(row)
 
     newAOPs = []
     for order in ords:
         prodnum = random.randint(1,4) # each order includes 1-4 products
         prods = random.sample([prod[0] for prod in data], k=prodnum)
         for i in range(prodnum): 
-            aop = []
-            prod = random.choice(data)
-            aop.append(order[0]) # add AccountOrder UUID to AccountOrderProduct record
-            aop.append(prods[i]) # add product id
-            aop.append(random.randint(1,4)) # add quantity
-            aop.append("3.99") # add price of a single item??
-            aop.append("in stock")
-            start = time.mktime(time.strptime(order[2], "%x %X"))
-            end = math.floor(time.time())
-            a = genTimeStamp(start, end)
-            b = genTimeStamp(start, end)
-            aop.append(min(a, b)) # add shipped at
-            aop.append(max(a, b)) # add delivered at
-            newAOPs.append(aop)
+            # find sellers of this prod
+            currProdSellers = [pi[1] for pi in inv if pi[0]==prods[i]]
+            print(currProdSellers)
+            # choose to order from 1-2 dependant on how many sellers
+            numSellersForProd = min(len(currProdSellers),2)
+            for j in range(numSellersForProd):
+                aop = []
+                aop.append(order[0]) # add AccountOrder UUID to AccountOrderProduct record
+                aop.append(prods[i]) # add product id
+                aop.append(currProdSellers[j]) # add seller id
+                aop.append(random.randint(1,4)) # add quantity
+                aop.append("3.99") # add price of a single item??
+                aop.append("in stock") #should this be "shipped", "deliverd", etc?
+                start = time.mktime(time.strptime(order[2], "%x %X"))
+                end = math.floor(time.time())
+                a = genTimeStamp(start, end)
+                b = genTimeStamp(start, end)
+                aop.append(min(a, b)) # add shipped at
+                aop.append(max(a, b)) # add delivered at
+                newAOPs.append(aop)
     
     with open('data/AccountOrderProduct.csv', 'w') as aopfile:
         aopwriter = csv.writer(aopfile, dialect='unix')

@@ -27,7 +27,7 @@ WHERE id = :id
     @staticmethod
     def fullget(id):
         rows = app.db.execute('''
-SELECT Product.id, name, price, available, Product.description, COALESCE(ROUND(AVG(T.rating), 2), NULL) AS rate, Product.seller
+SELECT Product.id, name, price, available, Product.description, COALESCE(ROUND(AVG(T.rating), 2), NULL) AS rate
 FROM Product LEFT OUTER JOIN (SELECT * FROM Review, ProductReview WHERE Review.id = ProductReview.review) AS T ON Product.id = T.product
 WHERE Product.id = :id
 GROUP BY Product.id
@@ -67,9 +67,10 @@ WHERE available = :available
     @staticmethod
     def get_inventory(id):
         rows = app.db.execute('''
-        SELECT quantity
+        SELECT SUM(quantity)
         FROM ProductInventory
-        WHERE product = :id''', id=id)
+        WHERE product = :id
+        GROUP BY product''', id=id)
         print(rows)
         return [row[0] for row in rows]
     
