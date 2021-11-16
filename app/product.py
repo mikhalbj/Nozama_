@@ -15,12 +15,12 @@ from flask import Blueprint
 bp = Blueprint('product', __name__)
 
 class SearchForm(FlaskForm):
-    searchterm = StringField('Search here')
-    tag = RadioField('Filter by category')
-    avail = BooleanField('Only find available items')
+    searchterm = StringField('Search for:')
+    tag = RadioField('Filter by category:')
+    avail = BooleanField('Only find available items:')
     maxprice = DecimalField('Only find items cheaper than:')
     searchdesc = BooleanField('Match ketwords in description:')
-    sort = RadioField('Sort by price or rating:', choices=['price', 'rating'])
+    sort = RadioField('Sort products by:', choices=['price', 'rating'])
     submit = SubmitField()
 
 class CartAddForm(FlaskForm):
@@ -47,7 +47,8 @@ def product(id):
         image = "https://cdn.w600.comps.canstockphoto.com/pile-of-random-stuff-eps-vector_csp24436545.jpg"
     quantity = Product.get_inventory(id)[0]
     reviews = Review.get(id)
-    return render_template('product_details.html', title='See Product', product=product, imgurl=image, num=quantity, cartform=form, review=reviews)
+    sellers = [["23154134", 15], ["556yq4r2", 3], ["546gjwt", 0]]
+    return render_template('product_details.html', title='See Product', product=product, imgurl=image, num=quantity, cartform=form, review=reviews, sellers=sellers)
 
 @bp.route('/search/<argterm>', methods=['GET', 'POST'])
 def search(argterm):
