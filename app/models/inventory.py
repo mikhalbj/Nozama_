@@ -15,7 +15,7 @@ class Inventory:
     SELECT Product.id, name, quantity, seller, description
     FROM Product, ProductInventory
     WHERE Product.id = ProductInventory.product
-        AND Product.seller = :id
+        AND ProductInventory.seller = :id
     ''',
                                   id = id) 
             print(rows)      
@@ -24,21 +24,21 @@ class Inventory:
         @staticmethod
         def add_prod(name, description, price, quantity, seller, url):
             rows = app.db.execute('''
-    INSERT INTO Product(name, description, price, available, seller)
-    VALUES(:name, :description, :price, true, :seller)
+    INSERT INTO Product(name, description, price, available)
+    VALUES(:name, :description, :price, true)
     RETURNING id
     ''',
                                   name=name,
                                   description=description,
-                                  price=price,
-                                  seller = seller)
+                                  price=price)
             id = rows[0][0]
             rows = app.db.execute('''
-    INSERT INTO ProductInventory(product, quantity)
-    VALUES(:id, :quantity)
+    INSERT INTO ProductInventory(product, seller, quantity)
+    VALUES(:id, :seller, :quantity)
     RETURNING product
     ''',
                                   id = id, 
+                                  seller = seller,
                                   quantity = quantity)
             rows = app.db.execute('''
     INSERT INTO ProductImage(product, url)
