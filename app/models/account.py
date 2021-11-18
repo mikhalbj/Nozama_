@@ -100,9 +100,9 @@ class Account:
 
 
     @staticmethod
-    async def update_information(id, firstname, lastname, email, address):
+    def update_information(id, firstname, lastname, email, address):
         try:
-            rows = await app.db.execute('''
+            rows = app.db.execute('''
                 UPDATE Account
                 SET firstname = :firstname, lastname = :lastname, email = :email, address = :address
                 WHERE id = :id

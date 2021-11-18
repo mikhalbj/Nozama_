@@ -27,7 +27,7 @@ WHERE id = :id
     @staticmethod
     def fullget(id):
         rows = app.db.execute('''
-SELECT Product.id, name, price, available, Product.description, COALESCE(AVG(T.rating), NULL) AS rating, Product.seller
+SELECT Product.id, name, price, available, Product.description, COALESCE(ROUND(AVG(T.rating), 2), NULL) AS rate
 FROM Product LEFT OUTER JOIN (SELECT * FROM Review, ProductReview WHERE Review.id = ProductReview.review) AS T ON Product.id = T.product
 WHERE Product.id = :id
 GROUP BY Product.id
@@ -67,9 +67,10 @@ WHERE available = :available
     @staticmethod
     def get_inventory(id):
         rows = app.db.execute('''
-        SELECT quantity
+        SELECT SUM(quantity)
         FROM ProductInventory
-        WHERE product = :id''', id=id)
+        WHERE product = :id
+        GROUP BY product''', id=id)
         print(rows)
         return [row[0] for row in rows]
     
@@ -84,32 +85,40 @@ WHERE name LIKE :strng
         return [Product(*row) for row in rows]
 
     @staticmethod
-    def advanced_search(strng="", searchName=True, searchDesc=False, sortbyPrice=False, availOnly=False, priceMax=False, tag=False):
+    def advanced_search(strng="", searchName=True, searchDesc=False, sortBy=False, availOnly=False, priceMax=False, tag=False, page=1):
 
     
-        sel = "SELECT Product.id, Product.name, Product.price, Product.available, COALESCE(AVG(T.rating), NULL) AS rating"
+        sel = "SELECT Product.id, Product.name, Product.price, Product.available, COALESCE(ROUND(AVG(T.rating),2), NULL) AS rate"
         gby = "GROUP BY Product.id"
         where = "WHERE "
         frm = "FROM Product LEFT OUTER JOIN (SELECT * FROM Review, ProductReview WHERE Review.id = ProductReview.review) AS T ON Product.id = T.product"
-        
-        if searchName and searchDesc:
+        lo = "LIMIT 25"
+        sby = ""
+
+        if searchName and eval(searchDesc):
             where += "(Product.name LIKE :strng OR Product.description LIKE :strng)"
-        elif searchDesc:
+        elif eval(searchDesc):
             where += " Product.description LIKE :strng"
         elif searchName:
             where += " Product.name LIKE :strng"
-        if availOnly:
+        if eval(availOnly):
             where += " AND Product.available = True"
         if priceMax:
             where += " AND Product.price < :pricemax"
         if tag:
             where += " AND ProductTag.tag = Tag.id AND Tag.name = :tag AND ProductTag.product = Product.id"
             frm += ", Tag, ProductTag"
+        if sortBy == 'price':
+            sby = "ORDER BY price" + "\n"
+        elif sortBy == 'rating':
+            sby = "ORDER BY rate DESC NULLS LAST" + "\n"
+        if page and int(page) > 1:
+            lo += " OFFSET "
+            lo += str(25*(int(page)-1))
         
         qry = sel + "\n" + frm + "\n" + where + "\n" + gby
+        qry = "SELECT * FROM ProductImage RIGHT OUTER JOIN (" + qry + ") AS SUB ON ProductImage.product = SUB.id" + "\n" + sby + lo
         print(qry)
-        qry = "SELECT * FROM ProductImage RIGHT OUTER JOIN (" + qry + ") AS SUB ON ProductImage.product = SUB.id"
         rows = app.db.execute(qry, strng="%"+strng+"%", tag=tag, pricemax=priceMax)
-        print(rows)
         return rows
 

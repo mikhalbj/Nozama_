@@ -4,6 +4,31 @@
 
 <br><br>
 
+<!-- Cart Modal -->
+<div class="modal fade" id="cartModal" tabindex="-1" aria-labelledby="cartModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+  <div class="modal-content">
+      <div class="modal-header">
+      <h5 class="modal-title" id="cartModalLabel">Add to Cart</h5>
+      <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      
+      <div class="modal-body">
+          <form action="" method="post">
+            {{cartform.csrf_token}}
+              <div class="d-flex justify-content-left mb-3">
+                  <p><h1>{{cartform.quantity(placeholder='1')}}</h1></p>
+              </div>
+
+              <div class="d-grid gap-2">
+                  {{cartform.submit(class_='btn btn-success btn-large')}}
+              </div>
+          </form>
+      </div>
+  </div>
+  </div>
+</div>
+
 <h2>Product you clicked on:</h2>
 <table class='table table-hover table-bordered container'>
   <thead class="thead-dark">
@@ -22,13 +47,39 @@
         <th scope="row">{{product.id}}</th>
         <td>{{product.name}}</td>
         <td>{{product.price}}</td>
-        <td>{{product.rating}}</td>
+        <td>{{product.rate}}</td>
         <td>{{product.description}}</td>
-        <td>{{product.seller}}</td>
         <td>{{num}}</td>
       </tr>
   </tbody>
 </table>
-<img src={{imgurl}} class="img-fluid rounded-start" alt="...">
+<img style= "width: 15%; margin-left: 40%; margin-right: 40%;"src={{imgurl}} class="img-fluid rounded-start" alt="...">
+<button type="button" class="btn btn-primary mr-2" data-bs-toggle="modal" data-bs-target="#cartModal"> Add to Cart</button>
+<h2>Reviews:</h2> 
+
+<table class='table table-hover table-bordered container'>
+  <thead><tr>
+    <th>Review ID</th>
+    <th>Title</th>
+    <th>Author</th>
+    <th>Rating</th>
+    <th>Description</th>
+    <th>Time</th>
+    <th>Edited</th>
+  </tr></thead>
+  <tbody>
+    {% for r in review%}
+    <tr>
+      <td scope="row">{{r.id}}</td>
+      <td>{{r.title}}</td>
+      <td>{{r.author}}</td>
+      <td>{{r.rating}}</td>
+      <td>{{review.description}}</td>
+      <td>{{r.time}}</td>
+      <td>{{r.edited}}</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+  </table>
 
 {% endblock %}
