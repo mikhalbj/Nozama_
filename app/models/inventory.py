@@ -86,31 +86,16 @@ class Inventory:
                 print(err)
             return Inventory.get(seller)
 
-
-
-            
-    #     @staticmethod
-    #     def search_id(id):
-    #         rows = app.db.execute('''
-    # SELECT id, name, quantity, seller
-    # FROM Product, ProductInventory
-    # WHERE Product.id = ProductInventory.id
-    #     AND Product.seller = :seller
-    #     AND Product.id = :id
-    # ''',
-    #                               id = id)    
-    #                               #not sure I understand this line   
-    #         return [ProductInventory(*row) for row in rows]
-
-    #     @staticmethod
-    #     def search_prod(seller, prod):
-    #         rows = app.db.execute('''
-    # SELECT id, name, quantity, seller
-    # FROM Product, ProductInventory
-    # WHERE Product.id = ProductInventory.id
-    #     AND Product.seller = :seller
-    #     AND Product.name LIKE :prod
-    # ''',
-    #                               seller = seller,
-    #                               prod = prod)       
-    #         return [ProductInventory(*row) for row in rows]
+        @staticmethod
+        def get_order_history(id):
+            rows = app.db.execute('''
+    SELECT AccountOrderProduct.product, quantity, price, status, placed_at, shipped_at, delivered_at, url
+    FROM AccountOrderProduct, AccountOrder, ProductImage
+    WHERE seller = '07aab60d-7991-4ec4-b1ca-3c8489e30e4d'
+    AND AccountOrder.id = account_order
+    AND ProductImage.product = AccountOrderProduct.product
+    ORDER BY placed_at DESC
+    ''',
+                                  id = id) 
+            print(rows)      
+            return rows if rows is not None else None

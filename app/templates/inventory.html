@@ -101,5 +101,58 @@
             </div>
 
 
+<h2>Your Order History:</h2>
+<table class='table table-hover table-bordered container'>
+  <thead class="thead-dark">
+    <tr>
+      <th scope="col">Order ID</th>
+      <th scope="col">Product Name</th>
+      <th scope="col">Quantity</th>
+      <th scope="col">Price</th>
+      <th scope="col">Status</th>
+      <th scope="col">Shipped Date</th>
+      <th scope="col">Delivered Date</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for order in order_history%}
+
+      <div class="card mb-4">
+        <div class="card-header">
+            <div class="container">
+                <div class="row">
+                    <div class="col float-left"><small class="text-muted">ORDER PLACED</small></div>
+                    <div class="col-8"><small class="text-muted float-end">Order #: <a href="/order/{{order.id}}" class="link-unstyled" style="text-decoration: underline;">{{order.id}}</a></small></div>
+                </div>
+                <div class="row">
+                    <div class="col float-left"><small class="text-muted">{{order.placed_at.strftime("%B %d, %Y")}}</small></div>
+                    <div class="col-8"></div>
+                </div>
+            </div>
+        </div>
+        <div class="card-body">
+        <h5 class="card-title pb-2">Order Products <span class="badge bg-secondary">{{order.status}}</span></h5>
+        
+        <div class="container">
+            <div class="row pb-2">
+                <div class="col-md-2 float-left">
+                    <img src={{order.url}} class="img-fluid rounded-start" alt="...">
+                </div>
+                <div class="col-md-10">
+                    <div class="container">
+                        <div class="row"><div class="col float-left">{{order.product}} <span class="badge bg-success">Delivered</span></div></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+    </div>
+
+    {% endfor %}
+  </tbody>
+</table>
+
+
 
 {% endblock %}

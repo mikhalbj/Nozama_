@@ -56,8 +56,9 @@ def inventory():
         
            #return redirect(url_for('inventories.inventory', id = id))
     #print(inventory)
-    print('reached end')
-    return render_template('inventory.html', title='See Inventory', inventory=inventory, new_form = NewProdForm(), edit_form = EditInventoryForm(), id = id)
+    
+    order_history = Inventory.get_order_history(id)
+    return render_template('inventory.html', title='See Inventory', inventory=inventory, new_form = NewProdForm(), edit_form = EditInventoryForm(), id = id, order_history = order_history)
 
 
 class NewProdForm(FlaskForm):
