@@ -8,6 +8,7 @@ from flask_wtf.html5 import URLField
 from wtforms.widgets.html5 import URLInput, Input
 from flask_babel import _, lazy_gettext as _l
 
+
 from .models.inventory import Inventory
 from .models.product import Product
 from .models.user import User
@@ -24,26 +25,42 @@ def inventory():
     if not Account.is_seller(id):
         return redirect(url_for(account.account, id = id))
     inventory = Inventory.get(id)
-    form = NewProdForm()
+    new_form = NewProdForm()
+    edit_form = EditInventoryForm()
 
-    if form.validate_on_submit():
-        name = form.name.data
-        description = form.description.data
-        price = form.price.data
-        quantity = form.quantity.data
-        url = form.url.data
+    if new_form.submit1.data and new_form.validate():
+        name = new_form.name.data
+        description = new_form.description.data
+        price = new_form.price.data
+        quantity = new_form.quantity.data
+        url = new_form.url.data
         seller = id
         inventory = Inventory.add_prod(name = name, description = description, price = price, quantity= quantity, seller = seller, url = url)
+        print('New product added')
         return redirect(url_for('inventories.inventory', id = id))
-    return render_template('inventory.html', title='See Inventory', inventory=inventory, form = form, id = id)
+    
+    if edit_form.submit2.data and edit_form.validate():
+        seller = id
+        inventory = Inventory.edit_inventory(edit_form.prod_id.data, edit_form.name.data, edit_form.description.data, edit_form.price.data, edit_form.quantity.data, edit_form.url.data, seller)
+        print('Inventory updated')
+        return redirect(url_for('inventories.inventory', id = id))
+
+    return render_template('inventory.html', title='See Inventory', inventory=inventory, new_form = new_form, edit_form = edit_form, id = id)
 
 
 class NewProdForm(FlaskForm):
     name = StringField(_l('Product Name'), validators=[DataRequired()])
     description = StringField(_l('Description'), validators=[DataRequired()])
-        # I had an issue with Price being an integer field
     price = DecimalField(_l('Price'), places = 2, validators=[DataRequired()])
     quantity = IntegerField(_l('Quantity'), validators=[DataRequired()])
-      # we will also need to change the schema for this to work
     url = URLField(validators=[url()])
-    submit = SubmitField(_l('Add Product'))
+    submit1 = SubmitField(_l('Add Product'))
+
+class EditInventoryForm(FlaskForm):
+    prod_id = IntegerField(_l('Product ID'), validators = [DataRequired()])
+    name = StringField(_l('Product Name'), validators=[DataRequired()])
+    description = StringField(_l('Description'), validators=[DataRequired()])
+    price = DecimalField(_l('Price'), places = 2, validators=[DataRequired()])
+    quantity = IntegerField(_l('Quantity'), validators=[DataRequired()])
+    url = URLField(validators=[url()])
+    submit2 = SubmitField(_l('Edit Product'))

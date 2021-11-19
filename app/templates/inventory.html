@@ -26,31 +26,107 @@
   </tbody>
 </table>
 
+<div class="col-sm-6">
+  <div class="card">
+    <div class="card-body">
+      <h4 class="card-title">Edit Inventory</h4>
+      <container>
+          <div class="row g-4 pt-3">
+                  <div class="col-5"><button type="button" class="btn btn-outline-primary"  data-bs-toggle="modal" data-bs-target="#editModal">Edit a Product</button></div>
+          </div>
+      </container>
+    </div>
+  </div>
+</div>
+</div>
+
+        <!-- Edit product modal -->
+        <div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
+          <div class="modal-dialog modal-dialog-scrollable">
+          <div class="modal-content">
+              <div class="modal-header">
+              <h5 class="modal-title" id="editModalLabel">Update Product Information</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+              </div>
+              
+              <div class="modal-body">
+                  <form action="" method="post">
+                      {{ edit_form.csrf_token }}
+                      <div class="d-flex justify-content-left mb-3">
+                          <p>Product name: {{edit_form.name}}</p>
+                          <p>Description: {{edit_form.description}}</p>
+                          <p>Price: {{edit_form.price}}</p>
+                          <p>Quantity: {{edit_form.quantity}}</p>
+                          <p>URL: {{edit_form.url}}</p>
+                      </div>
+  
+                      <div class="d-grid gap-2">
+                          {{edit_form.submit2(class_='btn btn-success btn-large')}}
+                      </div>
+                  </form>
+              </div>
+          </div>
+          </div>
+      </div>
+
+
 <h1>Add new product!</h1>
 
 <form action="" method="post">
-  {{form.csrf_token}}
+  {{new_form.csrf_token}}
   <p>
-    {{ form.name.label() }}<br/>
-    {{ form.name(size=32) }}<br/>
+    {{ new_form.name.label() }}<br/>
+    {{ new_form.name(size=32) }}<br/>
   </p>
   <p>
-    {{ form.description.label }}<br/>
-    {{ form.description(size=100) }}<br/>
+    {{ new_form.description.label }}<br/>
+    {{ new_form.description(size=100) }}<br/>
   </p>
   <p>
-    {{ form.price.label }} <br/>
-    {{ form.price(size=64) }}<br/>
+    {{ new_form.price.label }} <br/>
+    {{ new_form.price(size=64) }}<br/>
   </p>
   <p>
-    {{ form.quantity.label }}<br/>
-    {{ form.quantity(size=64) }}<br/>
+    {{ new_form.quantity.label }}<br/>
+    {{ new_form.quantity(size=64) }}<br/>
   </p>
   <p>
-    {{ form.url.label }}<br/>
-    {{ form.url(size=64) }}<br/>
+    {{ new_form.url.label }}<br/>
+    {{ new_form.url(size=64) }}<br/>
   </p>
-  <p>{{ form.submit() }}</p>
+  <p>{{ new_form.submit1() }}</p>
 </form>
+
+<h1>Edit your inventory!</h1>
+
+<form action="" method="post">
+  {{edit_form.csrf_token}}
+  <p>
+    {{ edit_form.prod_id.label() }}<br/>
+    {{ edit_form.prod_id(size=32) }}<br/>
+  </p>
+  <p>
+    {{ edit_form.name.label() }}<br/>
+    {{ edit_form.name(size=32) }}<br/>
+  </p>
+  <p>
+    {{ edit_form.description.label }}<br/>
+    {{ edit_form.description(size=100) }}<br/>
+  </p>
+  <p>
+    {{ edit_form.price.label }} <br/>
+    {{ edit_form.price(size=64) }}<br/>
+  </p>
+  <p>
+    {{ edit_form.quantity.label }}<br/>
+    {{ edit_form.quantity(size=64) }}<br/>
+  </p>
+  <p>
+    {{ edit_form.url.label }}<br/>
+    {{ edit_form.url(size=64) }}<br/>
+  </p>
+  <p>{{ edit_form.submit2() }}</p>
+</form>
+
 
 {% endblock %}

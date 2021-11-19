@@ -49,6 +49,39 @@ class Inventory:
                                   url = url)
             return Inventory.get(seller)
 
+        @staticmethod
+        def edit_inventory(prod_id, name, description, price, quantity, url, seller):
+            rows = app.db.execute('''
+    UPDATE Product
+    SET name= :name, description= :description, price=:price, quantity = :quantity, url = :url
+    WHERE id = :prod_id
+    RETURNING *
+    ''',
+                                  prod_id = prod_id,
+                                  name=name,
+                                  description=description,
+                                  price=price,
+                                  quantity = quantity,
+                                  url = url)
+            rows = app.db.execute('''
+    UPDATE ProductInventory
+    SET quantity = :quantity
+    WHERE product = :prod_id AND seller = :seller
+    RETURNING *
+    ''',
+                                  prod_id = prod_id, 
+                                  quantity = quantity,
+                                  seller = seller)
+            rows = app.db.execute('''
+    UPDATE ProductImage
+    SET url =:url
+    WHERE product = :prod_id
+    RETURNING *
+    ''',
+                                  prod_id = prod_id, 
+                                  url = url)
+            return Inventory.get(seller)
+
             
     #     @staticmethod
     #     def search_id(id):
