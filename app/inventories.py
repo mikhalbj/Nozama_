@@ -28,24 +28,36 @@ def inventory():
     new_form = NewProdForm()
     edit_form = EditInventoryForm()
 
-    if new_form.submit1.data and new_form.validate():
-        name = new_form.name.data
-        description = new_form.description.data
-        price = new_form.price.data
-        quantity = new_form.quantity.data
-        url = new_form.url.data
-        seller = id
-        inventory = Inventory.add_prod(name = name, description = description, price = price, quantity= quantity, seller = seller, url = url)
-        print('New product added')
-        return redirect(url_for('inventories.inventory', id = id))
+    if request.method == 'POST':
+        #print('going into first loop')
+        print(edit_form.submit2.data)
+        if edit_form.submit2.data and edit_form.validate():
+            
+            prod_id = edit_form.prod_id.data
+            name = edit_form.name.data
+            description = edit_form.description.data
+            price = edit_form.price.data
+            quantity = edit_form.quantity.data
+            url = edit_form.url.data
+            seller = id
+            inventory = Inventory.edit_inventory(prod_id = prod_id, name = name, description = description, price = price, quantity= quantity, url = url, seller = seller)
+            print('Inventory updated')
     
-    if edit_form.submit2.data and edit_form.validate():
-        seller = id
-        inventory = Inventory.edit_inventory(edit_form.prod_id.data, edit_form.name.data, edit_form.description.data, edit_form.price.data, edit_form.quantity.data, edit_form.url.data, seller)
-        print('Inventory updated')
-        return redirect(url_for('inventories.inventory', id = id))
-
-    return render_template('inventory.html', title='See Inventory', inventory=inventory, new_form = new_form, edit_form = edit_form, id = id)
+        if new_form.submit1.data and new_form.validate():
+            name = new_form.name.data
+            description = new_form.description.data
+            price = new_form.price.data
+            quantity = new_form.quantity.data
+            url = new_form.url.data
+            seller = id
+            inventory = Inventory.add_prod(name = name, description = description, price = price, quantity= quantity, seller = seller, url = url)
+            print('New product added')
+            #return redirect(url_for('inventories.inventory', id = id))
+        
+           #return redirect(url_for('inventories.inventory', id = id))
+    #print(inventory)
+    print('reached end')
+    return render_template('inventory.html', title='See Inventory', inventory=inventory, new_form = NewProdForm(), edit_form = EditInventoryForm(), id = id)
 
 
 class NewProdForm(FlaskForm):
@@ -57,7 +69,7 @@ class NewProdForm(FlaskForm):
     submit1 = SubmitField(_l('Add Product'))
 
 class EditInventoryForm(FlaskForm):
-    prod_id = IntegerField(_l('Product ID'), validators = [DataRequired()])
+    prod_id = StringField(_l('Product ID'), validators = [DataRequired()])
     name = StringField(_l('Product Name'), validators=[DataRequired()])
     description = StringField(_l('Description'), validators=[DataRequired()])
     price = DecimalField(_l('Price'), places = 2, validators=[DataRequired()])

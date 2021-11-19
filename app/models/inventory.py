@@ -40,6 +40,7 @@ class Inventory:
                                   id = id, 
                                   seller = seller,
                                   quantity = quantity)
+            print('It was added!')
             rows = app.db.execute('''
     INSERT INTO ProductImage(product, url)
     VALUES(:id, :url)
@@ -51,36 +52,41 @@ class Inventory:
 
         @staticmethod
         def edit_inventory(prod_id, name, description, price, quantity, url, seller):
-            rows = app.db.execute('''
-    UPDATE Product
-    SET name= :name, description= :description, price=:price, quantity = :quantity, url = :url
-    WHERE id = :prod_id
-    RETURNING *
-    ''',
-                                  prod_id = prod_id,
-                                  name=name,
-                                  description=description,
-                                  price=price,
-                                  quantity = quantity,
-                                  url = url)
-            rows = app.db.execute('''
-    UPDATE ProductInventory
-    SET quantity = :quantity
-    WHERE product = :prod_id AND seller = :seller
-    RETURNING *
-    ''',
-                                  prod_id = prod_id, 
-                                  quantity = quantity,
-                                  seller = seller)
-            rows = app.db.execute('''
-    UPDATE ProductImage
-    SET url =:url
-    WHERE product = :prod_id
-    RETURNING *
-    ''',
-                                  prod_id = prod_id, 
-                                  url = url)
+            try:
+                rows = app.db.execute('''
+        UPDATE Product
+        SET name= :name, description= :description, price=:price
+        WHERE id = :prod_id
+        RETURNING *
+        ''',
+                                    prod_id = prod_id,
+                                    name=name,
+                                    description=description,
+                                    price=price)
+                print('updated!')
+                rows = app.db.execute('''
+        UPDATE ProductInventory
+        SET quantity = :quantity
+        WHERE product = :prod_id AND seller = :seller
+        RETURNING *
+        ''',
+                                    prod_id = prod_id, 
+                                    quantity = quantity,
+                                    seller = seller)
+                rows = app.db.execute('''
+        UPDATE ProductImage
+        SET url =:url
+        WHERE product = :prod_id
+        RETURNING *
+        ''',
+                                    prod_id = prod_id, 
+                                    url = url)
+                print(rows)
+            except Exception as err:
+                print(err)
             return Inventory.get(seller)
+
+
 
             
     #     @staticmethod
