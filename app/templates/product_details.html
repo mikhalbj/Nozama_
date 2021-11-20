@@ -4,6 +4,33 @@
 
 <br><br>
 
+<!-- Sell Modal -->
+<div class="modal fade" id="sellModal" tabindex="-1" aria-labelledby="sellModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+  <div class="modal-content">
+      <div class="modal-header">
+      <h5 class="modal-title" id="sellModalLabel">Sell This Product</h5>
+      <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      
+      <div class="modal-body">
+          <form action="" method="post">
+            {{sf.csrf_token}}
+              <div class="d-flex justify-content-left mb-3">
+                  <p><h1>{{sf.quantity(placeholder='1')}}</h1></p>
+              </div>
+              <div class="d-flex justify-content-left mb-3">
+                <p><h1>{{sf.optin()}}</h1></p>
+              </div>
+              <div class="d-grid gap-2">
+                  {{sf.submit(class_='btn btn-success btn-large')}}
+              </div>
+          </form>
+      </div>
+  </div>
+  </div>
+</div>
+
 <!-- Cart Modal -->
 <div class="modal fade" id="cartModal" tabindex="-1" aria-labelledby="cartModalLabel" aria-hidden="true">
   <div class="modal-dialog">
@@ -55,6 +82,9 @@
 </table>
 <img style= "width: 15%; margin-left: 40%; margin-right: 40%;"src={{imgurl}} class="img-fluid rounded-start" alt="...">
 <button type="button" class="btn btn-primary mr-2" data-bs-toggle="modal" data-bs-target="#cartModal"> Add to Cart</button>
+{% if sb%}
+  <button type="button" class="btn btn-primary mr-2" data-bs-toggle="modal" data-bs-target="#sellModal"> Start selling</button>
+{%endif%}
 <h2>Reviews:</h2> 
 
 <table class='table table-hover table-bordered container'>

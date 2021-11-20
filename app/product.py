@@ -9,6 +9,8 @@ from flask_babel import _, lazy_gettext as _l
 from .models.product import Product
 from .models.reviewsmod import Review
 from .models.cart import Cart
+from .models.account import Account
+from .models.inventory import Inventory
 
 
 from flask import Blueprint
@@ -33,21 +35,33 @@ class NextPageForm(FlaskForm):
 class PrevPageForm(FlaskForm):
     submit = SubmitField(_l('Previous Page'), validators=[DataRequired()])
 
+class SellProdForm(FlaskForm):
+    quantity = IntegerField(_l('Quantity'), validators=[DataRequired()])
+      # we will also need to change the schema for this to work
+    optin = BooleanField(_l('I want to sell this product'), validators=[DataRequired()])
+    submit = SubmitField(_l('Sell Product'))
+
 @bp.route('/product_details/<uuid:id>', methods=['GET', 'POST'])
 def product(id):
     form = CartAddForm()
+    sellForm = SellProdForm()
     product = Product.fullget(id)
     image = Product.get_img(id)
+    sellBool = Account.is_seller(current_user.id) and not Inventory.sells(current_user.id, id)
     if form.submit.data and form.validate():
         Cart.add_cart(current_user.id, form.quantity.data, id)
         print("YAY")
+    if sellForm.submit.data and sellForm.validate():
+        Inventory.start_selling(current_user.id, sellForm.quantity.data, id)
+        print("YOU DID IT!")
+        return redirect(url_for('product.product_details', id=id))
     if image:
         image = image[0][1]
     else:
         image = "https://cdn.w600.comps.canstockphoto.com/pile-of-random-stuff-eps-vector_csp24436545.jpg"
     quantity = Product.get_inventory(id)[0]
     reviews = Review.get(id)
-    return render_template('product_details.html', title='See Product', product=product, imgurl=image, num=quantity, cartform=form, review=reviews)
+    return render_template('product_details.html', title='See Product', product=product, imgurl=image, num=quantity, cartform=form, review=reviews, sf=sellForm, sb=sellBool)
 
 @bp.route('/search/<argterm>', methods=['GET', 'POST'])
 def search(argterm):
