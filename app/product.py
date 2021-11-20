@@ -9,6 +9,8 @@ from flask_babel import _, lazy_gettext as _l
 from .models.product import Product
 from .models.reviewsmod import Review
 from .models.cart import Cart
+from .models.account import Account
+from .models.inventory import Inventory
 
 
 from flask import Blueprint
@@ -45,14 +47,14 @@ def product(id):
     sellForm = SellProdForm()
     product = Product.fullget(id)
     image = Product.get_img(id)
-    #WRITE AN API METHOD TO CHECK WHETHER THE CURR USER IS A SELLER AND NOT CURRENTLY SELLING PROD "id"
-    #sellBool = Inventory.can_sell(current_user.id, id)
+    sellBool = Account.is_seller(current_user.id) and not Inventory.sells(current_user.id, id)
     if form.submit.data and form.validate():
         Cart.add_cart(current_user.id, form.quantity.data, id)
         print("YAY")
     if sellForm.submit.data and sellForm.validate():
-        # Inventory.start_selling(current_user.id, sellForm.quantity.data, id)
+        Inventory.start_selling(current_user.id, sellForm.quantity.data, id)
         print("YOU DID IT!")
+        return redirect(url_for('product.product_details', id=id))
     if image:
         image = image[0][1]
     else:

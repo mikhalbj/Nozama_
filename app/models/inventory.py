@@ -48,6 +48,24 @@ class Inventory:
                                   id = id, 
                                   url = url)
             return Inventory.get(seller)
+        
+        @staticmethod
+        def sells(uid, pid):
+            rows = app.db.execute('''
+            SELECT seller
+            FROM ProductInventory
+            WHERE seller = :uid AND product = :pid''',
+            uid=uid, pid=pid)
+            return True if len(rows) != 0 else False
+        
+        @staticmethod
+        def start_selling(uid, q, pid):
+            rows = app.db.execute('''
+            INSERT INTO ProductInventory(product, seller, quantity)
+            VALUES (:pid, :uid, :q)
+            RETURNING product''',
+            uid=uid, pid=pid, q=q)
+            print("USERS NOW SELLING THIS PRODUCT")
 
             
     #     @staticmethod
