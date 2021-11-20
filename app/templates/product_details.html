@@ -4,6 +4,36 @@
 
 <br><br>
 
+  <!-- Edit product modal -->
+  <div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-scrollable">
+    <div class="modal-content">
+        <div class="modal-header">
+        <h5 class="modal-title" id="editModalLabel">Update Product Information</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        
+        <div class="modal-body">
+            <form action="" method="post">
+                {{ edit_form.csrf_token }}
+                <div class="d-flex justify-content-left mb-3">
+                    <p>Product ID: {{edit_form.prod_id}}</p>
+                    <p>Product name: {{edit_form.name}}</p>
+                    <p>Description: {{edit_form.description}}</p>
+                    <p>Price: {{edit_form.price}}</p>
+                    <p>Quantity: {{edit_form.quantity}}</p>
+                    <p>URL: {{edit_form.url}}</p>
+                </div>
+
+                <div class="d-grid gap-2">
+                    {{edit_form.submit2(class_='btn btn-success btn-large')}}
+                </div>
+            </form>
+        </div>
+    </div>
+    </div>
+  </div>
+
 <!-- Sell Modal -->
 <div class="modal fade" id="sellModal" tabindex="-1" aria-labelledby="sellModalLabel" aria-hidden="true">
   <div class="modal-dialog">
@@ -84,6 +114,9 @@
 <button type="button" class="btn btn-primary mr-2" data-bs-toggle="modal" data-bs-target="#cartModal"> Add to Cart</button>
 {% if sb%}
   <button type="button" class="btn btn-primary mr-2" data-bs-toggle="modal" data-bs-target="#sellModal"> Start selling</button>
+{%endif%}
+{% if eb%}
+  <button type="button" class="btn btn-primary mr-2" data-bs-toggle="modal" data-bs-target="#editModal"> Edit listing</button>
 {%endif%}
 <h2>Reviews:</h2> 
 
