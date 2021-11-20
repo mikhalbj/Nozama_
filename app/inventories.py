@@ -29,6 +29,7 @@ def inventory():
 
     new_form = NewProdForm()
     edit_form = EditInventoryForm()
+    quantity_form = EditQuantityForm()
 
     # initialdata = {'name': 'one', 'description': '', 'price': 0, 'quantity': 0, 'url': ''}
  
@@ -39,6 +40,13 @@ def inventory():
         #print('going into first loop')
         print(edit_form.submit2.data)
         
+        if quantity_form.submit3.data and quantity_form.validate():
+            prod_id = quantity_form.prod_id.data
+            quantity = quantity_form.quantity.data
+            seller = id
+            inventory = Inventory.edit_quantity(prod_id, quantity, seller)
+            return redirect(url_for('inventories.inventory', id = id))
+
 
         if edit_form.submit2.data and edit_form.validate():
             
@@ -74,7 +82,7 @@ def inventory():
 
      # order_history = Inventory.get_order_history(id)
     print(new_form.name.data)
-    return render_template('inventory.html', title='See Inventory', inventory=inventory, new_form = NewProdForm(), edit_form = edit_form, id = id, order_history = order_history)
+    return render_template('inventory.html', title='See Inventory', inventory=inventory, new_form = NewProdForm(), edit_form = edit_form, quantity_form = quantity_form, id = id, order_history = order_history)
 
 
 class NewProdForm(FlaskForm):
@@ -93,3 +101,8 @@ class EditInventoryForm(FlaskForm):
     quantity = IntegerField(_l('Quantity'), validators=[DataRequired()])
     url = URLField(validators=[url()])
     submit2 = SubmitField(_l('Edit Product'))
+
+class EditQuantityForm(FlaskForm):
+    prod_id = StringField(_l('Product ID'), validators = [DataRequired()])
+    quantity = IntegerField(_l('Quantity'), validators=[DataRequired()])
+    submit3 = SubmitField(_l('Edit Product'))

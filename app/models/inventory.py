@@ -69,6 +69,24 @@ class Inventory:
             print("USERS NOW SELLING THIS PRODUCT")
 
         @staticmethod
+        def edit_quantity(prod_id, quantity, seller):
+            try: 
+                rows = app.db.execute('''
+                UPDATE ProductInventory
+                SET quantity = :quantity
+                WHERE product = :prod_id AND seller = :seller
+                RETURNING *
+                ''',
+                                        prod_id = prod_id,
+                                        quantity = quantity,
+                                        seller = seller
+                )
+                print(rows)
+            except Exception as err:
+                print(err)
+            return Inventory.get(seller)
+
+        @staticmethod
         def edit_inventory(prod_id, name, description, price, quantity, url, seller):
             try:
                 rows = app.db.execute('''
