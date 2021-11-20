@@ -99,3 +99,14 @@ class Inventory:
                                   id = id) 
             print(rows)      
             return rows if rows is not None else None
+
+        @staticmethod
+        def is_lister(id):
+            rows = app.db.execute('''
+    SELECT id
+    FROM Seller, Product
+    WHERE Seller.id = :id AND Product.lister = :id
+    ''',
+                                  id=id) 
+            print(rows)
+            return True if len(rows) != 0 else False

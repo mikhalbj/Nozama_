@@ -25,12 +25,21 @@ def inventory():
     if not Account.is_seller(id):
         return redirect(url_for(account.account, id = id))
     inventory = Inventory.get(id)
+    order_history = Inventory.get_order_history(id)
+
     new_form = NewProdForm()
     edit_form = EditInventoryForm()
+
+    # initialdata = {'name': 'one', 'description': '', 'price': 0, 'quantity': 0, 'url': ''}
+ 
+    # new_form = NewProdForm(**initialdata)
+    # edit_form = EditInventoryForm(**initialdata)
 
     if request.method == 'POST':
         #print('going into first loop')
         print(edit_form.submit2.data)
+        
+
         if edit_form.submit2.data and edit_form.validate():
             
             prod_id = edit_form.prod_id.data
@@ -42,7 +51,9 @@ def inventory():
             seller = id
             inventory = Inventory.edit_inventory(prod_id = prod_id, name = name, description = description, price = price, quantity= quantity, url = url, seller = seller)
             print('Inventory updated')
-    
+            print(prod_id)
+            return redirect(url_for('inventories.inventory', id = id))
+
         if new_form.submit1.data and new_form.validate():
             name = new_form.name.data
             description = new_form.description.data
@@ -52,13 +63,18 @@ def inventory():
             seller = id
             inventory = Inventory.add_prod(name = name, description = description, price = price, quantity= quantity, seller = seller, url = url)
             print('New product added')
-            #return redirect(url_for('inventories.inventory', id = id))
+            #return render_template('inventory.html', title='See Inventory', inventory=inventory, new_form = NewProdForm(), edit_form = EditInventoryForm(), id = id, order_history = order_history)
+            return redirect(url_for('inventories.inventory', id = id))
         
-           #return redirect(url_for('inventories.inventory', id = id))
-    #print(inventory)
-    
-    order_history = Inventory.get_order_history(id)
-    return render_template('inventory.html', title='See Inventory', inventory=inventory, new_form = NewProdForm(), edit_form = EditInventoryForm(), id = id, order_history = order_history)
+
+    # initialdata = {'name': '', 'description': '', 'price': 0, 'quantity': 0, 'url': ''}
+ 
+    # new_form = NewProdForm(**initialdata)
+    # edit_form = EditInventoryForm(**initialdata)
+
+     # order_history = Inventory.get_order_history(id)
+    print(new_form.name.data)
+    return render_template('inventory.html', title='See Inventory', inventory=inventory, new_form = NewProdForm(), edit_form = edit_form, id = id, order_history = order_history)
 
 
 class NewProdForm(FlaskForm):
