@@ -9,7 +9,7 @@ class Cart:
     @staticmethod
     def get_all(account_id):
         rows = app.db.execute('''
-            SELECT Product.id, Product.name, CartProduct.quantity, Product.Price*CartProduct.quantity AS "totalPrice"
+            SELECT Product.id, Product.name, CartProduct.quantity, CAST(Product.Price*CartProduct.quantity AS DECIMAL(10,2)) AS "totalPrice"
             FROM CartProduct, Product
             WHERE cartProduct.account = :account_id AND Product.id = CartProduct.product
             ''',
@@ -28,6 +28,19 @@ class Cart:
             time = datetime.datetime.now())
         id = rows[0][0]
 
+        #rows = app.db.execute('''
+            #INSERT INTO AccountOrderProduct(account_order, product, seller, quantity, price, status, shipped_at, delivered_at)
+            #SELECT AccountOrder.id, pv.product, seller, pv.quantity, p.price, NULL, NULL, NULL
+            #FROM AccountOrder, Product AS p 
+            #JOIN ProductInventory pv ON p.id=pv.product
+            #JOIN CartProduct cp ON p.id=cp.product
+            #WHERE AccountOrder.account = :account_id AND placed_at = :time AND cp.Account = :account_id
+            #RETURNING account_order
+            #''',
+            #account_id = account_id,
+            #time = datetime.datetime.now())
+        #id = rows[0][0]
+
         rows = app.db.execute('''
         DELETE FROM CartProduct WHERE account = :account_id RETURNING account
         ''',
@@ -37,7 +50,6 @@ class Cart:
 
     @staticmethod
     def add_cart(account_id, quantity, id):
-        print("hi")
         rows = app.db.execute('''
         INSERT INTO CartProduct(account, product, quantity)
         VALUES(:account_id, :prod_id, :quantity)
