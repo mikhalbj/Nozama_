@@ -46,8 +46,11 @@ class PasswordForm(FlaskForm):
 
 @bp.route('/account/<id>', methods=['GET', 'POST'])
 def public(id):
-    return '<html><body>Hello</body></html>'
 
+    user = User.get(id)
+    account = Account.get(id)
+
+    return render_template('public_account.html', user=user, account=account)
 
 @bp.route('/account/orders', methods=['GET'])
 def get_account_orders():

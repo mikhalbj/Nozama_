@@ -76,7 +76,7 @@ const renderOrders = (orders) => {
                 <div class="col-md-10">
                     <div class="container">
                         <div class="row"><div class="col float-left">${product.name} <span class="badge ${product.status === 'delivered' ? 'bg-success' : 'bg-secondary'}">${product.status === 'delivered' ? 'Delivered' : 'Shipped'}</span></div></div>
-                        <div class="row"><div class="col float-left"><small class="text-muted">Vendor</small></div></div>
+                        <div class="row"><div class="col float-left"><small class="text-muted">x${product.quantity}</small></div></div>
                     </div>
                 </div>
             </div>
