@@ -16,10 +16,6 @@ const getPage = (e) => {
         currentPage = parseInt(e.target.innerText)
     }
 
-    console.log(`/account/orders`)
-    console.log(`/account/orders?page=${currentPage}`)
-    console.log(`/account/orders?page=${currentPage}&limit=${pageLimit}`)
-
     $.get(`/account/orders?page=${currentPage}&limit=${pageLimit}`, (res) => {
         renderOrders(JSON.parse(res))
 
@@ -90,8 +86,6 @@ const generatePaginationButtons = () => {
 
     buttonList.empty()
 
-    console.log('yo')
-
     buttonList.append(`
         <li class="page-item pagi ${currentPage === 1 ? 'disabled' : ''}">
             <a class="page-link" href="#" aria-label="Previous">
@@ -113,6 +107,68 @@ const generatePaginationButtons = () => {
     $('.pagi').click(getPage)
 } 
 
+const generatePlots = () => {
+    const plots = $('#plotContainer')
 
+    $.get('/api/purchases/dates', res => {
+        orders = JSON.parse(res)
 
-$(document).ready(generatePaginationButtons)
+        const chart = LineChart(orders, {
+            x: d => new Date(d.month),
+            y: d => parseInt(d.count),
+            yLabel: 'Purchases',
+            height: 500,
+            color: 'steelblue'
+        })
+
+        plots.append('<br><h4>Purchases per month</h4>')
+        plots.append(chart)
+    })
+
+    $.get('/api/purchases/spending', res => {
+        orders = JSON.parse(res)
+
+        const chart = LineChart(orders, {
+            x: d => new Date(d.month),
+            y: d => parseFloat(d.spending),
+            yLabel: 'Spending ($)',
+            height: 500,
+            color: 'steelblue'
+        })
+
+        plots.append('<br><br><br><h4>Spending per month</h4>')
+        plots.append(chart)
+        
+    })
+
+    $.get('/api/purchases/categories', res => {
+        orders = JSON.parse(res)
+
+        const chart = DonutChart(orders, {
+            name: d => d.category,
+            value: d => parseInt(d.count),
+            height: 500
+        })
+
+        plots.append('<br><br><br><h4>Purchases by category</h4>')
+        plots.append(chart)
+
+        const spendingPropChart = DonutChart(orders, {
+            name: d => d.category,
+            value: d => parseFloat(d.amount),
+            height: 500
+        })
+
+        plots.append('<br><br><br><h4>Purchases by spending</h4>')
+        plots.append(spendingPropChart)
+
+        console.log(orders)
+    })
+}
+
+const init = () => {
+    generatePaginationButtons()
+    generatePlots()
+}
+
+$(document).ready(init)
