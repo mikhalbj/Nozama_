@@ -95,7 +95,7 @@ class Account:
 
         seller = Account.is_seller(id)
 
-        orders = Order.get_all(id)
+        orders = Order.get_paginated(id)
         return Account(id, balance, seller, orders)
 
 
