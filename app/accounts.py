@@ -6,8 +6,10 @@ from flask_wtf import FlaskForm
 from wtforms import BooleanField, DecimalField, SubmitField, StringField, PasswordField
 from wtforms.validators import ValidationError, DataRequired, Email, EqualTo
 from flask_babel import _, lazy_gettext as _l
+import json
 
 from .models.user import User
+from .models.order import Order
 from .models.account import Account
 
 
@@ -46,6 +48,21 @@ class PasswordForm(FlaskForm):
 def public(id):
     return '<html><body>Hello</body></html>'
 
+
+@bp.route('/account/orders', methods=['GET'])
+def get_account_orders():
+    if not current_user.is_authenticated:
+        return json.dumps('[]')
+
+    page = 1 if request.args.get('page') == None else int(request.args.get('page'))
+    limit = 10 if request.args.get('limit') == None else int(request.args.get('limit'))
+
+    offset = (page - 1) * limit
+
+    orders = Order.get_paginated(current_user.id, limit=limit, offset=offset)
+
+    return json.dumps([Order.toJSON(order) for order in orders])
+
 @bp.route('/account', methods=['GET', 'POST'])
 def account():
     if not current_user.is_authenticated:
@@ -76,3 +93,4 @@ def account():
     account = Account.get(current_user.id)
 
     return render_template('account.html', title='Account', user=current_user, account=account, deposit_form=deposit_form, withdraw_form=withdraw_form, vendor_form=vendor_form, info_form=info_form, pass_form=pass_form)
+
