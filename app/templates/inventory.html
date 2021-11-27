@@ -142,11 +142,11 @@
             <div class="container">
                 <div class="row">
                     <div class="col float-left"><small class="text-muted">ORDER PLACED</small></div>
-                    <div class="col-8"><small class="text-muted float-end">Order #: <a href="/order/{{order.id}}" class="link-unstyled" style="text-decoration: underline;">{{order.id}}</a></small></div>
+                    <div class="col-8"><small class="text-muted float-end">Order #: </small></div>
                 </div>
                 <div class="row">
                     <div class="col float-left"><small class="text-muted">{{order.placed_at.strftime("%B %d, %Y")}}</small></div>
-                    <div class="col-8"></div>
+                    <div class="col-8"><small class="text-muted" >{{order.id}}</small></div>
                 </div>
             </div>
         </div>

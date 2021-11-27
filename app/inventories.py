@@ -31,13 +31,7 @@ def inventory():
     edit_form = EditInventoryForm()
     quantity_form = EditQuantityForm()
 
-    # initialdata = {'name': 'one', 'description': '', 'price': 0, 'quantity': 0, 'url': ''}
- 
-    # new_form = NewProdForm(**initialdata)
-    # edit_form = EditInventoryForm(**initialdata)
-
     if request.method == 'POST':
-        #print('going into first loop')
         print(edit_form.submit2.data)
         
         if quantity_form.submit3.data and quantity_form.validate():
