@@ -25,6 +25,7 @@ def inventory():
     if not Account.is_seller(id):
         return redirect(url_for(account.account, id = id))
     inventory = Inventory.get(id)
+    listed = Inventory.get_listed(id)
     order_history = Inventory.get_order_history(id)
 
     new_form = NewProdForm()
@@ -37,7 +38,6 @@ def inventory():
     # edit_form = EditInventoryForm(**initialdata)
 
     if request.method == 'POST':
-        #print('going into first loop')
         print(edit_form.submit2.data)
         
         if quantity_form.submit3.data and quantity_form.validate():
@@ -74,15 +74,8 @@ def inventory():
             #return render_template('inventory.html', title='See Inventory', inventory=inventory, new_form = NewProdForm(), edit_form = EditInventoryForm(), id = id, order_history = order_history)
             return redirect(url_for('inventories.inventory', id = id))
         
-
-    # initialdata = {'name': '', 'description': '', 'price': 0, 'quantity': 0, 'url': ''}
- 
-    # new_form = NewProdForm(**initialdata)
-    # edit_form = EditInventoryForm(**initialdata)
-
-     # order_history = Inventory.get_order_history(id)
     print(new_form.name.data)
-    return render_template('inventory.html', title='See Inventory', inventory=inventory, new_form = NewProdForm(), edit_form = edit_form, quantity_form = quantity_form, id = id, order_history = order_history)
+    return render_template('inventory.html', title='See Inventory', inventory=inventory, listed = listed, new_form = NewProdForm(), edit_form = edit_form, quantity_form = quantity_form, id = id, order_history = order_history)
 
 
 class NewProdForm(FlaskForm):

@@ -24,10 +24,11 @@ class Inventory:
         @staticmethod
         def add_prod(name, description, price, quantity, seller, url):
             rows = app.db.execute('''
-    INSERT INTO Product(name, description, price, available)
-    VALUES(:name, :description, :price, true)
+    INSERT INTO Product(name, description, price, available, lister)
+    VALUES(:name, :description, :price, true, :id)
     RETURNING id
     ''',
+                                  id = seller,
                                   name=name,
                                   description=description,
                                   price=price)
@@ -146,3 +147,17 @@ class Inventory:
                                   id=id) 
             print(rows)
             return True if len(rows) != 0 else False
+
+        @staticmethod
+        def get_listed(id):
+            rows = app.db.execute('''
+    SELECT Product.id, name, quantity, seller, description, url
+    FROM Product, ProductInventory, ProductImage
+    WHERE Product.id = ProductInventory.product
+        AND ProductInventory.seller = :id
+        AND Product.lister = :id
+        AND ProductImage.product = Product.id
+    ''',
+                                  id = id) 
+            print(rows)      
+            return rows if rows is not None else None

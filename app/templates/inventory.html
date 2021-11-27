@@ -4,13 +4,37 @@
 
 <br><br>
 
-<h2>Your Product Inventory:</h2>
+<h2>Products You Have Listed:</h2>
+<body> Click on product details to edit name, description, image, or price </body>
 <table class='table table-hover table-bordered container'>
   <thead class="thead-dark">
     <tr>
       <th scope="col">Product ID</th>
       <th scope="col">Product Name</th>
       <th scope="col">Description</th>
+      <th scope="col">Quantity Available</th>
+      <th scope="col">Product Image</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for inventory in listed%}
+      <tr>
+        <th scope="row">{{inventory.id}}</th>
+        <td><a href="{{ url_for('product.product', id=inventory.id) }}">{{inventory.name}}</a></td>
+        <td>{{inventory.description}}</td>
+        <td>{{inventory.quantity}}</td>
+        <td><img src={{inventory.url}} class="img-fluid rounded-start" alt="..."></td>
+      </tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+<h2>All Products You Sell:</h2>
+<table class='table table-hover table-bordered container'>
+  <thead class="thead-dark">
+    <tr>
+      <th scope="col">Product ID</th>
+      <th scope="col">Product Name</th>
       <th scope="col">Quantity Available</th>
     </tr>
   </thead>
@@ -19,7 +43,6 @@
       <tr>
         <th scope="row">{{inventory.id}}</th>
         <td><a href="{{ url_for('product.product', id=inventory.id) }}">{{inventory.name}}</a></td>
-        <td>{{inventory.description}}</td>
         <td>{{inventory.quantity}}</td>
       </tr>
     {% endfor %}
