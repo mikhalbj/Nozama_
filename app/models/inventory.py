@@ -126,11 +126,12 @@ class Inventory:
         @staticmethod
         def get_order_history(id):
             rows = app.db.execute('''
-    SELECT AccountOrderProduct.product, quantity, price, status, placed_at, shipped_at, delivered_at, url
-    FROM AccountOrderProduct, AccountOrder, ProductImage
-    WHERE seller = '07aab60d-7991-4ec4-b1ca-3c8489e30e4d'
+    SELECT AccountOrderProduct.product, quantity, AccountOrderProduct.price, status, placed_at, shipped_at, delivered_at, url, AccountOrder.id, name
+    FROM AccountOrderProduct, AccountOrder, ProductImage, Product
+    WHERE seller = '7f52ecc5-18ca-44d4-bc6c-55c88267e09f'
     AND AccountOrder.id = account_order
     AND ProductImage.product = AccountOrderProduct.product
+    AND Product.id = AccountOrderProduct.product
     ORDER BY placed_at DESC
     ''',
                                   id = id) 
@@ -161,3 +162,60 @@ class Inventory:
                                   id = id) 
             print(rows)      
             return rows if rows is not None else None
+
+        @staticmethod
+        def update_shipped(account_order, product, seller, delivered_at):
+            try:
+                rows = app.db.execute('''
+                    UPDATE AccountOrderProduct
+                    SET shipped_at = :time
+                    WHERE account_order = :account_order 
+                    AND product = :product
+                    AND seller = :seller
+                    RETURNING *
+                ''',
+                    time = datetime.datetime.now(),
+                    account_order = account_order,
+                    product = product,
+                    seller = id
+                    )
+
+                print(rows)
+            except Exception as err:
+                print(err)
+            return Inventory.get(seller)
+    
+        @staticmethod
+        def update_delivered(account_order, product, seller, delivered_at):
+            try:
+                rows = app.db.execute('''
+                    UPDATE AccountOrderProduct
+                    SET delivered_at = :time
+                    WHERE account_order = :account_order 
+                    AND product = :product
+                    AND seller = :seller
+                    RETURNING *
+                ''',
+                    time = datetime.datetime.now(),
+                    account_order = account_order,
+                    product = product,
+                    seller = id
+                    )
+
+                print(rows)
+            except Exception as err:
+                print(err)
+            return Inventory.get(seller)
+            
+        @staticmethod
+        def get_seller_analytics(id):
+            rows = app.db.execute( '''
+                SELECT count(account_order)
+                FROM AccountOrderProduct
+                WHERE seller = :id
+            ''',
+                id = id)
+            print(rows)      
+            return rows if rows is not None else None
+        
+        
