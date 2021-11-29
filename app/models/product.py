@@ -121,4 +121,21 @@ WHERE name LIKE '%' || :strng || '%'
         print(qry)
         rows = app.db.execute(qry, strng="%"+strng+"%", tag=tag, pricemax=priceMax)
         return rows
+    
+    @staticmethod
+    def popular():
+        prods = app.db.execute('''
+        SELECT Product.name, Product.description, ProductImage.url, Sub.product, Sub.rate, Sub.count
+        FROM (
+            SELECT ProductReview.product, AVG(Review.rating) AS rate, COUNT(ProductReview.product) AS count, (AVG(Review.rating)*COUNT(ProductReview.product)) AS score
+            FROM Review, ProductReview 
+            WHERE Review.id = ProductReview.review
+            GROUP BY ProductReview.product
+            ORDER BY score DESC NULLS LAST
+            LIMIT 4
+        ) AS Sub, Product, ProductImage
+        WHERE ProductImage.product = Sub.product AND Product.id = Sub.product
+        ''')
+        print(prods)
+        return prods
 
