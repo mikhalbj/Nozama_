@@ -36,10 +36,10 @@ class PrevPageForm(FlaskForm):
     submit = SubmitField(_l('Previous Page'), validators=[DataRequired()])
 
 class SellProdForm(FlaskForm):
-    quantity = IntegerField(_l('Quantity'), validators=[DataRequired()])
+    q = IntegerField(_l('Quantity'), validators=[DataRequired()])
       # we will also need to change the schema for this to work
     optin = BooleanField(_l('I confirm I am selling this product'), validators=[DataRequired()])
-    submit = SubmitField(_l('Sell Product'))
+    s = SubmitField(_l('Sell Product'))
 
 @bp.route('/product_details/<uuid:id>', methods=['GET', 'POST'])
 def product(id):
@@ -52,8 +52,8 @@ def product(id):
     if form.submit.data and form.validate():
         Cart.add_cart(current_user.id, form.quantity.data, id)
         print("YAY")
-    if sellForm.submit.data and sellForm.validate():
-        Inventory.start_selling(current_user.id, sellForm.quantity.data, id)
+    if sellForm.s.data and sellForm.validate():
+        Inventory.start_selling(current_user.id, sellForm.q.data, id)
         print("YOU DID IT!")
         return redirect(url_for('product.product', id=id))
     if image:
