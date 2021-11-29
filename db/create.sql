@@ -136,9 +136,9 @@ EXECUTE PROCEDURE TF_InitBalance();
 -- Trigger to maintain availability field in Product during transactions
 CREATE FUNCTION TF_WatchAvail() RETURNS TRIGGER AS $$
 BEGIN
-  IF (SELECT SUM(quantity) FROM ProductInventory WHERE product = NEW.product GROUP BY product) == 0 AND
+  IF (SELECT SUM(quantity) FROM ProductInventory WHERE product = NEW.product GROUP BY product) = 0 AND
     (SELECT available FROM Product WHERE id = NEW.product) IS True THEN
-    UPDATE Product SET available= False WHERE Product.id = NEW.product;
+    UPDATE Product SET available = False WHERE Product.id = NEW.product;
   ELSIF (SELECT SUM(quantity) FROM ProductInventory WHERE product = NEW.product GROUP BY product) <> 0 AND 
     (SELECT available FROM Product WHERE id = NEW.product) IS False THEN
     UPDATE Product SET available = True WHERE Product.id = NEW.product;
