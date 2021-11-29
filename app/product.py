@@ -40,35 +40,37 @@ class SellProdForm(FlaskForm):
 
 @bp.route('/product_details/<uuid:id>', methods=['GET', 'POST'])
 def product(id):
-    saveBool = Cart.can_save(current_user.id, id)
-    sellers = Inventory.all_sellers(id)
+    if not current_user.is_authenticated:
+        saveBool = False
+        sellBool = False
+    else:
+        saveBool = Cart.can_save(current_user.id, id)
+        sellBool = Account.is_seller(current_user.id) and not Inventory.sells(current_user.id, id)
+    
     form = CartAddForm()
-    sellForm = SellProdForm()
-    saveForm = SaveProdForm()
-    product = Product.fullget(id)
-    image = Product.get_img(id)
-    sellBool = Account.is_seller(current_user.id) and not Inventory.sells(current_user.id, id)
     if form.submit.data and form.validate():
         Cart.add_cart(current_user.id, form.quantity.data, id)
-        print("YAY")
+
+    sellForm = SellProdForm()
     if sellForm.s.data and sellForm.validate():
         Inventory.start_selling(current_user.id, sellForm.q.data, id)
-        print("YOU DID IT!")
         return redirect(url_for('product.product', id=id))
+    
+    saveForm = SaveProdForm()
     if saveForm.save.data and saveForm.validate():
         if saveBool:
             Cart.save(current_user.id, id)
             flash('The product is saved for later!')
-            print("YOU DID IT!")
         else:
             flash('You\'ve already saved this product!')
-        return redirect(url_for('product.product', id=id))
-    if image:
-        image = image[0][1]
-    else:
-        image = "https://cdn.w600.comps.canstockphoto.com/pile-of-random-stuff-eps-vector_csp24436545.jpg"
+    
+    
+    product = Product.fullget(id)
+    image = Product.get_img(id)
     quantity = Product.get_inventory(id)[0]
     reviews = Review.get(id)
+    sellers = Inventory.all_sellers(id)
+    
     return render_template('product_details.html', title='See Product', product=product, imgurl=image, num=quantity, cartform=form, review=reviews, sf=sellForm, sb=sellBool, sellers=sellers, saveform=saveForm)
 
 @bp.route('/search/<argterm>', methods=['GET', 'POST'])
