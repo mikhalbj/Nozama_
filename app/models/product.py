@@ -27,7 +27,7 @@ WHERE id = :id
     @staticmethod
     def fullget(id):
         rows = app.db.execute('''
-SELECT Product.id, name, price, available, Product.description, COALESCE(ROUND(AVG(T.rating), 2), NULL) AS rate
+SELECT Product.id, name, price, available, Product.description, COALESCE(ROUND(AVG(T.rating), 2), NULL) AS rate, COUNT(T.rating) AS count
 FROM Product LEFT OUTER JOIN (SELECT * FROM Review, ProductReview WHERE Review.id = ProductReview.review) AS T ON Product.id = T.product
 WHERE Product.id = :id
 GROUP BY Product.id
