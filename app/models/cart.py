@@ -18,17 +18,28 @@ class Cart:
 
 
     @staticmethod
-    def place_order(account_id):
+    def place_order(account_id, time):
 
-        time = datetime.datetime.now()
+        balance = Cart.get_balance(account_id)
+        total = Cart.cart_total(account_id)
 
         rows = app.db.execute('''
-            INSERT INTO AccountOrder(account, placed_at)
-            VALUES(:account_id, :time)
-            RETURNING id
-            ''',
-            account_id = account_id,
-            time = time)
+        UPDATE Balance
+        SET balance = balance - :total
+        WHERE id = :account_id
+        RETURNING *
+        ''',
+        total = total,
+        account_id = account_id
+        )
+
+        rows = app.db.execute('''
+        INSERT INTO AccountOrder(account, placed_at)
+        VALUES(:account_id, :time)
+        RETURNING id
+        ''',
+        account_id = account_id,
+        time = time)
         id = rows[0][0]
 
         orderid = Cart.getoid(account_id, time)
@@ -36,7 +47,6 @@ class Cart:
         cart_prods = Cart.getcp(account_id)
         for x in cart_prods:
             product = cart_prods[index][0]
-            print(product)
             price = cart_prods[index][1]
             quant = cart_prods[index][2]
             Cart.edit_inventory(account_id, product, quant, orderid, price, time)
@@ -50,6 +60,20 @@ class Cart:
         return rows if rows is not None else None
     
     @staticmethod
+    def check_inventory(account_id, time):
+        orderid = Cart.getoid(account_id, time)
+        cart_prods = Cart.getcp(account_id)
+        index = 0
+        for x in cart_prods:
+            product = cart_prods[index][0]
+            total = Cart.inventory_total(product)
+            quant = cart_prods[index][2]
+            if quant > total:
+                return False
+        return True
+
+
+    @staticmethod
     def edit_inventory(account_id, prodid, quant, orderid, price, time):
         sellers = Cart.getsellers(prodid)
         index = 0
@@ -57,8 +81,9 @@ class Cart:
             amount = min(quant, sellers[index][1])
             s = sellers[index][0]
             q = sellers[index][1]
-            Cart.updateaop(orderid, prodid, s, amount, price, time)
-            Cart.editquant(prodid, q, amount, s)
+            cost = price*amount
+            Cart.updateaop(orderid, prodid, s, amount, price)
+            Cart.editseller(prodid, q, amount, s, cost)
             quant -= amount
             index += 1
         return True
@@ -83,6 +108,16 @@ class Cart:
             WHERE CartProduct.product = Product.id AND cartProduct.account = :account_id
             ''',
             account_id=account_id)
+        return rows[0][0] if rows else 0.0
+
+    @staticmethod
+    def inventory_total(product):
+        rows = app.db.execute('''
+            SELECT SUM(Quantity)
+            FROM ProductInventory 
+            WHERE product = :product
+            ''',
+            product=product)
         return rows[0][0] if rows else 0.0
 
     @staticmethod
@@ -116,11 +151,11 @@ class Cart:
         return rows if rows else 0.0
 
     @staticmethod
-    def updateaop(orderid, prodid, seller, amount, price, time):
-        status = 'S'
+    def updateaop(orderid, prodid, seller, amount, price):
+        status = 'Order Placed'
         rows = app.db.execute('''
            INSERT INTO AccountOrderProduct(account_order, product, seller, quantity, price, status, shipped_at, delivered_at)
-           VALUES(:orderid, :prodid, :seller, :amount, :price, :status, :time, :time)
+           VALUES(:orderid, :prodid, :seller, :amount, :price, :status, NULL, NULL)
            RETURNING account_order
             ''',
             orderid=orderid,
@@ -128,8 +163,7 @@ class Cart:
             seller=seller,
             amount=amount,
             price=price,
-            status=status,
-            time=time)
+            status=status)
         return True
 
     @staticmethod
@@ -153,7 +187,7 @@ class Cart:
         return rows if rows is not None else None
 
     @staticmethod
-    def editquant(prod_id, quantity, amount, seller): 
+    def editseller(prod_id, quantity, amount, seller, cost): 
         rows = app.db.execute('''
             UPDATE ProductInventory
             SET quantity = :quantity - :amount
@@ -165,4 +199,25 @@ class Cart:
             amount = amount,
             seller = seller
             )
+        
+        rows = app.db.execute('''
+            UPDATE Balance
+            SET balance = balance + :cost
+            WHERE id = :seller
+            RETURNING *
+            ''',
+            cost = cost,
+            seller = seller
+            )
+
         return rows if rows is not None else None
+
+    @staticmethod
+    def get_balance(id):
+        rows = app.db.execute('''
+            SELECT balance
+            FROM Balance
+            WHERE id = :id
+            ''',
+            id = id)
+        return rows[0][0] if rows else 0.0

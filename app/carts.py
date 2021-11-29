@@ -2,7 +2,7 @@ from flask import render_template, redirect, url_for, flash, request
 from werkzeug.urls import url_parse
 from flask_login import login_user, logout_user, current_user
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, BooleanField, SubmitField
+from wtforms import StringField, PasswordField, BooleanField, SubmitField, HiddenField
 from wtforms.validators import ValidationError, DataRequired, Email, EqualTo
 from flask_babel import _, lazy_gettext as _l
 
@@ -12,6 +12,8 @@ from .models.cart import Cart
 
 
 from flask import Blueprint
+import datetime;
+
 bp = Blueprint('carts', __name__,)
 
 class MakeOrder(FlaskForm):
@@ -19,6 +21,7 @@ class MakeOrder(FlaskForm):
     info_submit = SubmitField()
 
 class RemoveItem(FlaskForm):
+    delete_id = HiddenField("productId")
     info_submit = SubmitField()
 
 @bp.route('/cart', methods=['GET', 'POST'])
@@ -33,11 +36,15 @@ def cart():
     remove = RemoveItem()
     
     if order_form.is_submitted() and order_form.validate():
-        Cart.place_order(current_user.id)
-        return redirect(url_for('carts.cart'))
-
-    if remove.is_submitted():
-        Cart.remove(current_user.id, remove.form.get('productId'))
+        time = datetime.datetime.now()
+        if Cart.check_inventory(current_user.id, time) == False:
+            flash('Cannot Place Order - Insufficient Product Availability')
+        else:
+            if Cart.get_balance(current_user.id) < Cart.cart_total(current_user.id):
+                flash('Cannot Place Order - Insufficient Balance')
+            else:
+                Cart.place_order(current_user.id, time)
         return redirect(url_for('carts.cart'))
 
     return render_template('cart.html', title='Cart', cart=cart, total=total, saved=saved, order_form=order_form, remove=remove)
+
