@@ -29,11 +29,8 @@ class CartAddForm(FlaskForm):
     quantity = IntegerField('How many of this item?', validators=[DataRequired()])
     submit = SubmitField()
 
-class NextPageForm(FlaskForm):
-    submit = SubmitField(_l('Next Page'), validators=[DataRequired()])
-
-class PrevPageForm(FlaskForm):
-    submit = SubmitField(_l('Previous Page'), validators=[DataRequired()])
+class SaveProdForm(FlaskForm):
+    save = SubmitField(_l('Save For Later'), validators=[DataRequired()])
 
 class SellProdForm(FlaskForm):
     q = IntegerField(_l('Quantity'), validators=[DataRequired()])
@@ -43,9 +40,11 @@ class SellProdForm(FlaskForm):
 
 @bp.route('/product_details/<uuid:id>', methods=['GET', 'POST'])
 def product(id):
+    saveBool = Cart.can_save(current_user.id, id)
     sellers = Inventory.all_sellers(id)
     form = CartAddForm()
     sellForm = SellProdForm()
+    saveForm = SaveProdForm()
     product = Product.fullget(id)
     image = Product.get_img(id)
     sellBool = Account.is_seller(current_user.id) and not Inventory.sells(current_user.id, id)
@@ -56,13 +55,21 @@ def product(id):
         Inventory.start_selling(current_user.id, sellForm.q.data, id)
         print("YOU DID IT!")
         return redirect(url_for('product.product', id=id))
+    if saveForm.save.data and saveForm.validate():
+        if saveBool:
+            Cart.save(current_user.id, id)
+            flash('The product is saved for later!')
+            print("YOU DID IT!")
+        else:
+            flash('You\'ve already saved this product!')
+        return redirect(url_for('product.product', id=id))
     if image:
         image = image[0][1]
     else:
         image = "https://cdn.w600.comps.canstockphoto.com/pile-of-random-stuff-eps-vector_csp24436545.jpg"
     quantity = Product.get_inventory(id)[0]
     reviews = Review.get(id)
-    return render_template('product_details.html', title='See Product', product=product, imgurl=image, num=quantity, cartform=form, review=reviews, sf=sellForm, sb=sellBool, sellers=sellers)
+    return render_template('product_details.html', title='See Product', product=product, imgurl=image, num=quantity, cartform=form, review=reviews, sf=sellForm, sb=sellBool, sellers=sellers, saveform=saveForm)
 
 @bp.route('/search/<argterm>', methods=['GET', 'POST'])
 def search(argterm):

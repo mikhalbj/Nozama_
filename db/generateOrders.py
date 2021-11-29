@@ -65,7 +65,7 @@ def genOrderProducts(ords):
                 aop.append(currProdSellers[j]) # add seller id
                 aop.append(random.randint(1,4)) # add quantity
                 aop.append("3.99") # add price of a single item??
-                aop.append("in stock") #should this be "shipped", "deliverd", etc?
+                aop.append(random.choices(["Shipped", "Placed", "Delivered"], weights=[1,1,1], k=1)[0]) #add status
                 start = time.mktime(time.strptime(order[2], "%x %X"))
                 end = math.floor(time.time())
                 a = genTimeStamp(start, end)
