@@ -175,6 +175,28 @@ class Cart:
             ''',
             account_id=account_id)     
         return rows if rows is not None else None
+    
+    @staticmethod
+    def save(account_id, pid):
+        rows = app.db.execute('''
+            INSERT INTO SavedProduct(account, product)
+            VALUES(:account_id, :prod_id)
+            RETURNING account
+            ''',
+            account_id = account_id,
+            prod_id = pid)
+        return rows if rows is not None else None
+    
+    @staticmethod
+    def can_save(account_id, pid):
+        rows = app.db.execute('''
+            SELECT product
+            FROM SavedProduct
+            WHERE account = :account_id AND product = :prod_id
+            ''',
+            account_id = account_id,
+            prod_id = pid)
+        return False if rows else True
 
     @staticmethod
     def remove(account_id, product):

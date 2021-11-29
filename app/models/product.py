@@ -79,9 +79,9 @@ WHERE available = :available
         rows = app.db.execute('''
 SELECT id, name, price, available
 FROM Product
-WHERE name LIKE :strng
+WHERE name LIKE '%' || :strng || '%'
 ''',
-                              strng="%"+strng+"%")
+                              strng = strng)
         return [Product(*row) for row in rows]
 
     @staticmethod

@@ -57,6 +57,15 @@
 </div>
 
 <div style="display: flexbox; margin-left: 10%; margin-right: 10%;">
+
+
+  {% for message in get_flashed_messages() %}
+    <div class="alert alert-success alert-dismissable" role="alert">
+      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close">
+      </button>
+        {{ message }}
+    </div>
+    {% endfor %}
   
   <h2>{{product.name}}</h2>
   <!-- Product Card -->
@@ -77,7 +86,10 @@
           </span>
           <p class="card-text">{{product.description}}</p>
           <button type="button" class="btn btn-primary mr-2" data-bs-toggle="modal" data-bs-target="#cartModal"> Add to Cart</button>
-          <button type="button" class="btn btn-primary mr-2" data-bs-toggle="modal" data-bs-target="#cartModal"> Save for Later</button>
+          <form action="" method="post">
+            {{saveform.csrf_token}}
+            {{saveform.save(class_='btn btn-primary mr-2')}}
+          </form>
           {% if sb%}
           <button type="button" class="btn btn-primary mr-2" data-bs-toggle="modal" data-bs-target="#sellModal"> Start selling</button>
           {%endif%}
