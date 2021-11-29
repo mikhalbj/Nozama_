@@ -1,7 +1,8 @@
 from flask import current_app as app
 
 class OrderProduct:
-    def __init__(self, order_id, product_id, quantity, price, status, shipped_at, delivered_at):
+    def __init__(self, account_id, order_id, product_id, quantity, price, status, shipped_at, delivered_at):
+        self.account_id = account_id
         self.order_id = order_id
         self.product_id = product_id
         self.quantity = quantity

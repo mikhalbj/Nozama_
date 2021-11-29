@@ -78,8 +78,8 @@ CREATE TABLE AccountOrderProduct(
     quantity INT NOT NULL CHECK (quantity > 0),
     price FLOAT(2) NOT NULL CHECK (price > 0),
     status VARCHAR(20) NOT NULL,
-    shipped_at TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT (current_timestamp AT TIME ZONE 'UTC'),
-    delivered_at TIMESTAMP WITHOUT TIME ZONE NOT NULL DEFAULT (current_timestamp AT TIME ZONE 'UTC'),
+    shipped_at TIMESTAMP WITHOUT TIME ZONE DEFAULT NULL,
+    delivered_at TIMESTAMP WITHOUT TIME ZONE DEFAULT NULL,
     PRIMARY KEY (account_order, product, seller)
 );
 
