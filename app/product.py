@@ -38,7 +38,7 @@ class PrevPageForm(FlaskForm):
 class SellProdForm(FlaskForm):
     quantity = IntegerField(_l('Quantity'), validators=[DataRequired()])
       # we will also need to change the schema for this to work
-    optin = BooleanField(_l('I want to sell this product'), validators=[DataRequired()])
+    optin = BooleanField(_l('I confirm I am selling this product'), validators=[DataRequired()])
     submit = SubmitField(_l('Sell Product'))
 
 @bp.route('/product_details/<uuid:id>', methods=['GET', 'POST'])
@@ -55,7 +55,7 @@ def product(id):
     if sellForm.submit.data and sellForm.validate():
         Inventory.start_selling(current_user.id, sellForm.quantity.data, id)
         print("YOU DID IT!")
-        return redirect(url_for('product.product_details', id=id))
+        return redirect(url_for('product.product', id=id))
     if image:
         image = image[0][1]
     else:

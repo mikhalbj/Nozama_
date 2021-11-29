@@ -20,7 +20,7 @@
                   <p><h1>{{sf.quantity(placeholder='1')}}</h1></p>
               </div>
               <div class="d-flex justify-content-left mb-3">
-                <p><h1>{{sf.optin()}}</h1></p>
+                <p>{{sf.optin()}}  {{ sf.optin.label }}</p>
               </div>
               <div class="d-grid gap-2">
                   {{sf.submit(class_='btn btn-success btn-large')}}
