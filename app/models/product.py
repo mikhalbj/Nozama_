@@ -138,4 +138,15 @@ WHERE name LIKE '%' || :strng || '%'
         ''')
         print(prods)
         return prods
+    
+    @staticmethod
+    def is_lister(pid, uid):
+        rows = app.db.execute('''
+        SELECT *
+        FROM Product
+        WHERE lister = :uid AND id = :pid
+        ''',
+                              pid=pid, uid=uid)
+        return True if len(rows) > 0 else False
+
 
