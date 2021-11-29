@@ -21,7 +21,7 @@ class SearchForm(FlaskForm):
     tag = RadioField('Filter by category:')
     avail = BooleanField('Only find available items:')
     maxprice = DecimalField('Only find items cheaper than:')
-    searchdesc = BooleanField('Match ketwords in description:')
+    searchdesc = BooleanField('Match keywords in description:')
     sort = RadioField('Sort products by:', choices=['price', 'rating'])
     submit = SubmitField()
 
@@ -63,7 +63,6 @@ def product(id):
             flash('The product is saved for later!')
         else:
             flash('You\'ve already saved this product!')
-    
     
     product = Product.fullget(id)
     image = Product.get_img(id)
