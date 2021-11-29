@@ -146,3 +146,30 @@ class Inventory:
                                   id=id) 
             print(rows)
             return True if len(rows) != 0 else False
+
+        @staticmethod
+        def edit_listing(prod_id, name, description, price, url):
+            try:
+                rows = app.db.execute('''
+        UPDATE Product
+        SET name= :name, description= :description, price=:price
+        WHERE id = :prod_id
+        RETURNING *
+        ''',
+                                    prod_id = prod_id,
+                                    name=name,
+                                    description=description,
+                                    price=price)
+                print('updated!')
+                rows = app.db.execute('''
+        UPDATE ProductImage
+        SET url =:url
+        WHERE product = :prod_id
+        RETURNING *
+        ''',
+                                    prod_id = prod_id, 
+                                    url = url)
+                print(rows)
+            except Exception as err:
+                print(err)
+            print("LISTING DETAILS UPDATED")

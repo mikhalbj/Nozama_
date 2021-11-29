@@ -2,8 +2,9 @@ from flask import render_template, redirect, url_for, flash, request
 from werkzeug.urls import url_parse
 from flask_login import login_user, logout_user, current_user
 from flask_wtf import FlaskForm
+from flask_wtf.html5 import URLField
 from wtforms import StringField, PasswordField, BooleanField, SubmitField, RadioField, DecimalField, SelectMultipleField, IntegerField
-from wtforms.validators import ValidationError, DataRequired, Email, EqualTo
+from wtforms.validators import ValidationError, DataRequired, Email, EqualTo, url
 from flask_babel import _, lazy_gettext as _l
 
 from .models.product import Product
@@ -41,13 +42,24 @@ class SellProdForm(FlaskForm):
     optin = BooleanField(_l('I want to sell this product'), validators=[DataRequired()])
     submit = SubmitField(_l('Sell Product'))
 
+class EditListingForm(FlaskForm):
+    name = StringField(_l('Product Name'), validators=[DataRequired()])
+    description = StringField(_l('Description'), validators=[DataRequired()])
+    price = DecimalField(_l('Price'), places = 2, validators=[DataRequired()])
+    url = URLField(validators=[url()])
+    submit2 = SubmitField(_l('Edit Product'))
+
 @bp.route('/product_details/<uuid:id>', methods=['GET', 'POST'])
 def product(id):
     form = CartAddForm()
     sellForm = SellProdForm()
+    eForm = EditListingForm()
     product = Product.fullget(id)
     image = Product.get_img(id)
     sellBool = Account.is_seller(current_user.id) and not Inventory.sells(current_user.id, id)
+    editBool = Product.is_lister(id, current_user.id)
+    if eform.submit.data and eform.validate():
+        Inventory.edit_listing(id, eform.name.data, eform.description.data, eform.price.data, eform.url.data)
     if form.submit.data and form.validate():
         Cart.add_cart(current_user.id, form.quantity.data, id)
         print("YAY")
@@ -61,7 +73,7 @@ def product(id):
         image = "https://cdn.w600.comps.canstockphoto.com/pile-of-random-stuff-eps-vector_csp24436545.jpg"
     quantity = Product.get_inventory(id)[0]
     reviews = Review.get(id)
-    return render_template('product_details.html', title='See Product', product=product, imgurl=image, num=quantity, cartform=form, review=reviews, sf=sellForm, sb=sellBool)
+    return render_template('product_details.html', title='See Product', product=product, imgurl=image, num=quantity, cartform=form, review=reviews, sf=sellForm, sb=sellBool, edit_form=eform, eb=editBool)
 
 @bp.route('/search/<argterm>', methods=['GET', 'POST'])
 def search(argterm):
