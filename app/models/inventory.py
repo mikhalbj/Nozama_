@@ -60,6 +60,15 @@ class Inventory:
             return True if len(rows) != 0 else False
         
         @staticmethod
+        def all_sellers(pid):
+            rows = app.db.execute('''
+            SELECT seller, quantity
+            FROM ProductInventory
+            WHERE product = :pid''',
+            pid=pid)
+            return rows
+        
+        @staticmethod
         def start_selling(uid, q, pid):
             rows = app.db.execute('''
             INSERT INTO ProductInventory(product, seller, quantity)

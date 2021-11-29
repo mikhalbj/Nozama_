@@ -43,7 +43,7 @@ class SellProdForm(FlaskForm):
 
 @bp.route('/product_details/<uuid:id>', methods=['GET', 'POST'])
 def product(id):
-    sellers = [["23154134", 15], ["556yq4r2", 3], ["546gjwt", 0]]
+    sellers = Inventory.all_sellers(id)
     form = CartAddForm()
     sellForm = SellProdForm()
     product = Product.fullget(id)
