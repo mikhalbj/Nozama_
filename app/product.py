@@ -17,12 +17,12 @@ from flask import Blueprint
 bp = Blueprint('product', __name__)
 
 class SearchForm(FlaskForm):
-    searchterm = StringField('Search here')
-    tag = RadioField('Filter by category')
-    avail = BooleanField('Only find available items')
+    searchterm = StringField('Search for:')
+    tag = RadioField('Filter by category:')
+    avail = BooleanField('Only find available items:')
     maxprice = DecimalField('Only find items cheaper than:')
     searchdesc = BooleanField('Match ketwords in description:')
-    sort = RadioField('Sort by price or rating:', choices=['price', 'rating'])
+    sort = RadioField('Sort products by:', choices=['price', 'rating'])
     submit = SubmitField()
 
 class CartAddForm(FlaskForm):
@@ -38,11 +38,12 @@ class PrevPageForm(FlaskForm):
 class SellProdForm(FlaskForm):
     quantity = IntegerField(_l('Quantity'), validators=[DataRequired()])
       # we will also need to change the schema for this to work
-    optin = BooleanField(_l('I want to sell this product'), validators=[DataRequired()])
+    optin = BooleanField(_l('I confirm I am selling this product'), validators=[DataRequired()])
     submit = SubmitField(_l('Sell Product'))
 
 @bp.route('/product_details/<uuid:id>', methods=['GET', 'POST'])
 def product(id):
+    sellers = Inventory.all_sellers(id)
     form = CartAddForm()
     sellForm = SellProdForm()
     product = Product.fullget(id)
@@ -54,14 +55,14 @@ def product(id):
     if sellForm.submit.data and sellForm.validate():
         Inventory.start_selling(current_user.id, sellForm.quantity.data, id)
         print("YOU DID IT!")
-        return redirect(url_for('product.product_details', id=id))
+        return redirect(url_for('product.product', id=id))
     if image:
         image = image[0][1]
     else:
         image = "https://cdn.w600.comps.canstockphoto.com/pile-of-random-stuff-eps-vector_csp24436545.jpg"
     quantity = Product.get_inventory(id)[0]
     reviews = Review.get(id)
-    return render_template('product_details.html', title='See Product', product=product, imgurl=image, num=quantity, cartform=form, review=reviews, sf=sellForm, sb=sellBool)
+    return render_template('product_details.html', title='See Product', product=product, imgurl=image, num=quantity, cartform=form, review=reviews, sf=sellForm, sb=sellBool, sellers=sellers)
 
 @bp.route('/search/<argterm>', methods=['GET', 'POST'])
 def search(argterm):
