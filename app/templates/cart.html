@@ -74,6 +74,7 @@
       <th scope="col">Product Name</th>
       <th scope="col">Quantity</th>
       <th scope="col">Total Price</th>
+      <th scope="col">Remove</th>
     </tr>
   </thead>
   <tbody>
@@ -83,6 +84,13 @@
         <td>{{cart.name}}</td>
         <td>{{cart.quantity}}</td>
         <td>{{cart.totalPrice}}</td>
+        <td>
+          <form action="" method="POST">
+          {{remove.csrf_token}}
+          <input id="productId" name="productId" type="hidden" value="{{cart.id}}">
+          <button type="submit"> X </button>
+          </form>
+  </td>
       </tr>
     {% endfor %}
   </tbody>

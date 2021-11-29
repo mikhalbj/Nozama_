@@ -18,6 +18,9 @@ class MakeOrder(FlaskForm):
     info_address = StringField("Address", validators=[DataRequired()])
     info_submit = SubmitField()
 
+class RemoveItem(FlaskForm):
+    info_submit = SubmitField()
+
 @bp.route('/cart', methods=['GET', 'POST'])
 def cart():
     if not current_user.is_authenticated:
@@ -27,9 +30,14 @@ def cart():
     cart = Cart.get_all(current_user.id)
     total = Cart.cart_total(current_user.id)
     saved = Cart.saved(current_user.id)
+    remove = RemoveItem()
     
     if order_form.is_submitted() and order_form.validate():
         Cart.place_order(current_user.id)
         return redirect(url_for('carts.cart'))
 
-    return render_template('cart.html', title='Cart', cart=cart, total=total, saved=saved, order_form=order_form)
+    if remove.is_submitted():
+        Cart.remove(current_user.id, remove.form.get('productId'))
+        return redirect(url_for('carts.cart'))
+
+    return render_template('cart.html', title='Cart', cart=cart, total=total, saved=saved, order_form=order_form, remove=remove)
