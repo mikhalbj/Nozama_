@@ -85,16 +85,6 @@ WHERE name LIKE :strng
         return [Product(*row) for row in rows]
 
     @staticmethod
-    def is_lister(pid, uid):
-        rows = app.db.execute('''
-SELECT 
-FROM Product
-WHERE lister = :uid AND product = :pid
-''',
-                              pid=pid, uid=uid)
-        return True if len(rows) > 0 else False
-
-    @staticmethod
     def advanced_search(strng="", searchName=True, searchDesc=False, sortBy=False, availOnly=False, priceMax=False, tag=False, page=1):
 
     
