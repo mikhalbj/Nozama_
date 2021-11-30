@@ -3,7 +3,7 @@ from werkzeug.urls import url_parse
 from flask_login import login_user, logout_user, current_user
 from flask_wtf import FlaskForm
 from wtforms import StringField, DecimalField, PasswordField, BooleanField, SubmitField, IntegerField
-from wtforms.validators import ValidationError, DataRequired, Email, EqualTo, Regexp, url
+from wtforms.validators import ValidationError, DataRequired, Email, EqualTo, Regexp, url, InputRequired
 from flask_wtf.html5 import URLField
 from wtforms.widgets.html5 import URLInput, Input
 from flask_babel import _, lazy_gettext as _l
@@ -94,7 +94,7 @@ class NewProdForm(FlaskForm):
     name = StringField(_l('Product Name'), validators=[DataRequired()])
     description = StringField(_l('Description'), validators=[DataRequired()])
     price = DecimalField(_l('Price'), places = 2, validators=[DataRequired()])
-    quantity = IntegerField(_l('Quantity'), validators=[DataRequired()])
+    quantity = IntegerField(_l('Quantity'), validators=[InputRequired()])
     url = URLField(validators=[url()])
     submit1 = SubmitField(_l('Add Product'))
 
@@ -102,12 +102,12 @@ class EditInventoryForm(FlaskForm):
     prod_id = StringField(_l('Product ID'), validators = [DataRequired()])
     name = StringField(_l('Product Name'), validators=[DataRequired()])
     description = StringField(_l('Description'), validators=[DataRequired()])
-    price = DecimalField(_l('Price'), places = 2, validators=[DataRequired()])
-    quantity = IntegerField(_l('Quantity'), validators=[DataRequired()])
+    price = DecimalField(_l('Price'), places = 2, validators=[InputRequired()])
+    quantity = IntegerField(_l('Quantity'), validators=[InputRequired()])
     url = URLField(validators=[url()])
     submit2 = SubmitField(_l('Edit Product'))
 
 class EditQuantityForm(FlaskForm):
     prod_id = StringField(_l('Product ID'), validators = [DataRequired()])
-    quantity = IntegerField(_l('Quantity'), validators=[DataRequired()])
+    quantity = IntegerField(_l('Quantity'), validators=[InputRequired()])
     submit3 = SubmitField(_l('Edit Product'))
