@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<br><br>
+
+<div class="row">
+    <div class="col-sm-6">
+      <ul class="list-group list-group-horizontal nav nav-pills">
+        <li class="nav-item">
+          <a class="nav-link active" aria-current="page" href="/inventory">View Inventory</a>
+        </li>
+      </ul>
+      <br>
+      <ul class="list-group list-group-horizontal nav nav-pills">
+        <li class="nav-item">
+          <a class="nav-link active" aria-current="page" href="/inventory/order-fulfillment">View Order Fulfillment</a>
+        </li>
+    </div>
+  </div>
+
+  <br><br>
+  <h2>Number of Products Sold To Date: {{analytics}}</h2>
+
+  
+{% endblock %}
