@@ -96,40 +96,31 @@ class Inventory:
             return Inventory.get(seller)
 
         @staticmethod
-        def edit_inventory(prod_id, name, description, price, quantity, url, seller):
+        def edit_inventory(prod_id, name, description, price, url):
             try:
                 rows = app.db.execute('''
-        UPDATE Product
-        SET name= :name, description= :description, price=:price
-        WHERE id = :prod_id
-        RETURNING *
-        ''',
+                            UPDATE Product
+                            SET name= :name, description= :description, price=:price
+                            WHERE id = :prod_id
+                            RETURNING *
+                            ''',
                                     prod_id = prod_id,
                                     name=name,
                                     description=description,
                                     price=price)
-                print('updated!')
+                print('updated product in edit_inventory!!')
                 rows = app.db.execute('''
-        UPDATE ProductInventory
-        SET quantity = :quantity
-        WHERE product = :prod_id AND seller = :seller
-        RETURNING *
-        ''',
-                                    prod_id = prod_id, 
-                                    quantity = quantity,
-                                    seller = seller)
-                rows = app.db.execute('''
-        UPDATE ProductImage
-        SET url =:url
-        WHERE product = :prod_id
-        RETURNING *
-        ''',
+                            UPDATE ProductImage
+                            SET url = :url
+                            WHERE product = :prod_id
+                            RETURNING *
+                            ''',
                                     prod_id = prod_id, 
                                     url = url)
                 print(rows)
             except Exception as err:
                 print(err)
-            return Inventory.get(seller)
+            return True
 
         @staticmethod
         def get_order_history(id):

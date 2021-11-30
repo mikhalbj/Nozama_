@@ -3,7 +3,9 @@ from werkzeug.urls import url_parse
 from flask_login import login_user, logout_user, current_user
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, BooleanField, SubmitField, RadioField, DecimalField, SelectMultipleField, IntegerField
-from wtforms.validators import ValidationError, DataRequired, Email, EqualTo
+from wtforms.validators import ValidationError, DataRequired, Email, EqualTo, url
+from flask_wtf.html5 import URLField
+from wtforms.widgets.html5 import URLInput, Input
 from flask_babel import _, lazy_gettext as _l
 
 from .models.product import Product
@@ -21,7 +23,7 @@ class SearchForm(FlaskForm):
     tag = RadioField('Filter by category:')
     avail = BooleanField('Only find available items:')
     maxprice = DecimalField('Only find items cheaper than:')
-    searchdesc = BooleanField('Match ketwords in description:')
+    searchdesc = BooleanField('Match keywords in description:')
     sort = RadioField('Sort products by:', choices=['price', 'rating'])
     submit = SubmitField()
 
@@ -38,14 +40,23 @@ class SellProdForm(FlaskForm):
     optin = BooleanField(_l('I confirm I am selling this product'), validators=[DataRequired()])
     s = SubmitField(_l('Sell Product'))
 
+class EditListingForm(FlaskForm):
+    name = StringField(_l('Product Name'), validators=[DataRequired()])
+    description = StringField(_l('Description'), validators=[DataRequired()])
+    price = DecimalField(_l('Price'), places = 2, validators=[DataRequired()])
+    url = URLField(validators=[url()])
+    submit2 = SubmitField(_l('Edit Product'))
+
 @bp.route('/product_details/<uuid:id>', methods=['GET', 'POST'])
 def product(id):
     if not current_user.is_authenticated:
         saveBool = False
         sellBool = False
+        editBool = False
     else:
         saveBool = Cart.can_save(current_user.id, id)
         sellBool = Account.is_seller(current_user.id) and not Inventory.sells(current_user.id, id)
+        editBool = Product.is_lister(id, current_user.id)
     
     form = CartAddForm()
     if form.submit.data and form.validate():
@@ -54,6 +65,12 @@ def product(id):
     sellForm = SellProdForm()
     if sellForm.s.data and sellForm.validate():
         Inventory.start_selling(current_user.id, sellForm.q.data, id)
+        return redirect(url_for('product.product', id=id))
+
+    eForm = EditListingForm()
+    if eForm.submit2.data and eForm.validate():
+        print("FORM SUBMITTED")
+        Inventory.edit_inventory(id, eForm.name.data, eForm.description.data, eForm.price.data, eForm.url.data)
         return redirect(url_for('product.product', id=id))
     
     saveForm = SaveProdForm()
@@ -64,14 +81,13 @@ def product(id):
         else:
             flash('You\'ve already saved this product!')
     
-    
     product = Product.fullget(id)
     image = Product.get_img(id)
     quantity = Product.get_inventory(id)[0]
     reviews = Review.get(id)
     sellers = Inventory.all_sellers(id)
     
-    return render_template('product_details.html', title='See Product', product=product, imgurl=image, num=quantity, cartform=form, review=reviews, sf=sellForm, sb=sellBool, sellers=sellers, saveform=saveForm)
+    return render_template('product_details.html', title='See Product', product=product, imgurl=image, num=quantity, cartform=form, review=reviews, sf=sellForm, sb=sellBool, sellers=sellers, saveform=saveForm, edit_form=eForm, eb=editBool)
 
 @bp.route('/search/<argterm>', methods=['GET', 'POST'])
 def search(argterm):

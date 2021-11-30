@@ -26,7 +26,8 @@ CREATE TABLE Product (
     name VARCHAR NOT NULL,
     description VARCHAR NOT NULL,
     price FLOAT(2) NOT NULL CHECK (price >= 0),
-    available BOOLEAN DEFAULT TRUE
+    available BOOLEAN DEFAULT TRUE,
+    lister UUID REFERENCES Seller(id)
 );
 
 CREATE TABLE ProductInventory (
