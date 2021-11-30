@@ -4,13 +4,54 @@
 
 <br><br>
 
-<h2>Your Product Inventory:</h2>
+<div class="row">
+  <div class="col-sm-6">
+    <ul class="list-group list-group-horizontal nav nav-pills">
+      <li class="nav-item">
+        <a class="nav-link active" aria-current="page" href="/inventory/order-fulfillment">View Order Fullfillment</a>
+      </li>
+    </ul>
+    <br>
+    <ul class="list-group list-group-horizontal nav nav-pills">
+      <li class="nav-item">
+        <a class="nav-link active" aria-current="page" href="/inventory/seller-analytics">View Your Seller Analytics</a>
+      </li>
+  </div>
+</div>
+
+<br>
+
+<h2>Products You Have Listed:</h2>
+<body> Click on product details to edit name, description, image, or price </body>
 <table class='table table-hover table-bordered container'>
   <thead class="thead-dark">
     <tr>
       <th scope="col">Product ID</th>
       <th scope="col">Product Name</th>
       <th scope="col">Description</th>
+      <th scope="col">Quantity Available</th>
+      <th scope="col">Product Image</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for inventory in listed%}
+      <tr>
+        <th scope="row">{{inventory.id}}</th>
+        <td><a href="{{ url_for('product.product', id=inventory.id) }}">{{inventory.name}}</a></td>
+        <td>{{inventory.description}}</td>
+        <td>{{inventory.quantity}}</td>
+        <td><img src={{inventory.url}} class="img-fluid rounded-start" alt="..."></td>
+      </tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+<h2>All Products You Sell:</h2>
+<table class='table table-hover table-bordered container'>
+  <thead class="thead-dark">
+    <tr>
+      <th scope="col">Product ID</th>
+      <th scope="col">Product Name</th>
       <th scope="col">Quantity Available</th>
     </tr>
   </thead>
@@ -19,7 +60,6 @@
       <tr>
         <th scope="row">{{inventory.id}}</th>
         <td><a href="{{ url_for('product.product', id=inventory.id) }}">{{inventory.name}}</a></td>
-        <td>{{inventory.description}}</td>
         <td>{{inventory.quantity}}</td>
       </tr>
     {% endfor %}
@@ -131,54 +171,7 @@
             </div>
 
 
-<h2>Your Order History:</h2>
-<table class='table table-hover table-bordered container'>
 
-  <tbody>
-    {% for order in order_history%}
-
-      <div class="card mb-4">
-        <div class="card-header">
-            <div class="container">
-                <div class="row">
-                    <div class="col float-left"><small class="text-muted">ORDER PLACED</small></div>
-                    <div class="col-8"><small class="text-muted float-end">Order #: <a href="/order/{{order.id}}" class="link-unstyled" style="text-decoration: underline;">{{order.id}}</a></small></div>
-                </div>
-                <div class="row">
-                    <div class="col float-left"><small class="text-muted">{{order.placed_at.strftime("%B %d, %Y")}}</small></div>
-                    <div class="col-8"></div>
-                </div>
-            </div>
-        </div>
-        <div class="card-body">
-        <h5 class="card-title pb-2">Order Products <span class="badge bg-secondary">{{order.status}}</span></h5>
-        
-        <div class="container">
-            <div class="row pb-2">
-                <div class="col-md-2 float-left">
-                    <img src={{order.url}} class="img-fluid rounded-start" alt="...">
-                </div>
-                <div class="col-md-10">
-                    <div class="container">
-                        <div class="row"><div class="col float-left">{{order.product}} <span class="badge bg-success">Delivered</span></div></div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-    </div>
-    </div>
-
-    {% endfor %}
-  </tbody>
-</table>
-
-{% if page and page > 1 %}
-<button type="button"><a href={{pp}}>❮Previous Page</a></button>
-{% endif %}
-{% if pages %}
-<button type="button"> <a href={{np}}> Next Page❯</a></button>
-{% endif %}
 
 
 
