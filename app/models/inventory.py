@@ -152,11 +152,9 @@ class Inventory:
         @staticmethod
         def get_listed(id):
             rows = app.db.execute('''
-    SELECT Product.id, name, quantity, seller, description, url
-    FROM Product, ProductInventory, ProductImage
-    WHERE Product.id = ProductInventory.product
-        AND ProductInventory.seller = :id
-        AND Product.lister = :id
+    SELECT Product.id, name, description, url
+    FROM Product, ProductImage
+    WHERE Product.lister = :id
         AND ProductImage.product = Product.id
     ''',
                                   id = id) 
@@ -215,6 +213,17 @@ class Inventory:
                 WHERE seller = :id
             ''',
                 id = id)
+            print(rows)      
+            return rows if rows is not None else None
+        
+        @staticmethod
+        def remove(uid, pid):
+            rows = app.db.execute( '''
+                DELETE FROM ProductInventory
+                WHERE seller = :uid AND product = :pid
+                RETURNING *
+            ''',
+                uid = uid, pid=pid)
             print(rows)      
             return rows if rows is not None else None
         

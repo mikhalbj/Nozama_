@@ -3,7 +3,6 @@
 {% block content %}
 
 <br><br>
-
 <div class="row">
   <div class="col-sm-6">
     <ul class="list-group list-group-horizontal nav nav-pills">
@@ -29,7 +28,6 @@
       <th scope="col">Product ID</th>
       <th scope="col">Product Name</th>
       <th scope="col">Description</th>
-      <th scope="col">Quantity Available</th>
       <th scope="col">Product Image</th>
     </tr>
   </thead>
@@ -39,20 +37,28 @@
         <th scope="row">{{inventory.id}}</th>
         <td><a href="{{ url_for('product.product', id=inventory.id) }}">{{inventory.name}}</a></td>
         <td>{{inventory.description}}</td>
-        <td>{{inventory.quantity}}</td>
-        <td><img src={{inventory.url}} class="img-fluid rounded-start" alt="..."></td>
+        <td style="max-width: 100px;"><img src={{inventory.url}} class="img-fluid rounded-start" alt="..."></td>
       </tr>
     {% endfor %}
   </tbody>
 </table>
+  {% if listed|length == 0 %}
+    <div class="card text-white bg-secondary mb-3" style="max-width: 800px; display: flexbox; margin-left: 10%; margin-right: 10%;">
+      <div class="card-body">
+        <p class="card-text"> You haven't created any products</p>
+      </div>
+    </div>
+  {% endif %}
 
 <h2>All Products You Sell:</h2>
+<div style="display: flexbox; margin-left: 10%; margin-right: 10%;">
 <table class='table table-hover table-bordered container'>
   <thead class="thead-dark">
     <tr>
       <th scope="col">Product ID</th>
       <th scope="col">Product Name</th>
       <th scope="col">Quantity Available</th>
+      <th scope="col">Quit Selling</th>
     </tr>
   </thead>
   <tbody>
@@ -61,11 +67,25 @@
         <th scope="row">{{inventory.id}}</th>
         <td><a href="{{ url_for('product.product', id=inventory.id) }}">{{inventory.name}}</a></td>
         <td>{{inventory.quantity}}</td>
+        <td>
+          <form action="" method="POST">
+          {{remove.csrf_token}}
+          {{remove.delete(value=inventory.id)}}
+          {{remove.submit4(class_='btn btn-danger btn-xs')}}
+          </form>
+        </td>
       </tr>
     {% endfor %}
   </tbody>
 </table>
-
+  {% if inventory|length == 0 %}
+    <div class="card text-white bg-secondary mb-3" style="max-width: 800px;">
+      <div class="card-body">
+        <p class="card-text"> You're not currently selling any products</p>
+      </div>
+    </div>
+  {% endif %}
+</div>
 
 
 <div class="col-sm-6">
@@ -83,6 +103,7 @@
   </div>
 </div>
 </div>
+
 
         <!-- Edit product modal -->
         <div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
