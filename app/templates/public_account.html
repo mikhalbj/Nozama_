@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<br><br>
+
+<div class="col-lg-8 mx-auto" id="publicContainer">
+    <header class="d-flex align-items-center pb-3 mb-3"><h2>Ben Stiller <span class="badge bg-secondary">Vendor</span></h2></header>
+    
+    <!-- Account Info -->
+    <div class="col-sm-6">
+        <div class="card">
+          <div class="card-body">
+            <h4 class="card-title">Personal Information</h4>
+            <ul class="list-group list-group-flush">
+              <li class="list-group-item"><span class="text-muted">Name: </span>{{user.firstname}} {{user.lastname}}</li>
+              <li class="list-group-item"><span class="text-muted">Account #: </span>{{user.id}}</li>
+              {% if account.vendor %}
+              <li class="list-group-item"><span class="text-muted">Email: </span>{{user.email}}</li>
+              <li class="list-group-item"><span class="text-muted">Address: </span>{{user.address}}</li>
+              {% endif %}
+            </ul>
+          </div>
+        </div>
+      </div>
+
+</div>
+
+<!-- Put review stuff below this-->
+
+<script src="{{ url_for('static', filename='js/publicAccount.js') }}"></script>
+
+{% endblock %}
+

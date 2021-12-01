@@ -219,7 +219,7 @@
 
 
     <div class="row row-cols-1 g-4">
-        <div class="col">
+        <div class="col" id='orderProducts'>
 
 
         {% for order in account.orders%}
@@ -242,28 +242,19 @@
                 <h5 class="card-title pb-2">Order Products <span class="badge bg-secondary">Shipped</span></h5>
                 
                 <div class="container">
-                    <div class="row pb-2">
-                        <div class="col-md-2 float-left">
-                            <img src="https://www.pixsy.com/wp-content/uploads/2021/04/ben-sweet-2LowviVHZ-E-unsplash-1.jpeg" class="img-fluid rounded-start" alt="...">
-                        </div>
-                        <div class="col-md-10">
-                            <div class="container">
-                                <div class="row"><div class="col float-left">Product Name <span class="badge bg-success">Delivered</span></div></div>
-                                <div class="row"><div class="col float-left"><small class="text-muted">Vendor</small></div></div>
+                    {% for product in order.products %}
+                        <div class="row pb-2">
+                            <div class="col-md-2 float-left">
+                                <img src="{{product.url}}" class="img-fluid rounded-start" alt="...">
+                            </div>
+                            <div class="col-md-10">
+                                <div class="container">
+                                    <div class="row"><div class="col float-left">{{product.name}} <span class="badge {{'bg-success' if product.status == 'delivered' else 'bg-secondary'}}">{{'Delivered' if product.status == 'delivered' else 'Shipped'}}</span></div></div>
+                                    <div class="row"><div class="col float-left"><small class="text-muted">x{{product.quantity}}</small></div></div>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                    <div class="row pb-2">
-                        <div class="col-md-2 float-left">
-                            <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRFU7U2h0umyF0P6E_yhTX45sGgPEQAbGaJ4g&usqp=CAU" class="img-fluid rounded-start" alt="...">
-                        </div>
-                        <div class="col-md-10">
-                            <div class="container">
-                                <div class="row"><div class="col float-left">Product Name <span class="badge bg-secondary">Shipped</span></div></div>
-                                <div class="row"><div class="col float-left"><small class="text-muted">Vendor</small></div></div>
-                            </div>
-                        </div>
-                    </div>
+                    {% endfor %}
                 </div>
 
             </div>
@@ -271,61 +262,13 @@
         {% endfor %}
     
         
-          
+        
 
 
-
-        <div class="card mb-4">
-            <div class="card-header">
-                <div class="container">
-                    <div class="row">
-                        <div class="col float-left"><small class="text-muted">ORDER PLACED</small></div>
-                        <div class="col"><small class="text-muted">TOTAL</small></div>
-                        <div class="col-8"><small class="text-muted float-end">Order #: 1294-23423423-23423</small></div>
-                    </div>
-                    <div class="row">
-                        <div class="col float-left"><small class="text-muted">March 12, 2021</small></div>
-                        <div class="col"><small class="text-muted">$37.81</small></div>
-                        <div class="col-8"></div>
-                    </div>
-                </div>
-            </div>
-            <div class="card-body">
-              <h5 class="card-title pb-2">Order Products <span class="badge bg-secondary">Shipped</span></h5>
-              
-              <div class="container">
-                <div class="row pb-2">
-                    <div class="col-md-2 float-left">
-                        <img src="https://www.pixsy.com/wp-content/uploads/2021/04/ben-sweet-2LowviVHZ-E-unsplash-1.jpeg" class="img-fluid rounded-start" alt="...">
-                    </div>
-                    <div class="col-md-10">
-                        <div class="container">
-                            <div class="row"><div class="col float-left">Product Name <span class="badge bg-success">Delivered</span></div></div>
-                            <div class="row"><div class="col float-left"><small class="text-muted">Vendor</small></div></div>
-                        </div>
-                    </div>
-                </div>
-                <div class="row pb-2">
-                    <div class="col-md-2 float-left">
-                        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRFU7U2h0umyF0P6E_yhTX45sGgPEQAbGaJ4g&usqp=CAU" class="img-fluid rounded-start" alt="...">
-                    </div>
-                    <div class="col-md-10">
-                        <div class="container">
-                            <div class="row"><div class="col float-left">Product Name <span class="badge bg-secondary">Shipped</span></div></div>
-                            <div class="row"><div class="col float-left"><small class="text-muted">Vendor</small></div></div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-          </div>
         </div>
 
-
-
-
         <nav aria-label="Page navigation example">
-            <ul class="pagination justify-content-center">
+            <ul class="pagination justify-content-center" id="paginationList">
               <li class="page-item disabled">
                 <a class="page-link" href="#" aria-label="Previous">
                   <span aria-hidden="true">&laquo;</span>
@@ -342,12 +285,18 @@
             </ul>
         </nav>
 
+        <header class="d-flex align-items-center pb-3 mb-3 mt-5"><h2>Analytics</h2></header>
 
 
-        </div>
+        <div id="plotContainer"></div>
+        
         
 
 </div>
+
+<script src="https://d3js.org/d3.v7.min.js"></script>
+<script src="{{ url_for('static', filename='js/observable.js') }}"></script>
+<script src="{{ url_for('static', filename='js/account.js') }}"></script>
 
 <!-- 
 {% if current_user.is_authenticated %}
