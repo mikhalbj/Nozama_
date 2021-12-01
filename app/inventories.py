@@ -43,12 +43,13 @@ def inventory():
     listed = Inventory.get_listed(id)
 
     new_form = NewProdForm()
-    # available_tags = Inventory.get_tags()
-    # print(available_tags)
-    # tags_list = [(i.name, i.id) for i in available_tags]
-    # print("tags created")
-    # print(tags_list)
-    # new_form.tag.choices = tags_list
+    available_tags = Inventory.get_tags()
+    print(available_tags)
+    tags_list = [ (i.id) for i in available_tags]
+    print("tags created")
+    print(tags_list)
+    print(type(tags_list))
+    new_form.tag.choices = tags_list
     edit_form = EditInventoryForm()
     quantity_form = EditQuantityForm()
 
@@ -104,7 +105,7 @@ class NewProdForm(FlaskForm):
     price = DecimalField(_l('Price'), places = 2, validators=[DataRequired()])
     quantity = IntegerField(_l('Quantity'), validators=[DataRequired()])
     url = URLField(validators=[url()])
-   # tag = SelectField(u'Tag', coerce = int)
+    tag =  SelectField(u'Tag')
     submit1 = SubmitField(_l('Add Product'))
 
 class EditInventoryForm(FlaskForm):

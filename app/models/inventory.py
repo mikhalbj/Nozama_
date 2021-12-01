@@ -221,7 +221,7 @@ class Inventory:
         @staticmethod
         def get_tags():
             rows = app.db.execute('''
-                SELECT name, id
+                SELECT id
                 FROM Tag
         ''')
             print(rows)
