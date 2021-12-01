@@ -2,7 +2,7 @@ from flask import render_template, redirect, url_for, flash, request
 from werkzeug.urls import url_parse
 from flask_login import login_user, logout_user, current_user
 from flask_wtf import FlaskForm
-from wtforms import StringField, DecimalField, PasswordField, BooleanField, SubmitField, IntegerField
+from wtforms import StringField, DecimalField, PasswordField, BooleanField, SubmitField, IntegerField, SelectField
 from wtforms.validators import ValidationError, DataRequired, Email, EqualTo, Regexp, url
 from flask_wtf.html5 import URLField
 from wtforms.widgets.html5 import URLInput, Input
@@ -20,13 +20,15 @@ bp = Blueprint('inventories', __name__)
 @bp.route('/inventory/order-fulfillment', methods = ['GET', 'POST'])
 def order_fulfillment():
     id = current_user.id
-    order_history = Inventory.get_order_history(id)
+    order_history = Inventory.get_order_history('27e30225-5d00-4383-a8d2-fa64e1cc8f73')
+    #replace later with id
     return render_template('order-fulfillment.html', order_history = order_history)
 
 @bp.route('/inventory/seller-analytics', methods = ['GET', 'POST'])
 def seller_analytics():
     id = current_user.id
-    analytics = Inventory.get_seller_analytics('7f52ecc5-18ca-44d4-bc6c-55c88267e09f')
+    analytics = Inventory.get_seller_analytics('27e30225-5d00-4383-a8d2-fa64e1cc8f73')
+    #replace later with id
     print(analytics)
     print("doggos")
     return render_template('seller-analytics.html', analytics = analytics)
@@ -41,6 +43,12 @@ def inventory():
     listed = Inventory.get_listed(id)
 
     new_form = NewProdForm()
+    # available_tags = Inventory.get_tags()
+    # print(available_tags)
+    # tags_list = [(i.name, i.id) for i in available_tags]
+    # print("tags created")
+    # print(tags_list)
+    # new_form.tag.choices = tags_list
     edit_form = EditInventoryForm()
     quantity_form = EditQuantityForm()
 
@@ -96,6 +104,7 @@ class NewProdForm(FlaskForm):
     price = DecimalField(_l('Price'), places = 2, validators=[DataRequired()])
     quantity = IntegerField(_l('Quantity'), validators=[DataRequired()])
     url = URLField(validators=[url()])
+   # tag = SelectField(u'Tag', coerce = int)
     submit1 = SubmitField(_l('Add Product'))
 
 class EditInventoryForm(FlaskForm):

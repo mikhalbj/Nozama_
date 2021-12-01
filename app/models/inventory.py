@@ -128,7 +128,7 @@ class Inventory:
             rows = app.db.execute('''
     SELECT AccountOrderProduct.product, quantity, AccountOrderProduct.price, status, placed_at, shipped_at, delivered_at, url, AccountOrder.id, name
     FROM AccountOrderProduct, AccountOrder, ProductImage, Product
-    WHERE seller = '7f52ecc5-18ca-44d4-bc6c-55c88267e09f'
+    WHERE seller = :id
     AND AccountOrder.id = account_order
     AND ProductImage.product = AccountOrderProduct.product
     AND Product.id = AccountOrderProduct.product
@@ -217,5 +217,16 @@ class Inventory:
                 id = id)
             print(rows)      
             return rows if rows is not None else None
+
+        @staticmethod
+        def get_tags():
+            rows = app.db.execute('''
+                SELECT name, id
+                FROM Tag
+        ''')
+            print(rows)
+            return rows if rows is not None else None
+
+    
         
         
