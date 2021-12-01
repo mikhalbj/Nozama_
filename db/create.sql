@@ -134,13 +134,13 @@ AFTER INSERT ON Account
 FOR EACH ROW
 EXECUTE PROCEDURE TF_InitBalance();
 
--- Trigger to maintain availability field in Product during transactions
+-- Trigger to maintain availability field in Product during INSERT / UPDATE transactions
 CREATE FUNCTION TF_WatchAvail() RETURNS TRIGGER AS $$
 BEGIN
   IF (SELECT SUM(quantity) FROM ProductInventory WHERE product = NEW.product GROUP BY product) = 0 AND
     (SELECT available FROM Product WHERE id = NEW.product) IS True THEN
     UPDATE Product SET available = False WHERE Product.id = NEW.product;
-  ELSIF (SELECT SUM(quantity) FROM ProductInventory WHERE product = NEW.product GROUP BY product) <> 0 AND 
+  ELSIF (SELECT SUM(quantity) FROM ProductInventory WHERE product = NEW.product GROUP BY product) > 0 AND 
     (SELECT available FROM Product WHERE id = NEW.product) IS False THEN
     UPDATE Product SET available = True WHERE Product.id = NEW.product;
   END IF;
@@ -153,6 +153,23 @@ CREATE TRIGGER TG_WatchAvail
 AFTER INSERT OR UPDATE ON ProductInventory
 FOR EACH ROW
 EXECUTE PROCEDURE TF_WatchAvail();
+
+-- Trigger to maintain availability field in Product during DELETE transactions
+CREATE FUNCTION TF_WatchAvail_D() RETURNS TRIGGER AS $$
+BEGIN
+  IF NOT EXISTS (SELECT SUM(quantity) FROM ProductInventory WHERE product = OLD.product GROUP BY product) AND
+    (SELECT available FROM Product WHERE id = OLD.product) IS True THEN
+    UPDATE Product SET available = False WHERE Product.id = OLD.product;
+  END IF;
+
+  RETURN OLD;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER TG_WatchAvail_D
+AFTER DELETE ON ProductInventory
+FOR EACH ROW
+EXECUTE PROCEDURE TF_WatchAvail_D();
 
 -- 
 -- View that maps new db design to template schema. Should be replaced once python code is rewritten

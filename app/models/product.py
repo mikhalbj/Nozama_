@@ -72,7 +72,7 @@ WHERE available = :available
         WHERE product = :id
         GROUP BY product''', id=id)
         print(rows)
-        return [row[0] for row in rows]
+        return rows[0] if rows else None
     
     @staticmethod
     def search(strng):
