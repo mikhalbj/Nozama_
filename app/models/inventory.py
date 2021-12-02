@@ -221,9 +221,25 @@ class Inventory:
         @staticmethod
         def get_seller_analytics(id):
             rows = app.db.execute( '''
-                SELECT count(account_order)
+                SELECT count(account_order) as count_order, sum(quantity) as num_items
                 FROM AccountOrderProduct
                 WHERE seller = :id
+            ''',
+                id = id)
+            print(rows)      
+            return rows if rows is not None else None
+        
+        @staticmethod
+        def popular_item(id):
+            rows = app.db.execute( '''
+                SELECT AccountOrderProduct.product, COUNT(AccountOrderProduct.product) AS value_occurrence, url, name 
+                FROM AccountOrderProduct, ProductImage, Product
+                WHERE seller = :id
+                AND AccountOrderProduct.product = ProductImage.product
+                AND AccountOrderProduct.product = Product.id
+                GROUP BY AccountOrderProduct.product, url, name
+                ORDER BY value_occurrence DESC
+                LIMIT 3;
             ''',
                 id = id)
             print(rows)      

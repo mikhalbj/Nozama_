@@ -20,7 +20,27 @@
   </div>
 
   <br><br>
-  <h2>Number of Products Sold To Date: {{analytics}}</h2>
-
+  {% for a in analytics%}
+  <h2>Number of orders to date: {{a.count_order}}</h2>
+  <h2>Number of products sold to date: {{a.num_items}}</h2>
+  {% endfor %}
+  <h2>Your 3 most popular items: </h2>
+  {% for p in popular_item%}
+  <div class="container">
+    <div class="row pb-2">
+        <div class="col-md-2 float-left">
+            <img src={{p.url}} class="img-fluid rounded-start" alt="...">
+        </div>
+        <div class="col-md-10">
+            <div class="container">
+                <div class="row"><div class="col float-left">{{p.name}} <span class="badge bg-secondary">{{p.status}}</span></div></div>
+                <br>
+                <p class="card-text">Quantity sold: {{p.value_occurrence}}</p>
+                <p class = "card-text"> Product name: {{p.product}}</p>
+                </div>
+        </div>
+    </div>
+</div>
+  {% endfor %}
   
 {% endblock %}

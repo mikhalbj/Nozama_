@@ -28,8 +28,8 @@ def seller_analytics():
     id = current_user.id
     analytics = Inventory.get_seller_analytics(id)
     print(analytics)
-    print("doggos")
-    return render_template('seller-analytics.html', analytics = analytics)
+    popular_item = Inventory.popular_item(id)
+    return render_template('seller-analytics.html', analytics = analytics, popular_item = popular_item)
 
 @bp.route('/inventory/shipped/<account_order>/<product>', methods=['GET', 'POST'])
 def shipped(account_order, product):

@@ -21,7 +21,7 @@
 
 <br><br>
 
-<h2>Your Order History:</h2>
+<h2>Your Order Fulfillment History:</h2>
 <table class='table table-hover table-bordered container'>
 
   <tbody>
@@ -52,10 +52,17 @@
                         <div class="row"><div class="col float-left">{{order.name}} <span class="badge bg-secondary">{{order.status}}</span></div></div>
                         <br>
                         <p class="card-text">Quantity ordered: {{order.quantity}}</p>
+                        {% if order.status != "Shipped" and order.status != "Delivered" %}
                         <a href="{{ url_for('inventories.shipped', account_order = order.id, product = order.product) }}" type="button" class="btn btn-light">Mark Shipped</a>
+                        {% endif %}
+                        {% if order.status == "Shipped" %}
                         <p class="card-text">Date Shipped: {{order.shipped_at.strftime('%Y-%m-%d')}}</p>
                         <a href="{{ url_for('inventories.delivered', account_order = order.id, product = order.product) }}" type="button" class="btn btn-light">Mark Delivered</a>
+                        {% endif %}
+                        {% if order.status == "Delivered" %}
+                        <p class="card-text">Date Shipped: {{order.shipped_at.strftime('%Y-%m-%d')}}</p>
                         <p class="card-text">Date Delivered: {{order.delivered_at.strftime('%Y-%m-%d')}}</p>
+                        {% endif %}
                       </div>
                 </div>
             </div>
