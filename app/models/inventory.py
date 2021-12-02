@@ -1,6 +1,7 @@
 # Creating the inventory page based on a typed-in seller
 
 from flask import current_app as app
+import datetime;
 
 class Inventory:
         def __init__(self, id, prod_id, name, available):
@@ -22,7 +23,7 @@ class Inventory:
             return rows if rows is not None else None
 
         @staticmethod
-        def add_prod(name, description, price, quantity, seller, url):
+        def add_prod(name, description, price, quantity, seller, url, tag):
             rows = app.db.execute('''
     INSERT INTO Product(name, description, price, available, lister)
     VALUES(:name, :description, :price, true, :id)
@@ -49,6 +50,13 @@ class Inventory:
     ''',
                                   id = id, 
                                   url = url)
+            rows = app.db.execute('''
+    INSERT INTO ProductTag(tag, product)
+    VALUES(:tag, :product)
+    RETURNING product
+    ''',
+                                tag = tag,
+                                product = id)
             return Inventory.get(seller)
         
         @staticmethod
@@ -164,11 +172,11 @@ class Inventory:
             return rows if rows is not None else None
 
         @staticmethod
-        def update_shipped(account_order, product, seller, delivered_at):
+        def update_shipped(account_order, product, seller):
             try:
                 rows = app.db.execute('''
                     UPDATE AccountOrderProduct
-                    SET shipped_at = :time
+                    SET shipped_at = :time, status = :status
                     WHERE account_order = :account_order 
                     AND product = :product
                     AND seller = :seller
@@ -177,20 +185,21 @@ class Inventory:
                     time = datetime.datetime.now(),
                     account_order = account_order,
                     product = product,
-                    seller = id
+                    seller = seller,
+                    status = 'Shipped'
                     )
-
                 print(rows)
+                print("Shipped!")
             except Exception as err:
                 print(err)
             return Inventory.get(seller)
     
         @staticmethod
-        def update_delivered(account_order, product, seller, delivered_at):
+        def update_delivered(account_order, product, seller):
             try:
                 rows = app.db.execute('''
                     UPDATE AccountOrderProduct
-                    SET delivered_at = :time
+                    SET delivered_at = :time, status = :status
                     WHERE account_order = :account_order 
                     AND product = :product
                     AND seller = :seller
@@ -199,10 +208,12 @@ class Inventory:
                     time = datetime.datetime.now(),
                     account_order = account_order,
                     product = product,
-                    seller = id
+                    seller = seller,
+                    status = 'Delivered'
                     )
 
                 print(rows)
+                print("Delivered!")
             except Exception as err:
                 print(err)
             return Inventory.get(seller)
@@ -221,7 +232,7 @@ class Inventory:
         @staticmethod
         def get_tags():
             rows = app.db.execute('''
-                SELECT id
+                SELECT id, name
                 FROM Tag
         ''')
             print(rows)

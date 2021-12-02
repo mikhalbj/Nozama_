@@ -40,7 +40,7 @@
             </div>
         </div>
         <div class="card-body">
-        <h5 class="card-title pb-2">Order Products <span class="badge bg-secondary">{{order.status}}</span></h5>
+        <h5 class="card-title pb-2">Product Ordered</h5>
         
         <div class="container">
             <div class="row pb-2">
@@ -49,8 +49,14 @@
                 </div>
                 <div class="col-md-10">
                     <div class="container">
-                        <div class="row"><div class="col float-left">{{order.name}} <span class="badge bg-success">Delivered</span></div></div>
-                    </div>
+                        <div class="row"><div class="col float-left">{{order.name}} <span class="badge bg-secondary">{{order.status}}</span></div></div>
+                        <br>
+                        <p class="card-text">Quantity ordered: {{order.quantity}}</p>
+                        <a href="{{ url_for('inventories.shipped', account_order = order.id, product = order.product) }}" type="button" class="btn btn-light">Mark Shipped</a>
+                        <p class="card-text">Date Shipped: {{order.shipped_at.strftime('%Y-%m-%d')}}</p>
+                        <a href="{{ url_for('inventories.delivered', account_order = order.id, product = order.product) }}" type="button" class="btn btn-light">Mark Delivered</a>
+                        <p class="card-text">Date Delivered: {{order.delivered_at.strftime('%Y-%m-%d')}}</p>
+                      </div>
                 </div>
             </div>
         </div>
