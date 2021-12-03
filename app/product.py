@@ -46,7 +46,7 @@ def product(id):
     else:
         image = "https://cdn.w600.comps.canstockphoto.com/pile-of-random-stuff-eps-vector_csp24436545.jpg"
     quantity = Product.get_inventory(id)[0]
-    reviews = Review.get(id)
+    reviews = Review.getProdRev(id)
     return render_template('product_details.html', title='See Product', product=product, imgurl=image, num=quantity, cartform=form, review=reviews)
 
 @bp.route('/search/<argterm>', methods=['GET', 'POST'])

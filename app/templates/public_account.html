@@ -30,5 +30,31 @@
 
 <script src="{{ url_for('static', filename='js/publicAccount.js') }}"></script>
 
+<h2>Reviews:</h2> 
+
+<table class='table table-hover table-bordered container'>
+  <thead><tr>
+    <th>Review ID</th>
+    <th>Title</th>
+    <th>Author</th>
+    <th>Rating</th>
+    <th>Description</th>
+    <th>Time</th>
+    <th>Edited</th>
+  </tr></thead>
+  <tbody>
+    {% for r in review%}
+    <tr>
+      <td scope="row">{{r.id}}</td>
+      <td>{{r.title}}</td>
+      <td>{{r.author}}</td>
+      <td>{{r.rating}}</td>
+      <td>{{r.description}}</td>
+      <td>{{r.time}}</td>
+      <td>{{r.edited}}</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+  </table>
 {% endblock %}
 

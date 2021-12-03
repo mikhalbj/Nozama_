@@ -11,6 +11,7 @@ import json
 from .models.user import User
 from .models.order import Order
 from .models.account import Account
+from .models.reviewsmod import Review
 
 
 from flask import Blueprint
@@ -49,6 +50,7 @@ def public(id):
 
     user = User.get(id)
     account = Account.get(id)
+    review = Review.getSellRev(id)
 
     return render_template('public_account.html', user=user, account=account)
 
