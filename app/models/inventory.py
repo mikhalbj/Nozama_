@@ -228,6 +228,18 @@ class Inventory:
                 id = id)
             print(rows)      
             return rows if rows is not None else None
+
+        # @staticmethod
+        # def avg_ship(id):
+        #     rows = app.db.execute( '''
+        #         SELECT delivered_at - shipped_at as diff
+        #         FROM AccountOrderProduct
+        #         WHERE seller = :id
+        #         GROUP BY delivered_at, shipped_at
+        #     ''',
+        #         id = id)
+        #     print(rows)      
+        #     return rows if rows is not None else None
         
         @staticmethod
         def popular_item(id):
@@ -244,6 +256,18 @@ class Inventory:
                 id = id)
             print(rows)      
             return rows if rows is not None else None
+
+        # @staticmethod
+        # def get_num_reviews(id):
+        #     rows = app.db.execute( '''
+        #         SELECT count(review) as number
+        #         FROM SellerReview
+        #         WHERE seller = :id
+        
+        #     ''',
+        #         id = id)
+        #     print(rows)      
+        #     return rows if rows is not None else None
 
         @staticmethod
         def get_tags():

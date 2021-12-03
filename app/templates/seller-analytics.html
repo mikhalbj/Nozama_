@@ -2,30 +2,60 @@
 
 {% block content %}
 
-<br><br>
 
 <div class="row">
-    <div class="col-sm-6">
-      <ul class="list-group list-group-horizontal nav nav-pills">
-        <li class="nav-item">
-          <a class="nav-link active" aria-current="page" href="/inventory">View Inventory</a>
-        </li>
-      </ul>
-      <br>
-      <ul class="list-group list-group-horizontal nav nav-pills">
-        <li class="nav-item">
-          <a class="nav-link active" aria-current="page" href="/inventory/order-fulfillment">View Order Fulfillment</a>
-        </li>
+  <div class="col-sm-6" style="display: flex; flex-direction: row;">
+    <ul class="list-group list-group-horizontal nav nav-pills">
+      <li class="nav-item">
+        <a class="nav-link active" aria-current="page" href="/inventory" style="margin: 20px;">View Inventory</a>
+      </li>
+    </ul>
+    <br>
+    <ul class="list-group list-group-horizontal nav nav-pills">
+      <li class="nav-item">
+        <a class="nav-link active" aria-current="page" href="/inventory/order-fulfillment" style="margin: 20px;">View Order Fulfillment</a>
+      </li>
+  </div>
+</div>
+
+
+<div class="row">
+  {% for a in analytics%}
+  <div style="display: flex; flex-direction: row;">
+  <div class="card" align-items = "center";>
+      <div class="card-body">
+        <h4 class="card-title">Number of Orders to Date:</h4>
+        <h2>{{a.count_order}}</h2>
+      </div>
+    </div>
+    <div class="card" align-items = "center";>
+      <div class="card-body">
+        <h4 class="card-title">Number of Products Sold:</h4>
+        <h2>{{a.num_items}}</h2>
+      </div>
+    </div>
+    <div class="card" align-items = "center";>
+      <div class="card-body">
+        <h4 class="card-title">Number of Seller Reviews:</h4>
+        <h2></h2>
+      </div>
+    </div>
+    <div class="card" align-items = "center";>
+      <div class="card-body">
+        <h4 class="card-title">Average Seller Rating:</h4>
+        <h2></h2>
+      </div>
     </div>
   </div>
+  {% endfor %}
+
+
 
   <br><br>
-  {% for a in analytics%}
-  <h2>Number of orders to date: {{a.count_order}}</h2>
-  <h2>Number of products sold to date: {{a.num_items}}</h2>
-  {% endfor %}
+
   <h2>Your 3 most popular items: </h2>
   {% for p in popular_item%}
+
   <div class="container">
     <div class="row pb-2">
         <div class="col-md-2 float-left">
@@ -33,10 +63,9 @@
         </div>
         <div class="col-md-10">
             <div class="container">
-                <div class="row"><div class="col float-left">{{p.name}} <span class="badge bg-secondary">{{p.status}}</span></div></div>
                 <br>
-                <p class="card-text">Quantity sold: {{p.value_occurrence}}</p>
-                <p class = "card-text"> Product name: {{p.product}}</p>
+                <p class = "card-text"> Product name: {{p.name}}</p>
+                <p class="card-text">Number of orders with this product: {{p.value_occurrence}}</p>
                 </div>
         </div>
     </div>

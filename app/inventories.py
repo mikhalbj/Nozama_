@@ -7,6 +7,7 @@ from wtforms.validators import ValidationError, DataRequired, Email, EqualTo, Re
 from flask_wtf.html5 import URLField
 from wtforms.widgets.html5 import URLInput, Input
 from flask_babel import _, lazy_gettext as _l
+from datetime import date
 
 
 from .models.inventory import Inventory
@@ -29,6 +30,9 @@ def seller_analytics():
     analytics = Inventory.get_seller_analytics(id)
     print(analytics)
     popular_item = Inventory.popular_item(id)
+    #avg_ship = Inventory.avg_ship(id)
+    #num_reviews = Inventory.get_num_reviews(id)
+    #print(num_reviews)
     return render_template('seller-analytics.html', analytics = analytics, popular_item = popular_item)
 
 @bp.route('/inventory/shipped/<account_order>/<product>', methods=['GET', 'POST'])
