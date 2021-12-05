@@ -44,10 +44,11 @@
           <form action="" method="post">
               {{ edit_form.csrf_token }}
               <div class="d-flex justify-content-left mb-3">
-                  <p>Product name: {{edit_form.name}}</p>
-                  <p>Description: {{edit_form.description}}</p>
-                  <p>Price: {{edit_form.price}}</p>
-                  <p>URL: {{edit_form.url}}</p>
+                  <p>Product name: {{edit_form.name(value = product.name)}}</p>
+                  <p>Description: {{edit_form.description(value = product.description)}}</p>
+                  <p>Price: {{edit_form.price(value = product.price)}}</p>
+                  <p>URL: {{edit_form.url(value = imgurl)}}</p>
+                  <p>Tag: {{edit_form.tag(value = product.tag)}}</p>
               </div>
 
               <div class="d-grid gap-2">
