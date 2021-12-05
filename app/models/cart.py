@@ -253,3 +253,17 @@ class Cart:
             ''',
             id = id)
         return rows[0][0] if rows else 0.0
+
+    @staticmethod
+    def editQuantity(account, product, quantity):
+        rows = app.db.execute('''
+            UPDATE CartProduct
+            SET quantity = :quantity
+            WHERE product = :product AND account = :account
+            RETURNING *
+            ''',
+            quantity = quantity,
+            product = product,
+            account = account
+            )
+        return rows if rows is not None else None

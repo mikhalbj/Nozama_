@@ -33,6 +33,11 @@ class RemoveFromSaved(FlaskForm):
     delete1 = HiddenField(_l('Product ID'), validators = [DataRequired()])
     submit2 = SubmitField(_l('X'))
 
+class EditQuantity(FlaskForm):
+    product1 = HiddenField(_l('Product ID'), validators = [DataRequired()])
+    quantity1 = IntegerField("Quantity", validators=[DataRequired()])
+    submit3 = SubmitField(_l('Save'))
+
 @bp.route('/cart', methods=['GET', 'POST'])
 def cart():
     if not current_user.is_authenticated:
@@ -45,9 +50,14 @@ def cart():
     remove = RemoveItem()
     move = MoveToCart()
     rfs = RemoveFromSaved()
+    editquant = EditQuantity()
     
     if remove.submit.data and remove.validate():
         Cart.removeProduct(current_user.id, remove.delete.data)
+        return redirect(url_for('carts.cart'))
+
+    if editquant.submit3.data and editquant.validate():
+        Cart.editQuantity(current_user.id, editquant.product1.data, editquant.quantity1.data)
         return redirect(url_for('carts.cart'))
 
     if rfs.submit2.data and rfs.validate():
@@ -69,5 +79,5 @@ def cart():
                 Cart.place_order(current_user.id, time)
         return redirect(url_for('carts.cart'))
 
-    return render_template('cart.html', title='Cart', cart=cart, total=total, saved=saved, order_form=order_form, remove=remove, move=move, rfs=rfs)
+    return render_template('cart.html', title='Cart', cart=cart, total=total, saved=saved, order_form=order_form, remove=remove, move=move, rfs=rfs, editquant=editquant)
 
