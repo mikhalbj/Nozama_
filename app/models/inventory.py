@@ -1,6 +1,7 @@
 # Creating the inventory page based on a typed-in seller
 
 from flask import current_app as app
+import datetime;
 
 class Inventory:
         def __init__(self, id, prod_id, name, available):
@@ -22,7 +23,7 @@ class Inventory:
             return rows if rows is not None else None
 
         @staticmethod
-        def add_prod(name, description, price, quantity, seller, url):
+        def add_prod(name, description, price, quantity, seller, url, tag):
             rows = app.db.execute('''
     INSERT INTO Product(name, description, price, available, lister)
     VALUES(:name, :description, :price, true, :id)
@@ -49,6 +50,13 @@ class Inventory:
     ''',
                                   id = id, 
                                   url = url)
+            rows = app.db.execute('''
+    INSERT INTO ProductTag(tag, product)
+    VALUES(:tag, :product)
+    RETURNING product
+    ''',
+                                tag = tag,
+                                product = id)
             return Inventory.get(seller)
         
         @staticmethod
@@ -126,9 +134,11 @@ class Inventory:
         @staticmethod
         def get_order_history(id):
             rows = app.db.execute('''
-    SELECT AccountOrderProduct.product, quantity, AccountOrderProduct.price, status, placed_at, shipped_at, delivered_at, url, AccountOrder.id, name
+    SELECT AccountOrderProduct.product, quantity, AccountOrderProduct.price, status, 
+    placed_at, shipped_at, delivered_at, url, AccountOrder.id, name, AccountOrder.account as customer,
+    (quantity * AccountOrderProduct.price) AS cost 
     FROM AccountOrderProduct, AccountOrder, ProductImage, Product
-    WHERE seller = '7f52ecc5-18ca-44d4-bc6c-55c88267e09f'
+    WHERE seller = :id
     AND AccountOrder.id = account_order
     AND ProductImage.product = AccountOrderProduct.product
     AND Product.id = AccountOrderProduct.product
@@ -164,11 +174,11 @@ class Inventory:
             return rows if rows is not None else None
 
         @staticmethod
-        def update_shipped(account_order, product, seller, delivered_at):
+        def update_shipped(account_order, product, seller):
             try:
                 rows = app.db.execute('''
                     UPDATE AccountOrderProduct
-                    SET shipped_at = :time
+                    SET shipped_at = :time, status = :status
                     WHERE account_order = :account_order 
                     AND product = :product
                     AND seller = :seller
@@ -177,20 +187,21 @@ class Inventory:
                     time = datetime.datetime.now(),
                     account_order = account_order,
                     product = product,
-                    seller = id
+                    seller = seller,
+                    status = 'Shipped'
                     )
-
                 print(rows)
+                print("Shipped!")
             except Exception as err:
                 print(err)
             return Inventory.get(seller)
     
         @staticmethod
-        def update_delivered(account_order, product, seller, delivered_at):
+        def update_delivered(account_order, product, seller):
             try:
                 rows = app.db.execute('''
                     UPDATE AccountOrderProduct
-                    SET delivered_at = :time
+                    SET delivered_at = :time, status = :status
                     WHERE account_order = :account_order 
                     AND product = :product
                     AND seller = :seller
@@ -199,10 +210,12 @@ class Inventory:
                     time = datetime.datetime.now(),
                     account_order = account_order,
                     product = product,
-                    seller = id
+                    seller = seller,
+                    status = 'Delivered'
                     )
 
                 print(rows)
+                print("Delivered!")
             except Exception as err:
                 print(err)
             return Inventory.get(seller)
@@ -210,12 +223,63 @@ class Inventory:
         @staticmethod
         def get_seller_analytics(id):
             rows = app.db.execute( '''
-                SELECT count(account_order)
+                SELECT count(account_order) as count_order, sum(quantity) as num_items
                 FROM AccountOrderProduct
                 WHERE seller = :id
             ''',
                 id = id)
             print(rows)      
             return rows if rows is not None else None
+
+        # @staticmethod
+        # def avg_ship(id):
+        #     rows = app.db.execute( '''
+        #         SELECT delivered_at - shipped_at as diff
+        #         FROM AccountOrderProduct
+        #         WHERE seller = :id
+        #         GROUP BY delivered_at, shipped_at
+        #     ''',
+        #         id = id)
+        #     print(rows)      
+        #     return rows if rows is not None else None
+        
+        @staticmethod
+        def popular_item(id):
+            rows = app.db.execute( '''
+                SELECT AccountOrderProduct.product, COUNT(AccountOrderProduct.product) AS value_occurrence, url, name 
+                FROM AccountOrderProduct, ProductImage, Product
+                WHERE seller = :id
+                AND AccountOrderProduct.product = ProductImage.product
+                AND AccountOrderProduct.product = Product.id
+                GROUP BY AccountOrderProduct.product, url, name
+                ORDER BY value_occurrence DESC
+                LIMIT 3;
+            ''',
+                id = id)
+            print(rows)      
+            return rows if rows is not None else None
+
+        # @staticmethod
+        # def get_num_reviews(id):
+        #     rows = app.db.execute( '''
+        #         SELECT count(review) as number
+        #         FROM SellerReview
+        #         WHERE seller = :id
+        
+        #     ''',
+        #         id = id)
+        #     print(rows)      
+        #     return rows if rows is not None else None
+
+        @staticmethod
+        def get_tags():
+            rows = app.db.execute('''
+                SELECT id, name
+                FROM Tag
+        ''')
+            print(rows)
+            return rows if rows is not None else None
+
+    
         
         
