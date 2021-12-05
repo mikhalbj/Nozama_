@@ -199,9 +199,19 @@ class Cart:
         return False if rows else True
 
     @staticmethod
-    def remove(account_id, product):
+    def removeProduct(account_id, product):
         rows = app.db.execute('''
             DELETE FROM CartProduct WHERE account = :account_id AND product = :product RETURNING account
+            ''',
+            account_id = account_id,
+            product = product
+            )
+        return rows if rows is not None else None
+    
+    @staticmethod
+    def removeSaved(account_id, product):
+        rows = app.db.execute('''
+            DELETE FROM SavedProduct WHERE account = :account_id AND product = :product RETURNING account
             ''',
             account_id = account_id,
             product = product

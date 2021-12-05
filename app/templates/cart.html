@@ -96,10 +96,10 @@
         <td>
           <form action="" method="POST">
           {{remove.csrf_token}}
-          <input id="productId" name="productId" type="hidden" value="{{cart.id}}">
-          <button class="btn btn-danger btn-xs" type="submit"> X </button>
+          {{remove.delete(value=cart.id)}}
+          {{remove.submit(class_='btn btn-danger btn-xs')}}
           </form>
-  </td>
+        </td>
       </tr>
     {% endfor %}
   </tbody>
@@ -111,6 +111,8 @@
     <tr>
       <th scope="col">Product ID</th>
       <th scope="col">Product Name</th>
+      <th scope="col">Add to Cart</th>
+      <th scope="col">Remove</th>
     </tr>
   </thead>
   <tbody>
@@ -118,12 +120,39 @@
       <tr>
         <td scope="row"><a href="/product/{{product.id}}" class="link-unstyled" style="text-decoration: underline;">{{product.id}}</a></th>
         <td>{{product.name}}</td>
+        <td><button type="button" class="btn btn-primary mr-2" data-bs-toggle="modal" data-bs-target="#cModal">Add to Cart</button></td>
+        <td><form action="" method="POST">
+          {{rfs.csrf_token}}
+          {{rfs.delete1(value=product.id)}}
+          {{rfs.submit2(class_='btn btn-danger btn-xs')}}
+        </form></td>
       </tr>
+      <div class="modal fade" id="cModal" tabindex="-1" aria-labelledby="cModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+            <h5 class="modal-title" id="cModalLabel">Add to Cart</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            
+            <div class="modal-body">
+              <form action="" method="POST">
+              {{move.csrf_token}}
+              <div class="d-flex justify-content-left mb-3">
+                <p><h1>{{move.quantity(placeholder='Quantity')}}</h1></p>
+            </div>
+              {{move.product(value=product.id)}}
+              <div class="d-grid gap-2">
+                {{move.submit1(class_='btn btn-success btn-large')}}
+              </div>
+              </form>
+            </div>
     {% endfor %}
   </tbody>
 </table>
 
 {% endblock %}
+
 
 
 
