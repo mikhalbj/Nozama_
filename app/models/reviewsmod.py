@@ -39,9 +39,9 @@ class Review:
 
 #add a PRODUCT review
     @staticmethod
-    def add_prodrev(title, author, description, written_at, rating): #I dont think that I need author here but will need to autoppopulate some how on entry
+    def add_prodrev(title, author, description, rating): #I dont think that I need author here but will need to autoppopulate some how on entry
         rows = app.db.execute('''
-    INSERT INTO Review(title, author, description, written_at, edited_at, rating)
+    INSERT INTO Review(title, author, description, rating)
     VALUES(:title, :author, :description, :written_at, none, :rating)
     RETURNING id
     ''',
@@ -84,7 +84,7 @@ class Review:
         return Review.get(author)
 
 
-#get all reviews written by one user
+#get all reviews written by one user FOR ALL PRODUCTS
     @staticmethod
     def review_history(id):
             rows = app.db.execute('''
@@ -98,6 +98,22 @@ class Review:
             print(rows)      
             return rows if rows is not None else None
 
+#get all reviews written by one user FOR ONE PRODUCT
+    @staticmethod
+    def review_history(UID, PID):
+            rows = app.db.execute('''
+    SELECT ProductReview.product, author, description, written_at, edited_at, rating
+    FROM ProductReview, Review
+    WHERE author = :UID
+    AND ProductReview.review = Review.id
+    AND ProductReview.product = :PID
+    ORDER BY rating
+    ''',
+                                  id = id) 
+            print(rows)      
+            return rows if rows is not None else None
+
+
     @staticmethod
     def is_lister(id):
             rows = app.db.execute('''
@@ -108,3 +124,85 @@ class Review:
                                   id=id) 
             print(rows)
             return True if len(rows) != 0 else False
+
+    #IF A user has bought a product 
+    @staticmethod
+    def hasBought(UID, PID):
+            rows = app.db.execute('''
+    SELECT id
+    FROM AccountOrderProduct, Product, AccountOrder
+    WHERE AccountOrderProduct.product = :PID 
+    AND Product.id = :PID
+    AND AccountOrder.account = :UID
+    AND AccountOrder.id = AccountOrderProduct.account_order
+    ''',
+                                  id=id) 
+            print(rows)
+            return True if len(rows) != 0 else False
+
+#IF a user has bought from a seller
+    @staticmethod
+    def hasBoughtSeller(UID, SID):
+            rows = app.db.execute('''
+    SELECT id
+    FROM AccountOrderProduct, Product, AccountOrder
+    WHERE Product.seller = :SID 
+    AND AccountOrder.account = :UID
+    AND AccountOrder.id = AccountOrderProduct.account_order
+    ''',
+                                  id=id) 
+            print(rows)
+            return True if len(rows) != 0 else False
+
+
+##Check If a person has reviewed a product:
+    @staticmethod
+    def hasReviewedProd(UID, PID): 
+            rows = app.db.execute('''
+    SELECT UID
+    FROM Review, ProductReview
+    WHERE Review.author = :UID AND ProductReview.product = :PID
+    ''',
+                                  id=id) 
+            print(rows)
+            return True if len(rows) != 0 else False
+
+    ##If a person has reviewed a Seller:
+    @staticmethod
+    def hasReviewedProd(UID, SID): 
+            rows = app.db.execute('''
+    SELECT UID
+    FROM Review, SellerReview
+    WHERE Review.author = :UID AND SellerReview.seller = :SID
+    ''',
+                                  id=id) 
+            print(rows)
+            return True if len(rows) != 0 else False
+
+    
+    #find the average rating for a given product
+    @staticmethod
+    def averageProd(PID): 
+            rows = app.db.execute('''
+    SELECT AVG(Review.rating)
+    FROM Review, ProductReview
+    WHERE ProductReview.product = :PID
+    ''',
+                                  id=id) 
+            print(rows)
+            return rows if rows is not None else None
+
+    #find the average rating for a given seller
+    @staticmethod
+    def averageSell(SID): 
+            rows = app.db.execute('''
+    SELECT AVG(Review.rating)
+    FROM Review, SellerReview
+    WHERE SellerReview.seller = :SID
+    ''',
+                                  id=id) 
+            print(rows)
+            return rows if rows is not None else None
+
+
+
