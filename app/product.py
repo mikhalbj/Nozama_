@@ -3,7 +3,7 @@ from werkzeug.urls import url_parse
 from flask_login import login_user, logout_user, current_user
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, BooleanField, SubmitField, RadioField, DecimalField, SelectMultipleField, IntegerField
-from wtforms.validators import ValidationError, DataRequired, Email, EqualTo, url
+from wtforms.validators import ValidationError, DataRequired, Email, EqualTo, url, InputRequired
 from flask_wtf.html5 import URLField
 from wtforms.widgets.html5 import URLInput, Input
 from flask_babel import _, lazy_gettext as _l
@@ -35,7 +35,7 @@ class SaveProdForm(FlaskForm):
     save = SubmitField(_l('Save For Later'), validators=[DataRequired()])
 
 class SellProdForm(FlaskForm):
-    q = IntegerField(_l('Quantity'), validators=[DataRequired()])
+    q = IntegerField(_l('Quantity'), validators=[InputRequired()])
       # we will also need to change the schema for this to work
     optin = BooleanField(_l('I confirm I am selling this product'), validators=[DataRequired()])
     s = SubmitField(_l('Sell Product'))
@@ -43,7 +43,7 @@ class SellProdForm(FlaskForm):
 class EditListingForm(FlaskForm):
     name = StringField(_l('Product Name'), validators=[DataRequired()])
     description = StringField(_l('Description'), validators=[DataRequired()])
-    price = DecimalField(_l('Price'), places = 2, validators=[DataRequired()])
+    price = DecimalField(_l('Price'), places = 2, validators=[InputRequired()])
     url = URLField(validators=[url()])
     submit2 = SubmitField(_l('Edit Product'))
 
@@ -83,11 +83,10 @@ def product(id):
     
     product = Product.fullget(id)
     image = Product.get_img(id)
-    quantity = Product.get_inventory(id)[0]
     reviews = Review.get(id)
     sellers = Inventory.all_sellers(id)
     
-    return render_template('product_details.html', title='See Product', product=product, imgurl=image, num=quantity, cartform=form, review=reviews, sf=sellForm, sb=sellBool, sellers=sellers, saveform=saveForm, edit_form=eForm, eb=editBool)
+    return render_template('product_details.html', title='See Product', product=product, imgurl=image, cartform=form, review=reviews, sf=sellForm, sb=sellBool, sellers=sellers, saveform=saveForm, edit_form=eForm, eb=editBool)
 
 @bp.route('/search/<argterm>', methods=['GET', 'POST'])
 def search(argterm):
