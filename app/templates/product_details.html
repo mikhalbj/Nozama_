@@ -170,7 +170,7 @@
             <tbody>
               {% for s in sellers%}
                 <tr>
-                  <td> <a href="{{ url_for('accounts.account', id=s.seller) }}">{{s.seller}}</a></td>
+                  <td> <a href="{{ url_for('accounts.public', id=s.seller) }}">{{s.firstname}} {{s.lastname}}</a></td>
                   <td>{{s.quantity}}</td>
                 </tr>
               {% endfor %}
