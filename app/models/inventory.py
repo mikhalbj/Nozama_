@@ -134,7 +134,9 @@ class Inventory:
         @staticmethod
         def get_order_history(id):
             rows = app.db.execute('''
-    SELECT AccountOrderProduct.product, quantity, AccountOrderProduct.price, status, placed_at, shipped_at, delivered_at, url, AccountOrder.id, name
+    SELECT AccountOrderProduct.product, quantity, AccountOrderProduct.price, status, 
+    placed_at, shipped_at, delivered_at, url, AccountOrder.id, name, AccountOrder.account as customer,
+    (quantity * AccountOrderProduct.price) AS cost 
     FROM AccountOrderProduct, AccountOrder, ProductImage, Product
     WHERE seller = :id
     AND AccountOrder.id = account_order

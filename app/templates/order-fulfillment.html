@@ -2,24 +2,23 @@
 
 {% block content %}
 
-<br><br>
 
 <div class="row">
-    <div class="col-sm-6">
+    <div style="display: flex; flex-direction: row;">
       <ul class="list-group list-group-horizontal nav nav-pills">
         <li class="nav-item">
-          <a class="nav-link active" aria-current="page" href="/inventory">View Inventory</a>
+          <a class="nav-link active" aria-current="page" href="/inventory" style="margin: 20px;">View Inventory</a>
         </li>
       </ul>
       <br>
       <ul class="list-group list-group-horizontal nav nav-pills">
         <li class="nav-item">
-          <a class="nav-link active" aria-current="page" href="/inventory/seller-analytics">View Your Seller Analytics</a>
+          <a class="nav-link active" aria-current="page" href="/inventory/seller-analytics" style="margin: 20px;">View Your Seller Analytics</a>
         </li>
     </div>
-  </div>
+</div>
 
-<br><br>
+<br>
 
 <h2>Your Order Fulfillment History:</h2>
 <table class='table table-hover table-bordered container'>
@@ -41,15 +40,14 @@
         </div>
         <div class="card-body">
         <h5 class="card-title pb-2">Product Ordered</h5>
-        
         <div class="container">
-            <div class="row pb-2">
+            <div class="row">
                 <div class="col-md-2 float-left">
                     <img src={{order.url}} class="img-fluid rounded-start" alt="...">
                 </div>
-                <div class="col-md-10">
+                <div class="col-md-4">
                     <div class="container">
-                        <div class="row"><div class="col float-left">{{order.name}} <span class="badge bg-secondary">{{order.status}}</span></div></div>
+                        <div class="col float-left">{{order.name}} <span class="badge bg-secondary">{{order.status}}</span></div>
                         <br>
                         <p class="card-text">Quantity ordered: {{order.quantity}}</p>
                         {% if order.status != "Shipped" and order.status != "Delivered" %}
@@ -63,13 +61,17 @@
                         <p class="card-text">Date Shipped: {{order.shipped_at.strftime('%Y-%m-%d')}}</p>
                         <p class="card-text">Date Delivered: {{order.delivered_at.strftime('%Y-%m-%d')}}</p>
                         {% endif %}
-                      </div>
+                    </div>
                 </div>
+                <div class="col-md-6">
+                  <p class="card-text">Customer ID: {{order.customer}}</p>
+                  <pclass = "card-text"> Shipping address: </pclass></p>
+                  <p class="card-text">Cost of Products: {{order.cost}}</p>
+                </div>
+                
             </div>
         </div>
-
-    </div>
-    </div>
+      </div>
 
     {% endfor %}
   </tbody>
