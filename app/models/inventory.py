@@ -71,9 +71,9 @@ class Inventory:
         @staticmethod
         def all_sellers(pid):
             rows = app.db.execute('''
-            SELECT seller, quantity
-            FROM ProductInventory
-            WHERE product = :pid''',
+            SELECT seller, quantity, firstname, lastname
+            FROM ProductInventory, Account
+            WHERE product = :pid AND Account.id = ProductInventory.seller''',
             pid=pid)
             return rows
         
