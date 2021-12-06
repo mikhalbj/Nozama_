@@ -9,6 +9,8 @@ from flask_babel import _, lazy_gettext as _l
 from .models.user import User
 from .models.product import Product
 from .models.cart import Cart
+from .models.order import Order
+from .models.order import OrderProduct
 
 
 from flask import Blueprint
@@ -17,8 +19,7 @@ import datetime;
 bp = Blueprint('carts', __name__,)
 
 class MakeOrder(FlaskForm):
-    info_address = StringField("Address", validators=[DataRequired()])
-    info_submit = SubmitField()
+    info_submit = SubmitField('Yes')
 
 class MoveToCart(FlaskForm):
     product = HiddenField(_l('Product ID'), validators = [DataRequired()])
@@ -81,3 +82,14 @@ def cart():
 
     return render_template('cart.html', title='Cart', cart=cart, total=total, saved=saved, order_form=order_form, remove=remove, move=move, rfs=rfs, editquant=editquant)
 
+@bp.route('/order/<uuid:id>', methods=['GET', 'POST'])
+def order(id):
+    if not current_user.is_authenticated:
+        return redirect(url_for('index.index'))
+
+    orderplaced = OrderProduct.get_all(id)
+    total = OrderProduct.order_cost(id)
+    orderID = id
+    return render_template('orderpage.html', title='Order', orderplaced=orderplaced, total=total, orderID = orderID)
+
+    

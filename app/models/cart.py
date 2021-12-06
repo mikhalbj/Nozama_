@@ -57,6 +57,7 @@ class Cart:
         ''',
         account_id = account_id
         )
+
         return rows if rows is not None else None
     
     @staticmethod
