@@ -2,11 +2,13 @@ from flask import render_template, redirect, url_for, flash, request
 from werkzeug.urls import url_parse
 from flask_login import login_user, logout_user, current_user
 from flask_wtf import FlaskForm
-from wtforms import StringField, DecimalField, PasswordField, BooleanField, SubmitField, IntegerField
-from wtforms.validators import ValidationError, DataRequired, Email, EqualTo, Regexp, url
+from wtforms import StringField, DecimalField, PasswordField, BooleanField, SubmitField, IntegerField, SelectField
+from wtforms.validators import ValidationError, DataRequired, Email, EqualTo, Regexp, url, InputRequired
 from flask_wtf.html5 import URLField
 from wtforms.widgets.html5 import URLInput, Input
 from flask_babel import _, lazy_gettext as _l
+from datetime import date
+
 
 from .models.inventory import Inventory
 from .models.product import Product
@@ -16,7 +18,39 @@ from .models.account import Account
 
 from flask import Blueprint
 bp = Blueprint('inventories', __name__)
+@bp.route('/inventory/order-fulfillment', methods = ['GET', 'POST'])
+def order_fulfillment():
+    id = current_user.id
+    order_history = Inventory.get_order_history(id)
+    return render_template('order-fulfillment.html', order_history = order_history)
 
+@bp.route('/inventory/seller-analytics', methods = ['GET', 'POST'])
+def seller_analytics():
+    id = current_user.id
+    analytics = Inventory.get_seller_analytics(id)
+    print(analytics)
+    popular_item = Inventory.popular_item(id)
+    #avg_ship = Inventory.avg_ship(id)
+    #num_reviews = Inventory.get_num_reviews(id)
+    #print(num_reviews)
+    return render_template('seller-analytics.html', analytics = analytics, popular_item = popular_item)
+
+@bp.route('/inventory/shipped/<account_order>/<product>', methods=['GET', 'POST'])
+def shipped(account_order, product):
+    seller = current_user.id
+    Inventory.update_shipped(account_order, product, seller)
+    order_history = Inventory.get_order_history(seller)
+    print("It was shipped!")
+    return redirect(url_for('inventories.order_fulfillment'))
+
+@bp.route('/inventory/delivered/<account_order>/<product>', methods=['GET', 'POST'])
+def delivered(account_order, product):
+    seller = current_user.id
+    Inventory.update_delivered(account_order, product, seller)
+    order_history = Inventory.get_order_history(seller)
+    print("It was delivered!")
+    return redirect(url_for('inventories.order_fulfillment'))
+    
 @bp.route('/inventory', methods=['GET', 'POST'])
 def inventory():
     id = current_user.id
@@ -24,26 +58,86 @@ def inventory():
     if not Account.is_seller(id):
         return redirect(url_for(account.account, id = id))
     inventory = Inventory.get(id)
-    form = NewProdForm()
+    listed = Inventory.get_listed(id)
 
-    if form.validate_on_submit():
-        name = form.name.data
-        description = form.description.data
-        price = form.price.data
-        quantity = form.quantity.data
-        url = form.url.data
-        seller = id
-        inventory = Inventory.add_prod(name = name, description = description, price = price, quantity= quantity, seller = seller, url = url)
-        return redirect(url_for('inventories.inventory', id = id))
-    return render_template('inventory.html', title='See Inventory', inventory=inventory, form = form, id = id)
+    new_form = NewProdForm()
+    available_tags = Inventory.get_tags()
+    print(available_tags)
+    tags_list = [ (i.id) for i in available_tags]
+    print("tags created")
+    print(tags_list)
+    print(type(tags_list))
+    new_form.tag.choices = tags_list
+    edit_form = EditInventoryForm()
+    quantity_form = EditQuantityForm()
+
+    # initialdata = {'name': 'one', 'description': '', 'price': 0, 'quantity': 0, 'url': ''}
+ 
+    # new_form = NewProdForm(**initialdata)
+    # edit_form = EditInventoryForm(**initialdata)
+
+    if request.method == 'POST':
+        print(edit_form.submit2.data)
+        
+        if quantity_form.submit3.data and quantity_form.validate():
+            prod_id = quantity_form.prod_id.data
+            quantity = quantity_form.quantity.data
+            seller = id
+            inventory = Inventory.edit_quantity(prod_id, quantity, seller)
+            return redirect(url_for('inventories.inventory', id = id))
+
+
+        if edit_form.submit2.data and edit_form.validate():
+            
+            prod_id = edit_form.prod_id.data
+            name = edit_form.name.data
+            description = edit_form.description.data
+            price = edit_form.price.data
+            quantity = edit_form.quantity.data
+            url = edit_form.url.data
+            seller = id
+            inventory = Inventory.edit_inventory(prod_id = prod_id, name = name, description = description, price = price, quantity= quantity, url = url, seller = seller)
+            print('Inventory updated')
+            print(prod_id)
+            return redirect(url_for('inventories.inventory', id = id))
+
+        if new_form.submit1.data and new_form.validate():
+            name = new_form.name.data
+            description = new_form.description.data
+            price = new_form.price.data
+            quantity = new_form.quantity.data
+            url = new_form.url.data
+            tag = new_form.tag.data
+            seller = id
+            inventory = Inventory.add_prod(name = name, description = description, price = price, quantity= quantity, seller = seller, url = url, tag = tag)
+            print('New product added')
+            #return render_template('inventory.html', title='See Inventory', inventory=inventory, new_form = NewProdForm(), edit_form = EditInventoryForm(), id = id, order_history = order_history)
+            return redirect(url_for('inventories.inventory', id = id))
+        
+    print(new_form.name.data)
+    return render_template('inventory.html', title='See Inventory', inventory=inventory, listed = listed, new_form = NewProdForm(), edit_form = edit_form, quantity_form = quantity_form, id = id)
 
 
 class NewProdForm(FlaskForm):
     name = StringField(_l('Product Name'), validators=[DataRequired()])
     description = StringField(_l('Description'), validators=[DataRequired()])
-        # I had an issue with Price being an integer field
     price = DecimalField(_l('Price'), places = 2, validators=[DataRequired()])
-    quantity = IntegerField(_l('Quantity'), validators=[DataRequired()])
-      # we will also need to change the schema for this to work
+    quantity = IntegerField(_l('Quantity'), validators=[InputRequired()])
     url = URLField(validators=[url()])
-    submit = SubmitField(_l('Add Product'))
+    tag =  SelectField(u'Tag', choices=[(0, 'cooking'), (1, 'food'), (2, 'beauty'), (3, 'decor'), (4, 'furniture'), (5, 'education'), (6, 'office supplies'), (7, 'sports'), (8, 'technology'), (9, 'music'), (10, 'art')])
+    submit1 = SubmitField(_l('Add Product'))
+
+class EditInventoryForm(FlaskForm):
+    prod_id = StringField(_l('Product ID'), validators = [DataRequired()])
+    name = StringField(_l('Product Name'), validators=[DataRequired()])
+    description = StringField(_l('Description'), validators=[DataRequired()])
+    price = DecimalField(_l('Price'), places = 2, validators=[InputRequired()])
+    quantity = IntegerField(_l('Quantity'), validators=[InputRequired()])
+    url = URLField(validators=[url()])
+    submit2 = SubmitField(_l('Edit Product'))
+
+class EditQuantityForm(FlaskForm):
+    prod_id = StringField(_l('Product ID'), validators = [DataRequired()])
+    quantity = IntegerField(_l('Quantity'), validators=[InputRequired()])
+    submit3 = SubmitField(_l('Edit Product'))
+
