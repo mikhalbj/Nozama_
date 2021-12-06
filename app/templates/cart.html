@@ -1,0 +1,129 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<br><br>
+
+<div class="container">
+    {% for message in get_flashed_messages() %}
+    <div class="alert alert-success alert-dismissable" role="alert">
+      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close">
+      </button>
+        {{ message }}
+    </div>
+    {% endfor %}
+
+<div class="col-lg-8 mx-auto">
+    <header class="d-flex align-items-center pb-3 mb-3"><h2>Your Cart:</h2></header>
+
+    <div class="row">
+      <div class="col-sm-6">
+        <ul class="list-group list-group-horizontal nav nav-pills">
+          <li class="nav-item">
+            <a class="nav-link active" aria-current="page" href="/account">View Account</a>
+          </li>
+        </ul>
+        <ul class="list-group list-group-horizontal nav nav-pills">
+          <li class="nav-item">
+            <a class="nav-link active" aria-current="page" href="/">Keep Shopping</a>
+          </li>
+        </ul>
+        <button type="button" class="btn btn-primary mr-2" data-bs-toggle="modal" data-bs-target="#addModal">Place Order</button>
+    </div>
+  
+    
+  <div class="modal fade" id="addModal" tabindex="-1" aria-labelledby="addModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+  <div class="modal-content">
+      <div class="modal-header">
+      <h5 class="modal-title" id="addModalLabel">Place Order</h5>
+      <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      
+      <div class="modal-body">
+          <form action="" method="post">
+            {{order_form.csrf_token}}
+              <div class="d-flex justify-content-left mb-3">
+                  <p><h1>{{order_form.info_address(placeholder='Address')}}</h1></p>
+              </div>
+
+              <div class="d-grid gap-2">
+                  {{order_form.info_submit(class_='btn btn-success btn-large')}}
+              </div>
+          </form>
+      </div>
+  </div>
+  </div>
+</div>
+
+
+      <div class="col-sm-6">
+      <div class="card">
+          <div class="card-body">
+            <h4 class="card-title">Order Total</h4>
+            <div class="container-fluid">
+              <div class="row">
+                  <div class="col-md-auto">
+                      <p class="card-text"><h1>${{'%0.2f'| format(total|float)}}</h1></p>
+                  </div>
+              </div>
+              <div class="row">
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  
+ 
+<table class="table table-hover table-bordered container">
+  <thead class="thread-muted text-muted">
+    <tr>
+      <th scope="col">Product ID</th>
+      <th scope="col">Product Name</th>
+      <th scope="col">Quantity</th>
+      <th scope="col">Total Price</th>
+      <th scope="col">Remove</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for cart in cart%}
+      <tr>
+        <th scope="row">{{cart.id}}</th>
+        <td>{{cart.name}}</td>
+        <td>{{cart.quantity}}</td>
+        <td>{{cart.totalPrice}}</td>
+        <td>
+          <form action="" method="POST">
+          {{remove.csrf_token}}
+          <input id="productId" name="productId" type="hidden" value="{{cart.id}}">
+          <button class="btn btn-danger btn-xs" type="submit"> X </button>
+          </form>
+  </td>
+      </tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+<header class="d-flex align-items-center pb-3 mb-3 mt-5"><h2>Saved for Later:</h2></header>
+<table class="table table-hover table-bordered container-fluid">
+  <thead class="thread-muted text-muted">
+    <tr>
+      <th scope="col">Product ID</th>
+      <th scope="col">Product Name</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for product in saved%}
+      <tr>
+        <td scope="row"><a href="/product/{{product.id}}" class="link-unstyled" style="text-decoration: underline;">{{product.id}}</a></th>
+        <td>{{product.name}}</td>
+      </tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+{% endblock %}
+
+
+

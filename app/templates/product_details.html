@@ -1,0 +1,228 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<br><br>
+
+<!-- Sell Modal -->
+<div class="modal fade" id="sellModal" tabindex="-1" aria-labelledby="sellModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+  <div class="modal-content">
+      <div class="modal-header">
+      <h5 class="modal-title" id="sellModalLabel">Sell This Product</h5>
+      <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      
+      <div class="modal-body">
+          <form action="" method="post">
+            {{sf.csrf_token}}
+              <div class="d-flex justify-content-left mb-3">
+                  <p><h1>{{sf.q(placeholder='1')}}</h1></p>
+              </div>
+              <div class="d-flex justify-content-left mb-3">
+                <p>{{sf.optin()}}  {{ sf.optin.label }}</p>
+              </div>
+              <div class="d-grid gap-2">
+                  {{sf.s(class_='btn btn-success btn-large')}}
+              </div>
+          </form>
+      </div>
+  </div>
+  </div>
+</div>
+
+<!-- Edit Modal -->
+<div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable">
+  <div class="modal-content">
+      <div class="modal-header">
+      <h5 class="modal-title" id="editModalLabel">Edit Product Listing</h5>
+      <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      
+      <div class="modal-body">
+          <form action="" method="post">
+              {{ edit_form.csrf_token }}
+              <div class="d-flex justify-content-left mb-3">
+                  <p>Product name: {{edit_form.name}}</p>
+                  <p>Description: {{edit_form.description}}</p>
+                  <p>Price: {{edit_form.price}}</p>
+                  <p>URL: {{edit_form.url}}</p>
+              </div>
+
+              <div class="d-grid gap-2">
+                  {{edit_form.submit2(class_='btn btn-success btn-large')}}
+              </div>
+          </form>
+      </div>
+  </div>
+  </div>
+</div>
+
+<!-- Cart Modal -->
+<div class="modal fade" id="cartModal" tabindex="-1" aria-labelledby="cartModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+  <div class="modal-content">
+      <div class="modal-header">
+      <h5 class="modal-title" id="cartModalLabel">Add to Cart</h5>
+      <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      
+      <div class="modal-body">
+          <form action="" method="post">
+            {{cartform.csrf_token}}
+              <div class="d-flex justify-content-left mb-3">
+                  <p><h1>{{cartform.quantity(placeholder='1')}}</h1></p>
+              </div>
+
+              <div class="d-grid gap-2">
+                  {{cartform.submit(class_='btn btn-success btn-large')}}
+              </div>
+          </form>
+      </div>
+  </div>
+  </div>
+</div>
+
+
+<div style="display: flexbox; margin-left: 10%; margin-right: 10%;">
+
+  {% for message in get_flashed_messages() %}
+    <div class="alert alert-success alert-dismissable" role="alert">
+      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close">
+      </button>
+        {{ message }}
+    </div>
+    {% endfor %}
+  
+  <h2>{{product.name}}</h2>
+  <!-- Product Card -->
+  <div class="card" style="max-width: 800px;">
+    <div class="row g-0">
+      <div class="col-md-4">
+        <img src={{imgurl}} class="img-fluid rounded-start" alt="...">
+      </div>
+      <div class="col-md-8">
+        <div class="card-body">
+          <h5 class="card-title">{{product.name}}</h5>
+          ${{product.price}}
+          <span class="badge bg-secondary rounded-pill">
+            {{product.rate}}
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-star-fill" viewBox="0 0 16 16">
+              <path d="M3.612 15.443c-.386.198-.824-.149-.746-.592l.83-4.73L.173 6.765c-.329-.314-.158-.888.283-.95l4.898-.696L7.538.792c.197-.39.73-.39.927 0l2.184 4.327 4.898.696c.441.062.612.636.282.95l-3.522 3.356.83 4.73c.078.443-.36.79-.746.592L8 13.187l-4.389 2.256z"/>
+            </svg>
+            • {{product.count}}
+          </span>
+          <p class="card-text">{{product.description}}</p>
+
+          <!-- BUTTONS -->
+          {% if current_user.is_authenticated %}
+            {% if product.available %}
+            <button type="button" class="btn btn-primary mr-2" data-bs-toggle="modal" data-bs-target="#cartModal"> Add to Cart</button>
+            {% else %}
+            <button type="button" class="btn btn-primary mr-2" data-bs-toggle="modal" data-bs-target="#cartModal" disabled> Add to Cart</button>
+            {% endif %}
+            <form action="" method="post">
+              {{saveform.csrf_token}}
+              {{saveform.save(class_='btn btn-primary mr-2')}}
+            </form>
+            {% if sb%}
+              <button type="button" class="btn btn-primary mr-2" data-bs-toggle="modal" data-bs-target="#sellModal"> Start selling</button>
+            {% endif %}
+            {% if eb%}
+              <button type="button" class="btn btn-primary mr-2" data-bs-toggle="modal" data-bs-target="#editModal"> Edit listing</button>
+            {% endif %}
+          {% else %}
+            <a href="{{ url_for('users.login') }}" type="button" class="btn btn-primary mr-2" style= "margin-right: 5%; display: inline-flex; ">Add to Cart</a>
+            <a href="{{ url_for('users.login') }}" type="button" class="btn btn-primary mr-2" style= "margin-right: 5%; display: inline-flex; ">Save for Later</a>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+  <br>
+  <br>
+  {% if not product.available %}
+  <div class="card text-white bg-danger mb-3" style="max-width: 800px;">
+    <div class="card-body">
+      <p class="card-text"> We're sorry! This product is not currently available. Please check back later.</p>
+    </div>
+  </div>
+  {% endif %}
+  
+  <!-- Seller Accordian -->
+  <div class="accordion" id="accordionExample" style="max-width: 800px;">
+    <div class="accordion-item">
+      <h2 class="accordion-header" id="headingOne">
+        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+          View Sellers
+        </button>
+      </h2>
+      <div id="collapseOne" class="accordion-collapse collapse" aria-labelledby="headingOne" data-bs-parent="#accordionExample">
+        <div class="accordion-body">
+          <table class='table table-hover table-bordered container' style="width: 80%">
+            <thead class="thead-dark">
+              <tr>
+                <th scope="col">Seller</th>
+                <th scope="col">Quantity</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for s in sellers%}
+                <tr>
+                  <td> <a href="{{ url_for('accounts.public', id=s.seller) }}">{{s.firstname}} {{s.lastname}}</a></td>
+                  <td>{{s.quantity}}</td>
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+  <br>
+  <br>
+  
+  
+  <!-- Review List -->
+  <h2>Reviews:</h2> 
+  <ul class="list-group" style="max-width: 800px;">
+    {% for r in review%}
+    <li class="list-group-item d-flex justify-content-between align-items-start">
+      <!-- VOTE BUTTONS -->
+      {% if current_user.is_authenticated %}
+      <div style="margin-right: 10px;">
+        <div style="margin-bottom: 2%;">
+          <button type="button" class="btn btn-outline-primary btn-sm" data-bs-toggle="modal" data-bs-target="#cartModal">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-caret-up-fill" viewBox="0 0 16 16">
+              <path d="m7.247 4.86-4.796 5.481c-.566.647-.106 1.659.753 1.659h9.592a1 1 0 0 0 .753-1.659l-4.796-5.48a1 1 0 0 0-1.506 0z"/>
+            </svg>
+          </button>
+        </div>
+        <div>
+          <button type="button" class="btn btn-outline-primary btn-sm" data-bs-toggle="modal" data-bs-target="#cartModal">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-caret-down-fill" viewBox="0 0 16 16">
+              <path d="M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z"/>
+            </svg>
+          </button>
+        </div>
+      </div>
+      {% endif %}
+      <!-- REVIEW CONTENT -->
+      <div class="ms-2 me-auto">
+        <div class="fw-bold">{{r.title}}</div> 
+        {{r.description}}
+        <br>
+        <small class="text-muted">Written/Edited: {{r.time}}{{r.edited}}</small>
+      </div>
+      <span class="badge bg-primary rounded-pill">{{r.rating}}
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-star-fill" viewBox="0 0 16 16">
+          <path d="M3.612 15.443c-.386.198-.824-.149-.746-.592l.83-4.73L.173 6.765c-.329-.314-.158-.888.283-.95l4.898-.696L7.538.792c.197-.39.73-.39.927 0l2.184 4.327 4.898.696c.441.062.612.636.282.95l-3.522 3.356.83 4.73c.078.443-.36.79-.746.592L8 13.187l-4.389 2.256z"/>
+        </svg>
+      </span>
+    </li>
+    {% endfor %}
+  </ul>
+  </div>
+
+{% endblock %}

@@ -9,8 +9,8 @@ import statistics
 def genCart(n, userIDs, prodIDs, currCarts):
     
     newCart = zip(random.choices(userIDs, k=(n * len(userIDs))), random.choices(prodIDs, k=(n * len(userIDs))))
-    with open('data/CartProduct.csv', 'a', newline='') as cpfile:
-        writer = csv.writer(cpfile)
+    with open('data/CartProduct.csv', 'w') as cpfile:
+        writer = csv.writer(cpfile, dialect='unix')
         for row in newCart:
             # elements stringified when read from file
             if [str(row[0]), str(row[1])] not in currCarts:
@@ -22,8 +22,8 @@ def genCart(n, userIDs, prodIDs, currCarts):
 def genSaved(n, userIDs, prodIDs, currSaved):
     
     newSaves = zip(random.choices(userIDs, k=(n * len(userIDs))), random.choices(prodIDs, k=(n * len(userIDs))))
-    with open('data/SavedProduct.csv', 'a', newline='') as sfile:
-        writer = csv.writer(sfile)
+    with open('data/SavedProduct.csv', 'w') as sfile:
+        writer = csv.writer(sfile, dialect='unix')
         for row in newSaves:
             # elements stringified when read from file
             if [str(row[0]), str(row[1])] not in currSaved:
@@ -59,8 +59,11 @@ def readCSVs():
     return [accs, prods, carts, saves]
 
 
+def genCartSaved(n):
+    [users, prods, carts, saved] = readCSVs()
+    genCart(n, users, prods, carts)
+    genSaved(n, users, prods, saved)
+
 if __name__ == "__main__":
     numProdPerAccount = 3
-    [users, prods, carts, saved] = readCSVs()
-    genCart(numProdPerAccount, users, prods, carts)
-    genSaved(numProdPerAccount, users, prods, saved)
+    genCartSaved(numProdPerAccount)
