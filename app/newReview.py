@@ -12,7 +12,7 @@ from .models.cart import Cart
 
 
 from flask import Blueprint
-bp = Blueprint('product', __name__)
+bp = Blueprint('review', __name__)
 
 
 class AddReviewForm(FlaskForm):
@@ -20,11 +20,11 @@ class AddReviewForm(FlaskForm):
     title = StringField(_l('Title'), validators=[DataRequired()])
     description = StringField(_l('Description'), validators=[DataRequired()])
     rating = RadioField(_l('Rating'), choices=['1', '2', '3', '4', '5'], validators=[DataRequired()])
-    submit = SubmitField()
+    submit1 = SubmitField()
 
-@bp.route('/submitReview', methods=['GET', 'POST'])
+@bp.route('/product_details/<uuid:id>/submitReview', methods=['GET', 'POST'])
 def review(id):
-    form = AddReviewForm()
-    #if form.submit.data and form.validate():
-       # Review.add_prodrev(form.title.data, current_user.id, form.description.data, form.rating.data)
-    return render_template('submitReview.html', title='New Review', user=current_user, account=account, AddReviewForm = form)
+    new_form = AddReviewForm()
+    if new_form.submit1.data and new_form.validate():
+        Review.add_prodrev(new_form.title.data, current_user.id, new_form.description.data, new_form.rating.data, uuid)
+    return render_template('submitreview.html', title='New Review', user=current_user, new_form = new_form)

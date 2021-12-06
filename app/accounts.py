@@ -50,7 +50,8 @@ def public(id):
 
     user = User.get(id)
     account = Account.get(id)
-    review = Review5.getSellRev(id)
+    review = Review.getSellRev(id)
+    prodReviews = Review.review_history(id)
 
     return render_template('public_account.html', user=user, account=account)
 

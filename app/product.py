@@ -61,16 +61,6 @@ def product(id):
     form = CartAddForm()
     if form.submit.data and form.validate():
         Cart.add_cart(current_user.id, form.quantity.data, id)
-<<<<<<< HEAD
-        print("YAY")
-    if image:
-        image = image[0][1]
-    else:
-        image = "https://cdn.w600.comps.canstockphoto.com/pile-of-random-stuff-eps-vector_csp24436545.jpg"
-    quantity = Product.get_inventory(id)[0]
-    reviews = Review.getProdRev(id)
-    return render_template('product_details.html', title='See Product', product=product, imgurl=image, num=quantity, cartform=form, review=reviews)
-=======
 
     sellForm = SellProdForm()
     if sellForm.s.data and sellForm.validate():
@@ -93,11 +83,10 @@ def product(id):
     
     product = Product.fullget(id)
     image = Product.get_img(id)
-    reviews = Review.get(id)
+    reviews = Review.getProdRev(id)
     sellers = Inventory.all_sellers(id)
     
     return render_template('product_details.html', title='See Product', product=product, imgurl=image, cartform=form, review=reviews, sf=sellForm, sb=sellBool, sellers=sellers, saveform=saveForm, edit_form=eForm, eb=editBool)
->>>>>>> main
 
 @bp.route('/search/<argterm>', methods=['GET', 'POST'])
 def search(argterm):

@@ -4,7 +4,7 @@ from flask import current_app as app
 class Review:
     def __init__(self, id, title, author, time, description=None, rating=None, edited=False):
         self.id = id
-        self.name = name
+        self.title = title
         self.author = author
         self.price = price
         self.time = time
@@ -42,19 +42,18 @@ class Review:
     def add_prodrev(title, author, description, rating): #I dont think that I need author here but will need to autoppopulate some how on entry
         rows = app.db.execute('''
     INSERT INTO Review(title, author, description, rating)
-    VALUES(:title, :author, :description, :written_at, none, :rating)
+    VALUES(:title, :author, :description, :rating)
     RETURNING id
     ''',
             title=title,
             author=author,
             description=description,
-            written_at=written_at,
             rating=rating)
         id = rows[0][0]
         rows = app.db.execute('''
     INSERT INTO ProductReview(review, product)
     VALUES(:review, :product)
-    RETURNING review
+    RETURNING id
     ''',
                                   review=review, 
                                   product=product)
@@ -100,7 +99,7 @@ class Review:
 
 #get all reviews written by one user FOR ONE PRODUCT
     @staticmethod
-    def review_history(UID, PID):
+    def review_history_prod(UID, PID):
             rows = app.db.execute('''
     SELECT ProductReview.product, author, description, written_at, edited_at, rating
     FROM ProductReview, Review
