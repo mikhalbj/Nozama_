@@ -2,47 +2,23 @@ from flask import render_template, redirect, url_for, flash, request
 from werkzeug.urls import url_parse
 from flask_login import login_user, logout_user, current_user
 from flask_wtf import FlaskForm
-<<<<<<< HEAD
-from wtforms import StringField, PasswordField, BooleanField, SubmitField, RadioField, DecimalField, SelectMultipleField
-from wtforms.validators import ValidationError, DataRequired, Email, EqualTo
-=======
 from wtforms import StringField, PasswordField, BooleanField, SubmitField, RadioField, DecimalField, SelectMultipleField, IntegerField
 from wtforms.validators import ValidationError, DataRequired, Email, EqualTo, url, InputRequired
 from flask_wtf.html5 import URLField
 from wtforms.widgets.html5 import URLInput, Input
->>>>>>> 2199269bf841e7a4e72a6c4c7511bc6915adec5d
 from flask_babel import _, lazy_gettext as _l
 
 from .models.product import Product
 from .models.reviewsmod import Review
 from .models.cart import Cart
-<<<<<<< HEAD
-=======
 from .models.account import Account
 from .models.inventory import Inventory
->>>>>>> 2199269bf841e7a4e72a6c4c7511bc6915adec5d
 
 
 from flask import Blueprint
 bp = Blueprint('product', __name__)
 
 class SearchForm(FlaskForm):
-<<<<<<< HEAD
-    searchterm = StringField('Search here')
-    tag = RadioField('Filter by category')
-    avail = BooleanField('Only find available items')
-    maxprice = DecimalField('Only find items cheaper than:')
-    searchdesc = BooleanField('Match ketwords in description:')
-    submit = SubmitField()
-
-@bp.route('/product_details/<uuid:id>', methods=['GET'])
-def product(id):
-    product = Product.fullget(id)
-    image = Product.get_img(id)[0][1]
-    quantity = Product.get_inventory(id)[0]
-    reviews = Review.get(id)
-    return render_template('product_details.html', title='See Product', product=product, imgurl=image, num=quantity, cartform=form, review=reviews)
-=======
     searchterm = StringField('Search for:')
     tag = RadioField('Filter by category:')
     avail = BooleanField('Only find available items:')
@@ -111,7 +87,6 @@ def product(id):
     sellers = Inventory.all_sellers(id)
     
     return render_template('product_details.html', title='See Product', product=product, imgurl=image, cartform=form, review=reviews, sf=sellForm, sb=sellBool, sellers=sellers, saveform=saveForm, edit_form=eForm, eb=editBool)
->>>>>>> 2199269bf841e7a4e72a6c4c7511bc6915adec5d
 
 @bp.route('/search/<argterm>', methods=['GET', 'POST'])
 def search(argterm):
@@ -122,19 +97,11 @@ def search(argterm):
 
 @bp.route('/advanced_search/', methods=['GET', 'POST'])
 def advanced_search():
-<<<<<<< HEAD
-    print(request.args)
-=======
->>>>>>> 2199269bf841e7a4e72a6c4c7511bc6915adec5d
     s = request.args.get("argterm")
     a = request.args.get("avail")
     t = request.args.get("tag")
     p = request.args.get("maxprice")
     d = request.args.get("searchdesc")
-<<<<<<< HEAD
-    products = Product.advanced_search(strng=s, tag=t, priceMax=p, availOnly=a, searchDesc=d)
-    return render_template('search.html', title='Search for Products', products=products, term=s)
-=======
     sby = request.args.get("sort")
     pg = request.args.get("page")
     products = Product.advanced_search(strng=s, tag=t, priceMax=p, availOnly=a, searchDesc=d, sortBy=sby, page=pg)
@@ -145,7 +112,6 @@ def advanced_search():
     np = url_for('product.advanced_search',argterm=s, tag=t, maxprice=p, avail=a, searchdesc=d, sort=sby, page=(int(pg)+1))
     
     return render_template('search.html', title='Search for Products', products=products, term=s, page=int(pg), pages=bool(len(products)==25), np=np, pp=pp)
->>>>>>> 2199269bf841e7a4e72a6c4c7511bc6915adec5d
 
 
 @bp.route('/search/', methods=['GET', 'POST'])
@@ -154,11 +120,7 @@ def presearch():
     form.tag.choices = Product.get_categories()
     if form.is_submitted():
         print(request.form)
-<<<<<<< HEAD
-        return redirect(url_for('product.advanced_search', argterm=form.searchterm.data, tag=form.tag.data, maxprice=form.maxprice.data, avail=form.avail.data, searchdesc=form.searchdesc.data))
-=======
         return redirect(url_for('product.advanced_search', argterm=form.searchterm.data, tag=form.tag.data, maxprice=form.maxprice.data, avail=form.avail.data, searchdesc=form.searchdesc.data, sort=form.sort.data))
->>>>>>> 2199269bf841e7a4e72a6c4c7511bc6915adec5d
     return render_template('search.html', title='Search for Products', presearch=True, form=form)
 
 
