@@ -2,16 +2,18 @@ import json
 from flask import current_app as app
 
 class OrderProduct:
-    def __init__(self, account_id, order_id, product_id, quantity, price, status, shipped_at, delivered_at, name):
+    def __init__(self, account_id, order_id, product, quantity, price, status, shipped_at, delivered_at, name, totalPrice):
         self.account_id = account_id
         self.order_id = order_id
-        self.product_id = product_id
+        self.product = product
         self.quantity = quantity
         self.price = price
         self.status = status
         self.shipped_at = shipped_at
         self.delivered_at = delivered_at
         self.name = name
+        self.totalPrice = totalPrice
+
 
     def toJSON(self):
         return json.dumps({
@@ -30,17 +32,17 @@ class OrderProduct:
     @staticmethod
     def get_all(order_id):
         rows = app.db.execute('''
-SELECT OP.account_order, OP.product, OP.quantity, OP.price, OP.status, OP.shipped_at, OP.delivered_at, P.name, PI.url
-FROM AccountOrderProduct as OP, ProductImage as PI, Product as P
+SELECT OP.account_order, OP.quantity, OP.price, OP.status, OP.shipped_at, OP.delivered_at, P.name, PI.url, CAST(OP.price*OP.quantity AS DECIMAL(10,2)) AS "totalPrice"
+FROM AccountOrderProduct AS OP, ProductImage AS PI, Product AS P
 WHERE OP.account_order = :order_id AND OP.product = PI.product AND P.id = OP.product
 ''',
                               order_id=order_id)
-        return [OrderProduct(*row) for row in rows]
+        return rows if rows is not None else None
 
     @staticmethod
     def order_cost(order_id):
         cost = app.db.execute('''
-SELECT SUM(price)
+SELECT SUM(CAST(price*quantity AS DECIMAL(10,2)))
 FROM AccountOrderProduct
 WHERE account_order = :order_id
 ''',
