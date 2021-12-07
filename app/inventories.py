@@ -43,6 +43,17 @@ def order_fulfillment():
         #return redirect(url_for('inventories.order_fulfillment', order_history = order_history))
     return render_template('order-fulfillment.html', order_history = order_history, searchform = searchform)
 
+@bp.route('/inventory/order-fulfillment/<order>', methods = ['GET', 'POST'])
+def order_fulfillment_by_order(order):
+    id = current_user.id
+    order_num = order
+    prod_name = ""
+    print("Is prod name true?", prod_name)
+    searchform = OrderSearchForm()
+    order_history = Inventory.get_order_history_search(id, prod_name= prod_name, order_num = order_num)
+    return render_template('order-fulfillment.html', order_history = order_history, searchform = searchform)
+    #return redirect(url_for('inventories.order_fulfillment'))
+
 
 @bp.route('/inventory/shipped/<account_order>/<product>', methods=['GET', 'POST'])
 def shipped(account_order, product):

@@ -48,8 +48,9 @@
             <div class="container">
                 <div class="row">
                     <div class="col float-left"><small class="text-muted">ORDER PLACED</small></div>
-                    <div class="col-8"><small class="text-muted float-end">Order #:{{order.id}}</small></div>
-                </div>
+                    <div class="col-8" class="text-muted float-end">
+                    <a href="{{ url_for('inventories.order_fulfillment_by_order', order = order.id) }}" class="text-muted float-end">Order #:{{order.id}}</a>
+                    </div>
                 <div class="row">
                     <div class="col float-left"><small class="text-muted">{{order.placed_at.strftime("%B %d, %Y")}}</small></div>
                 </div>
