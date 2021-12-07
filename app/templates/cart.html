@@ -79,6 +79,7 @@
       <th scope="col">Product Name</th>
       <th scope="col">Quantity</th>
       <th scope="col">Total Price</th>
+      <th scope="col">Save</th>
       <th scope="col">Remove</th>
     </tr>
   </thead>
@@ -89,6 +90,13 @@
         <td>{{cart.name}}</td>
         <td><button type="button" class="btn mr-2" data-bs-toggle="modal" data-bs-target="#quantModal">{{cart.quantity}}</button></td>
         <td>{{cart.totalPrice}}</td>
+        <td>
+          <form action="" method="POST">
+          {{save.csrf_token}}
+          {{save.productx(value=cart.id)}}
+          {{save.submitx(class_='btn')}}
+          </form>
+        </td>
         <td>
           <form action="" method="POST">
           {{remove.csrf_token}}

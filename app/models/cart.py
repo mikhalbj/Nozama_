@@ -132,6 +132,27 @@ class Cart:
         return rows[0][0] if rows else 0.0
 
     @staticmethod
+    def cartcount(account_id):
+        rows = app.db.execute('''
+           SELECT COUNT(product) 
+           FROM CartProduct 
+           WHERE CartProduct.account = :account_id
+            ''',
+            account_id=account_id)
+        return rows[0][0] if rows else 0.0
+
+    @staticmethod
+    def duplicate(account_id, product):
+        rows = app.db.execute('''
+            SELECT product
+            FROM CartProduct
+            WHERE account = :account_id AND product = :product
+            ''',
+            account_id = account_id,
+            product = product)
+        return False if rows else True
+
+    @staticmethod
     def getcp(account_id):
         rows = app.db.execute('''
            SELECT product, price, quantity 
