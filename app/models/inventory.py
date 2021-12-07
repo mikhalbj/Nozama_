@@ -105,7 +105,7 @@ class Inventory:
             return Inventory.get(seller)
 
         @staticmethod
-        def edit_inventory(prod_id, name, description, price, url):
+        def edit_inventory(prod_id, name, description, price, url, tag):
             try:
                 rows = app.db.execute('''
                             UPDATE Product
@@ -126,6 +126,14 @@ class Inventory:
                             ''',
                                     prod_id = prod_id, 
                                     url = url)
+                rows = app.db.execute('''
+                            UPDATE ProductTag(tag, product)
+                            SET tag = :tag
+                            WHERE product = :prod_id
+                            RETURNING product
+                            ''',
+                                    tag = tag,
+                                    prod_id = prod_id)
                 print(rows)
             except Exception as err:
                 print(err)
