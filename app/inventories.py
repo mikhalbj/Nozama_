@@ -2,7 +2,7 @@ from flask import render_template, redirect, url_for, flash, request
 from werkzeug.urls import url_parse
 from flask_login import login_user, logout_user, current_user
 from flask_wtf import FlaskForm
-from wtforms import StringField, DecimalField, PasswordField, BooleanField, SubmitField, IntegerField, HiddenField
+from wtforms import StringField, DecimalField, PasswordField, BooleanField, SubmitField, IntegerField, HiddenField, SelectField
 from wtforms.validators import ValidationError, DataRequired, Email, EqualTo, Regexp, url, InputRequired
 from flask_wtf.html5 import URLField
 from wtforms.widgets.html5 import URLInput, Input
@@ -120,3 +120,8 @@ class EditQuantityForm(FlaskForm):
 class RemoveInventoryForm(FlaskForm):
     delete = HiddenField(_l('Product ID'), validators = [DataRequired()])
     submit4 = SubmitField(_l('X'))
+
+class OrderSearchForm(FlaskForm):
+    prod_name = StringField(_l('Product Name'))
+    order_num = StringField(_l('Order Number'))
+    submit4 = SubmitField(_l('Search Inventory Fulfillment'))
