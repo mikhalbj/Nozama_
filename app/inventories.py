@@ -26,10 +26,11 @@ def seller_analytics():
     print(analytics)
     popular_item = Inventory.popular_item(id)
     buyers = Inventory.loyal_buyers(id)
+    listed = len(Inventory.get_listed(id))
     #avg_ship = Inventory.avg_ship(id)
     #num_reviews = Inventory.get_num_reviews(id)
     #print(num_reviews)
-    return render_template('seller-analytics.html', analytics = analytics, popular_item = popular_item, buyers = buyers)
+    return render_template('seller-analytics.html', analytics = analytics, popular_item = popular_item, buyers = buyers, listed = listed)
 
 @bp.route('/inventory/order-fulfillment', methods = ['GET', 'POST'])
 def order_fulfillment():
@@ -81,13 +82,13 @@ def inventory():
     listed = Inventory.get_listed(id)
 
     new_form = NewProdForm()
-    available_tags = Inventory.get_tags()
-    print(available_tags)
-    tags_list = [ (i.id) for i in available_tags]
-    print("tags created")
-    print(tags_list)
-    print(type(tags_list))
-    new_form.tag.choices = tags_list
+    # available_tags = Inventory.get_tags()
+    # print(available_tags)
+    # tags_list = [ (i.id) for i in available_tags]
+    # print("tags created")
+    # print(tags_list)
+    # print(type(tags_list))
+    # new_form.tag.choices = tags_list
     edit_form = EditInventoryForm()
     quantity_form = EditQuantityForm()
 

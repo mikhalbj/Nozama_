@@ -18,42 +18,44 @@
   </div>
 </div>
 
+<p style="font-style: italic;">Welcome to your seller analytics page!</p>
 
 <div class="row">
   {% for a in analytics%}
   <div style="display: flex; flex-direction: row;">
   <div class="card" align-items = "center";>
-      <div class="card-body">
+      <div class="card-body " align-items = "center">
         <h4 class="card-title">Number of Orders to Date:</h4>
-        <h2>{{a.count_order}}</h2>
+        <h2 style="text-align:center">{{a.count_order}}</h2>
       </div>
     </div>
     <div class="card" align-items = "center";>
       <div class="card-body">
         <h4 class="card-title">Number of Products Sold:</h4>
-        <h2>{{a.num_items}}</h2>
+        <h2 style="text-align:center">{{a.num_items}}</h2>
       </div>
     </div>
     <div class="card" align-items = "center";>
       <div class="card-body">
-        <h4 class="card-title">Number of Seller Reviews:</h4>
-        <h2></h2>
+        <h4 class="card-title">Number of Products Listed:</h4>
+        <h2 style="text-align:center"> {{listed}} </h2>
       </div>
     </div>
     <div class="card" align-items = "center";>
       <div class="card-body">
-        <h4 class="card-title">Average Seller Rating:</h4>
-        <h2></h2>
+        <h4 class="card-title">Total Revenue to Date:</h4>
+        <h2 style="text-align:center">$ {{a.total}}</h2>
       </div>
     </div>
   </div>
   {% endfor %}
+</div>
 
 
 
-  <br><br>
+  <br>
 
-  <h2>Your most popular items: </h2>
+  <h2 style="text-align:center">Your most popular items: </h2>
   {% for p in popular_item%}
 
   <div class="container">
@@ -72,7 +74,7 @@
 </div>
   {% endfor %}
 
-  <h2>Your most loyal buyers: </h2>
+  <h2 style="text-align:center">Your most loyal buyers: </h2>
   {% for b in buyers%}
 
   <div class="container">

@@ -244,7 +244,7 @@ class Inventory:
         @staticmethod
         def get_seller_analytics(id):
             rows = app.db.execute( '''
-                SELECT count(account_order) as count_order, sum(quantity) as num_items
+                SELECT count(account_order) as count_order, sum(quantity) as num_items, SUM(quantity*price) as total
                 FROM AccountOrderProduct
                 WHERE seller = :id
             ''',
