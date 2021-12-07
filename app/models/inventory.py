@@ -136,15 +136,36 @@ class Inventory:
             rows = app.db.execute('''
     SELECT AccountOrderProduct.product, quantity, AccountOrderProduct.price, status, 
     placed_at, shipped_at, delivered_at, url, AccountOrder.id, name, AccountOrder.account as customer,
-    (quantity * AccountOrderProduct.price) AS cost 
-    FROM AccountOrderProduct, AccountOrder, ProductImage, Product
+    (quantity * AccountOrderProduct.price) AS cost, Account.address, Account.firstname, Account.lastname 
+    FROM AccountOrderProduct, AccountOrder, ProductImage, Product, Account
     WHERE seller = :id
     AND AccountOrder.id = account_order
     AND ProductImage.product = AccountOrderProduct.product
     AND Product.id = AccountOrderProduct.product
+    AND AccountOrder.account = Account.id
     ORDER BY placed_at DESC
     ''',
                                   id = id) 
+            print(rows)      
+            return rows if rows is not None else None
+
+        @staticmethod
+        def get_order_history_search(id, prod_name, order_num):
+            
+            sel = "SELECT AccountOrderProduct.product, quantity, AccountOrderProduct.price, status, placed_at, shipped_at, delivered_at, url, AccountOrder.id, name, AccountOrder.account as customer, (quantity * AccountOrderProduct.price) AS cost, Account.address, Account.firstname, Account.lastname "
+            frm = "FROM AccountOrderProduct, AccountOrder, ProductImage, Product, Account"
+            where = "WHERE seller = :id AND AccountOrder.id = account_order AND ProductImage.product = AccountOrderProduct.product AND Product.id = AccountOrderProduct.product AND AccountOrder.account = Account.id"
+            sby = "ORDER BY placed_at DESC"
+
+            if prod_name:
+                where += " AND name = :prod_name"
+            if order_num:
+                where += " AND AccountOrder.id = :order_num"
+            qry = sel + "\n" + frm + "\n" + where + "\n" + sby
+            rows = app.db.execute(qry,
+                                  id = id,
+                                  prod_name = prod_name,
+                                  order_num = order_num) 
             print(rows)      
             return rows if rows is not None else None
 
@@ -252,6 +273,21 @@ class Inventory:
                 AND AccountOrderProduct.product = ProductImage.product
                 AND AccountOrderProduct.product = Product.id
                 GROUP BY AccountOrderProduct.product, url, name
+                ORDER BY value_occurrence DESC
+                LIMIT 3;
+            ''',
+                id = id)
+            print(rows)      
+            return rows if rows is not None else None
+
+        @staticmethod
+        def loyal_buyers(id):
+            rows = app.db.execute( '''
+                SELECT COUNT(AccountOrder.account) AS value_occurrence, Account.firstname, Account.lastname
+                FROM (AccountOrderProduct JOIN AccountOrder ON AccountOrderProduct.account_order = AccountOrder.id), Account
+                WHERE seller = :id
+                AND AccountOrder.account = Account.id
+                GROUP BY AccountOrder.account, Account.firstname, Account.lastname
                 ORDER BY value_occurrence DESC
                 LIMIT 3;
             ''',

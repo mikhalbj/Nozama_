@@ -71,5 +71,21 @@
     </div>
 </div>
   {% endfor %}
+
+  <h2>Your most loyal buyers: </h2>
+  {% for b in buyers%}
+
+  <div class="container">
+    <div class="row pb-2">
+        <div class="col-md-10">
+            <div class="container">
+                <br>
+                <p class = "card-text"> Buyer name: {{b.firstname}} {{b.lastname}}</p>
+                <p class="card-text">Number of orders from this buyer: {{b.value_occurrence}}</p>
+                </div>
+        </div>
+    </div>
+</div>
+  {% endfor %}
   
 {% endblock %}
