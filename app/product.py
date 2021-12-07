@@ -83,11 +83,13 @@ def product(id):
             flash('You\'ve already saved this product!')
     
     product = Product.fullget(id)
+    tags = Product.get_tags(id)
+    print(tags)
     image = Product.get_img(id)
     reviews = Review.get(id)
     sellers = Inventory.all_sellers(id)
     
-    return render_template('product_details.html', title='See Product', product=product, imgurl=image, cartform=form, review=reviews, sf=sellForm, sb=sellBool, sellers=sellers, saveform=saveForm, edit_form=eForm, eb=editBool)
+    return render_template('product_details.html', title='See Product', product=product, imgurl=image, cartform=form, review=reviews, sf=sellForm, sb=sellBool, sellers=sellers, saveform=saveForm, edit_form=eForm, eb=editBool, tag=tags)
 
 @bp.route('/search/<argterm>', methods=['GET', 'POST'])
 def search(argterm):

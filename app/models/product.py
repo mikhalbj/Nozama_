@@ -44,6 +44,15 @@ GROUP BY Product.id
                         WHERE ProductImage.product = :id
                         ''', id=id)
         return rows[0][0] if rows else "https://cdn.w600.comps.canstockphoto.com/pile-of-random-stuff-eps-vector_csp24436545.jpg"
+    
+    @staticmethod
+    def get_tags(id):
+        rows = app.db.execute('''
+                        SELECT name
+                        FROM Tag, ProductTag
+                        WHERE ProductTag.product = :id AND Tag.id = ProductTag.tag
+                        ''', id=id)
+        return rows
 
     @staticmethod
     def get_all(available=True):
