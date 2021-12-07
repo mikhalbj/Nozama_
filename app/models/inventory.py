@@ -136,12 +136,13 @@ class Inventory:
             rows = app.db.execute('''
     SELECT AccountOrderProduct.product, quantity, AccountOrderProduct.price, status, 
     placed_at, shipped_at, delivered_at, url, AccountOrder.id, name, AccountOrder.account as customer,
-    (quantity * AccountOrderProduct.price) AS cost 
-    FROM AccountOrderProduct, AccountOrder, ProductImage, Product
+    (quantity * AccountOrderProduct.price) AS cost, Account.address, Account.firstname, Account.lastname 
+    FROM AccountOrderProduct, AccountOrder, ProductImage, Product, Account
     WHERE seller = :id
     AND AccountOrder.id = account_order
     AND ProductImage.product = AccountOrderProduct.product
     AND Product.id = AccountOrderProduct.product
+    AND AccountOrder.account = Account.id
     ORDER BY placed_at DESC
     ''',
                                   id = id) 
@@ -151,9 +152,9 @@ class Inventory:
         @staticmethod
         def get_order_history_search(id, prod_name, order_num):
             
-            sel = "SELECT AccountOrderProduct.product, quantity, AccountOrderProduct.price, status, placed_at, shipped_at, delivered_at, url, AccountOrder.id, name, AccountOrder.account as customer, (quantity * AccountOrderProduct.price) AS cost "
-            frm = "FROM AccountOrderProduct, AccountOrder, ProductImage, Product"
-            where = "WHERE seller = :id AND AccountOrder.id = account_order AND ProductImage.product = AccountOrderProduct.product AND Product.id = AccountOrderProduct.product"
+            sel = "SELECT AccountOrderProduct.product, quantity, AccountOrderProduct.price, status, placed_at, shipped_at, delivered_at, url, AccountOrder.id, name, AccountOrder.account as customer, (quantity * AccountOrderProduct.price) AS cost, Account.address, Account.firstname, Account.lastname "
+            frm = "FROM AccountOrderProduct, AccountOrder, ProductImage, Product, Account"
+            where = "WHERE seller = :id AND AccountOrder.id = account_order AND ProductImage.product = AccountOrderProduct.product AND Product.id = AccountOrderProduct.product AND AccountOrder.account = Account.id"
             sby = "ORDER BY placed_at DESC"
 
             if prod_name:

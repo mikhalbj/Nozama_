@@ -18,17 +18,6 @@ from .models.account import Account
 
 from flask import Blueprint
 bp = Blueprint('inventories', __name__)
-@bp.route('/inventory/order-fulfillment', methods = ['GET', 'POST'])
-def order_fulfillment():
-    id = current_user.id
-    searchform = OrderSearchForm()
-    order_history = Inventory.get_order_history(id)
-    if searchform.submit4.data and searchform.validate():
-        prod_name = searchform.prod_name.data
-        order_num = searchform.order_num.data
-        order_history = Inventory.get_order_history_search(id, prod_name= prod_name, order_num = order_num)
-        #return redirect(url_for('inventories.order_fulfillment', order_history = order_history))
-    return render_template('order-fulfillment.html', order_history = order_history, searchform = searchform)
 
 @bp.route('/inventory/seller-analytics', methods = ['GET', 'POST'])
 def seller_analytics():
@@ -41,6 +30,19 @@ def seller_analytics():
     #num_reviews = Inventory.get_num_reviews(id)
     #print(num_reviews)
     return render_template('seller-analytics.html', analytics = analytics, popular_item = popular_item, buyers = buyers)
+
+@bp.route('/inventory/order-fulfillment', methods = ['GET', 'POST'])
+def order_fulfillment():
+    id = current_user.id
+    searchform = OrderSearchForm()
+    order_history = Inventory.get_order_history(id)
+    if searchform.submit4.data and searchform.validate():
+        prod_name = searchform.prod_name.data
+        order_num = searchform.order_num.data
+        order_history = Inventory.get_order_history_search(id, prod_name= prod_name, order_num = order_num)
+        #return redirect(url_for('inventories.order_fulfillment', order_history = order_history))
+    return render_template('order-fulfillment.html', order_history = order_history, searchform = searchform)
+
 
 @bp.route('/inventory/shipped/<account_order>/<product>', methods=['GET', 'POST'])
 def shipped(account_order, product):
