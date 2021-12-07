@@ -7,6 +7,7 @@ from wtforms.validators import ValidationError, DataRequired, Email, EqualTo, Re
 from flask_wtf.html5 import URLField
 from wtforms.widgets.html5 import URLInput, Input
 from flask_babel import _, lazy_gettext as _l
+from datetime import date
 
 
 from .models.inventory import Inventory
@@ -17,20 +18,59 @@ from .models.account import Account
 
 from flask import Blueprint
 bp = Blueprint('inventories', __name__)
-@bp.route('/inventory/order-fulfillment', methods = ['GET', 'POST'])
-def order_fulfillment():
-    id = current_user.id
-    order_history = Inventory.get_order_history(id)
-    return render_template('order-fulfillment.html', order_history = order_history)
 
 @bp.route('/inventory/seller-analytics', methods = ['GET', 'POST'])
 def seller_analytics():
     id = current_user.id
-    analytics = Inventory.get_seller_analytics('7f52ecc5-18ca-44d4-bc6c-55c88267e09f')
+    analytics = Inventory.get_seller_analytics(id)
     print(analytics)
-    print("doggos")
-    return render_template('seller-analytics.html', analytics = analytics)
+    popular_item = Inventory.popular_item(id)
+    buyers = Inventory.loyal_buyers(id)
+    #avg_ship = Inventory.avg_ship(id)
+    #num_reviews = Inventory.get_num_reviews(id)
+    #print(num_reviews)
+    return render_template('seller-analytics.html', analytics = analytics, popular_item = popular_item, buyers = buyers)
 
+@bp.route('/inventory/order-fulfillment', methods = ['GET', 'POST'])
+def order_fulfillment():
+    id = current_user.id
+    searchform = OrderSearchForm()
+    order_history = Inventory.get_order_history(id)
+    if searchform.submit4.data and searchform.validate():
+        prod_name = searchform.prod_name.data
+        order_num = searchform.order_num.data
+        order_history = Inventory.get_order_history_search(id, prod_name= prod_name, order_num = order_num)
+        #return redirect(url_for('inventories.order_fulfillment', order_history = order_history))
+    return render_template('order-fulfillment.html', order_history = order_history, searchform = searchform)
+
+@bp.route('/inventory/order-fulfillment/<order>', methods = ['GET', 'POST'])
+def order_fulfillment_by_order(order):
+    id = current_user.id
+    order_num = order
+    prod_name = ""
+    print("Is prod name true?", prod_name)
+    searchform = OrderSearchForm()
+    order_history = Inventory.get_order_history_search(id, prod_name= prod_name, order_num = order_num)
+    return render_template('order-fulfillment.html', order_history = order_history, searchform = searchform)
+    #return redirect(url_for('inventories.order_fulfillment'))
+
+
+@bp.route('/inventory/shipped/<account_order>/<product>', methods=['GET', 'POST'])
+def shipped(account_order, product):
+    seller = current_user.id
+    Inventory.update_shipped(account_order, product, seller)
+    order_history = Inventory.get_order_history(seller)
+    print("It was shipped!")
+    return redirect(url_for('inventories.order_fulfillment'))
+
+@bp.route('/inventory/delivered/<account_order>/<product>', methods=['GET', 'POST'])
+def delivered(account_order, product):
+    seller = current_user.id
+    Inventory.update_delivered(account_order, product, seller)
+    order_history = Inventory.get_order_history(seller)
+    print("It was delivered!")
+    return redirect(url_for('inventories.order_fulfillment'))
+    
 @bp.route('/inventory', methods=['GET', 'POST'])
 def inventory():
     id = current_user.id
@@ -41,6 +81,13 @@ def inventory():
     listed = Inventory.get_listed(id)
 
     new_form = NewProdForm()
+    available_tags = Inventory.get_tags()
+    print(available_tags)
+    tags_list = [ (i.id) for i in available_tags]
+    print("tags created")
+    print(tags_list)
+    print(type(tags_list))
+    new_form.tag.choices = tags_list
     edit_form = EditInventoryForm()
     quantity_form = EditQuantityForm()
     remove_form = RemoveInventoryForm()
@@ -85,8 +132,9 @@ def inventory():
             price = new_form.price.data
             quantity = new_form.quantity.data
             url = new_form.url.data
+            tag = new_form.tag.data
             seller = id
-            inventory = Inventory.add_prod(name = name, description = description, price = price, quantity= quantity, seller = seller, url = url)
+            inventory = Inventory.add_prod(name = name, description = description, price = price, quantity= quantity, seller = seller, url = url, tag = tag)
             print('New product added')
             #return render_template('inventory.html', title='See Inventory', inventory=inventory, new_form = NewProdForm(), edit_form = EditInventoryForm(), id = id, order_history = order_history)
             return redirect(url_for('inventories.inventory', id = id))
@@ -101,6 +149,7 @@ class NewProdForm(FlaskForm):
     price = DecimalField(_l('Price'), places = 2, validators=[DataRequired()])
     quantity = IntegerField(_l('Quantity'), validators=[InputRequired()])
     url = URLField(validators=[url()])
+    tag =  SelectField(u'Tag', choices=[(0, 'cooking'), (1, 'food'), (2, 'beauty'), (3, 'decor'), (4, 'furniture'), (5, 'education'), (6, 'office supplies'), (7, 'sports'), (8, 'technology'), (9, 'music'), (10, 'art')])
     submit1 = SubmitField(_l('Add Product'))
 
 class EditInventoryForm(FlaskForm):
