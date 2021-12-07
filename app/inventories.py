@@ -2,7 +2,7 @@ from flask import render_template, redirect, url_for, flash, request
 from werkzeug.urls import url_parse
 from flask_login import login_user, logout_user, current_user
 from flask_wtf import FlaskForm
-from wtforms import StringField, DecimalField, PasswordField, BooleanField, SubmitField, IntegerField, SelectField
+from wtforms import StringField, DecimalField, PasswordField, BooleanField, SubmitField, IntegerField, HiddenField, SelectField
 from wtforms.validators import ValidationError, DataRequired, Email, EqualTo, Regexp, url, InputRequired
 from flask_wtf.html5 import URLField
 from wtforms.widgets.html5 import URLInput, Input
@@ -90,6 +90,7 @@ def inventory():
     new_form.tag.choices = tags_list
     edit_form = EditInventoryForm()
     quantity_form = EditQuantityForm()
+    remove_form = RemoveInventoryForm()
 
     # initialdata = {'name': 'one', 'description': '', 'price': 0, 'quantity': 0, 'url': ''}
  
@@ -106,6 +107,10 @@ def inventory():
             inventory = Inventory.edit_quantity(prod_id, quantity, seller)
             return redirect(url_for('inventories.inventory', id = id))
 
+        if remove_form.submit4.data and remove_form.validate():
+            print(remove_form.delete.data)
+            Inventory.remove(id, remove_form.delete.data)
+            return redirect(url_for('inventories.inventory', id = id))
 
         if edit_form.submit2.data and edit_form.validate():
             
@@ -135,7 +140,7 @@ def inventory():
             return redirect(url_for('inventories.inventory', id = id))
         
     print(new_form.name.data)
-    return render_template('inventory.html', title='See Inventory', inventory=inventory, listed = listed, new_form = NewProdForm(), edit_form = edit_form, quantity_form = quantity_form, id = id)
+    return render_template('inventory.html', title='See Inventory', inventory=inventory, listed = listed, new_form = NewProdForm(), edit_form = edit_form, quantity_form = quantity_form, remove = remove_form, id = id)
 
 
 class NewProdForm(FlaskForm):
@@ -161,8 +166,11 @@ class EditQuantityForm(FlaskForm):
     quantity = IntegerField(_l('Quantity'), validators=[InputRequired()])
     submit3 = SubmitField(_l('Edit Product'))
 
+class RemoveInventoryForm(FlaskForm):
+    delete = HiddenField(_l('Product ID'), validators = [DataRequired()])
+    submit4 = SubmitField(_l('X'))
+
 class OrderSearchForm(FlaskForm):
     prod_name = StringField(_l('Product Name'))
     order_num = StringField(_l('Order Number'))
     submit4 = SubmitField(_l('Search Inventory Fulfillment'))
-
