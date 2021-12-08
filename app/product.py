@@ -2,7 +2,7 @@ from flask import render_template, redirect, url_for, flash, request
 from werkzeug.urls import url_parse
 from flask_login import login_user, logout_user, current_user
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, BooleanField, SubmitField, RadioField, DecimalField, SelectMultipleField, IntegerField
+from wtforms import StringField, PasswordField, BooleanField, SubmitField, RadioField, DecimalField, SelectMultipleField, IntegerField, SelectField
 from wtforms.validators import ValidationError, DataRequired, Email, EqualTo, url, InputRequired
 from flask_wtf.html5 import URLField
 from wtforms.widgets.html5 import URLInput, Input
@@ -45,6 +45,7 @@ class EditListingForm(FlaskForm):
     description = StringField(_l('Description'), validators=[DataRequired()])
     price = DecimalField(_l('Price'), places = 2, validators=[InputRequired()])
     url = URLField(validators=[url()])
+    tag =  SelectField(u'Tag', choices=[(0, 'cooking'), (1, 'food'), (2, 'beauty'), (3, 'decor'), (4, 'furniture'), (5, 'education'), (6, 'office supplies'), (7, 'sports'), (8, 'technology'), (9, 'music'), (10, 'art')])
     submit2 = SubmitField(_l('Edit Product'))
 
 @bp.route('/product_details/<uuid:id>', methods=['GET', 'POST'])
@@ -73,7 +74,7 @@ def product(id):
     eForm = EditListingForm()
     if eForm.submit2.data and eForm.validate():
         print("FORM SUBMITTED")
-        Inventory.edit_inventory(id, eForm.name.data, eForm.description.data, eForm.price.data, eForm.url.data)
+        Inventory.edit_inventory(id, eForm.name.data, eForm.description.data, eForm.price.data, eForm.url.data, eForm.tag.data)
         return redirect(url_for('product.product', id=id))
     
     saveForm = SaveProdForm()
@@ -85,11 +86,13 @@ def product(id):
             flash('You\'ve already saved this product!')
     
     product = Product.fullget(id)
+    tags = Product.get_tags(id)
+    print(tags)
     image = Product.get_img(id)
     reviews = Review.get(id)
     sellers = Inventory.all_sellers(id)
     
-    return render_template('product_details.html', title='See Product', product=product, imgurl=image, cartform=form, review=reviews, sf=sellForm, sb=sellBool, sellers=sellers, saveform=saveForm, edit_form=eForm, eb=editBool)
+    return render_template('product_details.html', title='See Product', product=product, imgurl=image, cartform=form, review=reviews, sf=sellForm, sb=sellBool, sellers=sellers, saveform=saveForm, edit_form=eForm, eb=editBool, tag=tags)
 
 @bp.route('/search/<argterm>', methods=['GET', 'POST'])
 def search(argterm):

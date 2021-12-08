@@ -2,25 +2,92 @@
 
 {% block content %}
 
-<br><br>
 
 <div class="row">
-    <div class="col-sm-6">
-      <ul class="list-group list-group-horizontal nav nav-pills">
-        <li class="nav-item">
-          <a class="nav-link active" aria-current="page" href="/inventory">View Inventory</a>
-        </li>
-      </ul>
-      <br>
-      <ul class="list-group list-group-horizontal nav nav-pills">
-        <li class="nav-item">
-          <a class="nav-link active" aria-current="page" href="/inventory/order-fulfillment">View Order Fulfillment</a>
-        </li>
+  <div class="col-sm-6" style="display: flex; flex-direction: row;">
+    <ul class="list-group list-group-horizontal nav nav-pills">
+      <li class="nav-item">
+        <a class="nav-link active" aria-current="page" href="/inventory" style="margin: 20px;">View Inventory</a>
+      </li>
+    </ul>
+    <br>
+    <ul class="list-group list-group-horizontal nav nav-pills">
+      <li class="nav-item">
+        <a class="nav-link active" aria-current="page" href="/inventory/order-fulfillment" style="margin: 20px;">View Order Fulfillment</a>
+      </li>
+  </div>
+</div>
+
+<p style="font-style: italic;">Welcome to your seller analytics page!</p>
+
+<div class="row">
+  {% for a in analytics%}
+  <div style="display: flex; flex-direction: row;">
+  <div class="card" align-items = "center";>
+      <div class="card-body " align-items = "center">
+        <h4 class="card-title">Number of Orders to Date:</h4>
+        <h2 style="text-align:center">{{a.count_order}}</h2>
+      </div>
+    </div>
+    <div class="card" align-items = "center";>
+      <div class="card-body">
+        <h4 class="card-title">Number of Products Sold:</h4>
+        <h2 style="text-align:center">{{a.num_items}}</h2>
+      </div>
+    </div>
+    <div class="card" align-items = "center";>
+      <div class="card-body">
+        <h4 class="card-title">Number of Products Listed:</h4>
+        <h2 style="text-align:center"> {{listed}} </h2>
+      </div>
+    </div>
+    <div class="card" align-items = "center";>
+      <div class="card-body">
+        <h4 class="card-title">Total Revenue to Date:</h4>
+        <h2 style="text-align:center">$ {{a.total}}</h2>
+      </div>
     </div>
   </div>
+  {% endfor %}
+</div>
 
-  <br><br>
-  <h2>Number of Products Sold To Date: {{analytics}}</h2>
 
+
+  <br>
+
+  <h2 style="text-align:center">Your most popular items: </h2>
+  {% for p in popular_item%}
+
+  <div class="container">
+    <div class="row pb-2">
+        <div class="col-md-2 float-left">
+            <img src={{p.url}} class="img-fluid rounded-start" alt="...">
+        </div>
+        <div class="col-md-10">
+            <div class="container">
+                <br>
+                <p class = "card-text"> Product name: {{p.name}}</p>
+                <p class="card-text">Number of orders with this product: {{p.value_occurrence}}</p>
+                </div>
+        </div>
+    </div>
+</div>
+  {% endfor %}
+
+  <h2 style="text-align:center">Your most loyal buyers: </h2>
+  {% for b in buyers%}
+
+  <div class="container">
+    <div class="row pb-2">
+        <div class="col-md-10">
+            <div class="container">
+                <br>
+                <p class = "card-text"> Buyer name: {{b.firstname}} {{b.lastname}}</p>
+                <p class="card-text">Number of orders from this buyer: {{b.value_occurrence}}</p>
+                </div>
+        </div>
+    </div>
+</div>
+  {% endfor %}
   
 {% endblock %}

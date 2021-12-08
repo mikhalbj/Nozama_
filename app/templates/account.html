@@ -239,7 +239,9 @@
                     </div>
                 </div>
                 <div class="card-body">
-                <h5 class="card-title pb-2">Order Products <span class="badge bg-secondary">Shipped</span></h5>
+                <h5 class="card-title pb-2">Order Products 
+                    <span class="badge {{'bg-success' if order.status == 'fulfilled' else 'bg-secondary'}}">{{'Fulfilled' if order.status == 'fulfilled' else 'In Progress'}}</span>
+                </h5>
                 
                 <div class="container">
                     {% for product in order.products %}
@@ -249,7 +251,7 @@
                             </div>
                             <div class="col-md-10">
                                 <div class="container">
-                                    <div class="row"><div class="col float-left">{{product.name}} <span class="badge {{'bg-success' if product.status == 'delivered' else 'bg-secondary'}}">{{'Delivered' if product.status == 'delivered' else 'Shipped'}}</span></div></div>
+                                    <div class="row"><div class="col float-left">{{product.name}} <span class="badge {{'bg-success' if product.status == 'delivered' else 'bg-secondary' if product.status == 'placed' else 'bg-warning'}}">{{'Delivered' if product.status == 'delivered' else 'Shipped' if product.status == 'shipped' else 'Placed'}}</span></div></div>
                                     <div class="row"><div class="col float-left"><small class="text-muted">x{{product.quantity}}</small></div></div>
                                 </div>
                             </div>
