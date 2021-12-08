@@ -17,15 +17,15 @@ class OrderProduct:
 
     def toJSON(self):
         return json.dumps({
-            'order_id': self.order_id,
-            'product_id': self.product_id,
-            'quantity': self.quantity,
-            'price': self.price,
-            'status': self.status,
-            'shipped_at': self.shipped_at,
-            'delivered_at': self.delivered_at,
-            'name': self.name,
-            'url': self.url
+            'order_id': self[0],
+            # 'product_id': self.product_id,
+            'quantity': self[1],
+            'price': self[2],
+            'status': self[3],
+            'shipped_at': self[4],
+            'delivered_at': self[5],
+            'name': self[6],
+            'url': self[7]
         }, default=lambda o: str(o))
         # return json.dumps('{{order_id: {}, product_id: {}, quantity: {}, price: {}, status: {}, shipped_at: {}, delivered_at: {}, name: {}, url: {}}}'.format(self.order_id, self.product_id, self.quantity, self.price, self.status, self.shipped_at, self.delivered_at, self.name, self.url))
 
@@ -82,7 +82,8 @@ class Order:
             'account_id': str(self.account_id),
             'placed_at': self.placed_at,
             'cost': self.cost,
-            'products': products_json
+            'products': products_json,
+            'status': self.status
         }, default=lambda o: str(o))
         # return json.dumps('{{id: {}, account_id: {}, placed_at: {}, cost: {}, products: {} }}'.format(self.id, self.account_id, self.placed_at, self.cost, products_json))
     
