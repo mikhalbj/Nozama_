@@ -125,7 +125,7 @@ WHERE name LIKE '%' || :strng || '%'
     @staticmethod
     def popular():
         prods = app.db.execute('''
-        SELECT Product.name, Product.description, ProductImage.url, Sub.product, Sub.rate, Sub.count
+        SELECT Product.name, Product.description, ProductImage.url, Sub.product, Sub.rate, Sub.count, Product.id
         FROM (
             SELECT ProductReview.product, SUM(Review.rating) AS rate, COUNT(ProductReview.product) AS count
             FROM Review, ProductReview 
@@ -137,7 +137,7 @@ WHERE name LIKE '%' || :strng || '%'
         WHERE ProductImage.product = Sub.product AND Product.id = Sub.product
         ''')
         print(prods)
-        return [prods[0] for x in range(0,4)]
+        return prods
     
     @staticmethod
     def is_lister(pid, uid):
