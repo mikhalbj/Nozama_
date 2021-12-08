@@ -108,7 +108,13 @@ def order(id):
     orderplaced = OrderProduct.get_all(id)
     total = OrderProduct.order_cost(id)
     orderID = id
-    time_placed = OrderProduct.get_all(id)
-    return render_template('orderpage.html', title='Order', orderplaced=orderplaced, total=total, orderID = orderID, time_placed=time_placed)
+    time_placed = Order.get(id)[0][2]
+    specificInfo = str(time_placed.year) + '/' + str(time_placed.month) + '/' + str(time_placed.day) + " " + str(time_placed.hour) + ":" + str(time_placed.minute) + ":" + str(time_placed.second)
+
+    if OrderProduct.check_status(id) == True:
+        s = "Fulfilled"
+    else:
+        s = "In Progress"
+    return render_template('orderpage.html', title='Order', orderplaced=orderplaced, total=total, orderID = orderID, time_placed=time_placed, specificInfo=specificInfo, s=s)
 
     
