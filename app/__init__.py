@@ -38,4 +38,7 @@ def create_app():
     from .api import bp as api_bp
     app.register_blueprint(api_bp)
 
+    from .newReview import bp as newReview_bp
+    app.register_blueprint(newReview_bp)
+
     return app

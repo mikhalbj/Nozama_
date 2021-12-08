@@ -3,14 +3,16 @@ from flask import render_template, redirect, url_for, flash, request
 from werkzeug.urls import url_parse
 from flask_login import login_user, logout_user, current_user
 from flask_wtf import FlaskForm
-from wtforms import BooleanField, DecimalField, SubmitField, StringField, PasswordField
+from wtforms import BooleanField, DecimalField, SubmitField, StringField, PasswordField, HiddenField, RadioField
 from wtforms.validators import ValidationError, DataRequired, Email, EqualTo
 from flask_babel import _, lazy_gettext as _l
 import json
+import datetime
 
 from .models.user import User
 from .models.order import Order
 from .models.account import Account
+from .models.reviewsmod import Review
 
 
 from flask import Blueprint
@@ -44,13 +46,77 @@ class PasswordForm(FlaskForm):
                                            EqualTo('pass_newpass')])
     pass_submit = SubmitField("Submit")
 
+class EditReviewForm(FlaskForm):
+    productRev = HiddenField(_l('Product ID'), validators = [DataRequired()])
+    RevID = HiddenField(_l('Review ID'), validators = [DataRequired()])
+    title = StringField(_l('Title'), validators=[DataRequired()])
+    description = StringField(_l('Description'), validators=[DataRequired()])
+    rating = RadioField(_l('Rating'), choices=[1, 2, 3, 4, 5], validators=[DataRequired()])
+    submitRev = SubmitField(_l('Submit'))
+
+class EditSellReviewForm(FlaskForm):
+    sellerRev = HiddenField(_l('Seller ID'), validators = [DataRequired()])
+    RevIDSell = HiddenField(_l('Review ID'), validators = [DataRequired()])
+    titleS = StringField(_l('Title'), validators=[DataRequired()])
+    descriptionS = StringField(_l('Description'), validators=[DataRequired()])
+    ratingS = RadioField(_l('Rating'), choices=[1, 2, 3, 4, 5], validators=[DataRequired()])
+    submitRevSell = SubmitField(_l('Submit'))
+
+class RemoveReview(FlaskForm):
+    delete1 = HiddenField(_l('Review ID'), validators = [DataRequired()])
+    submitDeleteProdReview = SubmitField(_l('X'))
+
+class RemoveSellReview(FlaskForm):
+    delete2 = HiddenField(_l('Review ID'), validators = [DataRequired()])
+    submitDeleteSellReview = SubmitField(_l('X'))
+
+
 @bp.route('/account/<id>', methods=['GET', 'POST'])
 def public(id):
 
     user = User.get(id)
     account = Account.get(id)
+    review = Review.getSellRev(id)
+    addReview = EditReviewForm()
+    prodReviews = Review.review_history(id)
+    sellReviews = Review.review_historySell(id)
+    count = Review.countSell(id)[0]
+    avg = Review.averageSell(id)[0]
+    author = current_user.id
+    removeProdRev = RemoveReview()
+    removeSellRev = RemoveSellReview()
+    editSell = EditSellReviewForm()
 
-    return render_template('public_account.html', user=user, account=account)
+    if removeProdRev.submitDeleteProdReview.data and removeProdRev.validate():
+        Review.removeReview(current_user.id, removeProdRev.delete1.data)
+        
+    if removeSellRev.submitDeleteSellReview.data and removeSellRev.validate():
+        Review.removeSellReview(current_user.id, removeSellRev.delete2.data)
+
+
+
+    if addReview.submitRev.data and addReview.validate():
+        print("the button for review has been pressed")
+        title = addReview.title.data
+        product = addReview.productRev.data
+        description = addReview.description.data
+        rating = addReview.rating.data
+        prodRevID = addReview.RevID.data
+        edit_time = datetime.datetime.now()
+        Review.edit_review(prodRevID, title, description, rating, edit_time)
+
+
+    if editSell.submitRevSell.data and editSell.validate():
+        print("the button for review has been pressed")
+        title = editSell.title.data
+        description = editSell.description.data
+        rating = editSell.rating.data
+        sellRevID = editSell.RevID.data
+        edit_time = datetime.datetime.now()
+        Review.edit_review(sellRevID, title, description, rating, edit_time)
+
+
+    return render_template('public_account.html', count = count, review = review, user=user, account=account, rfs = removeProdRev, rss = removeSellRev, addRev = addReview, sellRevEd = editSell, prodReviews = prodReviews, sellReviews = sellReviews, avg=avg)
 
 @bp.route('/account/orders', methods=['GET'])
 def get_account_orders():

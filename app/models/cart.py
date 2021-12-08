@@ -57,6 +57,7 @@ class Cart:
         ''',
         account_id = account_id
         )
+
         return rows if rows is not None else None
     
     @staticmethod
@@ -199,9 +200,19 @@ class Cart:
         return False if rows else True
 
     @staticmethod
-    def remove(account_id, product):
+    def removeProduct(account_id, product):
         rows = app.db.execute('''
             DELETE FROM CartProduct WHERE account = :account_id AND product = :product RETURNING account
+            ''',
+            account_id = account_id,
+            product = product
+            )
+        return rows if rows is not None else None
+    
+    @staticmethod
+    def removeSaved(account_id, product):
+        rows = app.db.execute('''
+            DELETE FROM SavedProduct WHERE account = :account_id AND product = :product RETURNING account
             ''',
             account_id = account_id,
             product = product
@@ -243,3 +254,17 @@ class Cart:
             ''',
             id = id)
         return rows[0][0] if rows else 0.0
+
+    @staticmethod
+    def editQuantity(account, product, quantity):
+        rows = app.db.execute('''
+            UPDATE CartProduct
+            SET quantity = :quantity
+            WHERE product = :product AND account = :account
+            RETURNING *
+            ''',
+            quantity = quantity,
+            product = product,
+            account = account
+            )
+        return rows if rows is not None else None

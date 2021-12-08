@@ -83,7 +83,7 @@ def product(id):
     
     product = Product.fullget(id)
     image = Product.get_img(id)
-    reviews = Review.get(id)
+    reviews = Review.getProdRev(id)
     sellers = Inventory.all_sellers(id)
     
     return render_template('product_details.html', title='See Product', product=product, imgurl=image, cartform=form, review=reviews, sf=sellForm, sb=sellBool, sellers=sellers, saveform=saveForm, edit_form=eForm, eb=editBool)
