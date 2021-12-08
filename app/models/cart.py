@@ -6,6 +6,7 @@ class Cart:
         self.account_id = account_id
         self.total = total
     
+    #Returns all products in the order
     @staticmethod
     def get_all(account_id):
         rows = app.db.execute('''
@@ -16,7 +17,7 @@ class Cart:
             account_id=account_id)     
         return rows if rows is not None else None
 
-
+    #updates account balances and inserts order into account order table
     @staticmethod
     def place_order(account_id, time):
 
@@ -42,6 +43,7 @@ class Cart:
         time = time)
         id = rows[0][0]
 
+        #individually looks at each product in the cart in order to choose product from correct seller
         orderid = Cart.getoid(account_id, time)
         index = 0
         cart_prods = Cart.getcp(account_id)
@@ -52,6 +54,7 @@ class Cart:
             Cart.edit_inventory(account_id, product, quant, orderid, price, time)
             index += 1
 
+        #removes product from cart when order is placed
         rows = app.db.execute('''
         DELETE FROM CartProduct WHERE account = :account_id RETURNING account
         ''',
@@ -60,6 +63,7 @@ class Cart:
 
         return rows if rows is not None else None
     
+    #checks the inventory to ensure there is enough to fulfill the order
     @staticmethod
     def check_inventory(account_id, time):
         orderid = Cart.getoid(account_id, time)
@@ -73,7 +77,7 @@ class Cart:
                 return False
         return True
 
-
+    #adjusting seller inventory to account for the order being placed
     @staticmethod
     def edit_inventory(account_id, prodid, quant, orderid, price, time):
         sellers = Cart.getsellers(prodid)
@@ -89,6 +93,7 @@ class Cart:
             index += 1
         return True
 
+    #adds product to the cart table
     @staticmethod
     def add_cart(account_id, quantity, id):
         rows = app.db.execute('''
@@ -101,6 +106,7 @@ class Cart:
             quantity = quantity)
         return True
     
+    #calculates the total cost of the cart by adding up the product multiplied by the price for every item in the cart
     @staticmethod
     def cart_total(account_id):
         rows = app.db.execute('''
@@ -111,6 +117,7 @@ class Cart:
             account_id=account_id)
         return rows[0][0] if rows else 0.0
 
+    #calculates the total inventory for a product by adding the inventory for each seller of a product
     @staticmethod
     def inventory_total(product):
         rows = app.db.execute('''
@@ -121,6 +128,7 @@ class Cart:
             product=product)
         return rows[0][0] if rows else 0.0
 
+    #finds the order id
     @staticmethod
     def getoid(account_id, time):
         rows = app.db.execute('''
@@ -131,6 +139,7 @@ class Cart:
             time=time)
         return rows[0][0] if rows else 0.0
 
+    #counts the number of products in the cart
     @staticmethod
     def cartcount(account_id):
         rows = app.db.execute('''
@@ -141,6 +150,7 @@ class Cart:
             account_id=account_id)
         return rows[0][0] if rows else 0.0
 
+    #looks to see if a product is already in the cart and returns false if it exists
     @staticmethod
     def duplicate(account_id, product):
         rows = app.db.execute('''
@@ -152,6 +162,7 @@ class Cart:
             product = product)
         return False if rows else True
 
+    #selects a specific product from the cart
     @staticmethod
     def getcp(account_id):
         rows = app.db.execute('''
@@ -162,6 +173,7 @@ class Cart:
             account_id=account_id)
         return rows if rows else 0.0
 
+    #finds all of the sellers of a single product
     @staticmethod
     def getsellers(prodid):
         rows = app.db.execute('''
@@ -172,6 +184,7 @@ class Cart:
             prodid=prodid)
         return rows if rows else 0.0
 
+    #adds a product into the accountorderproduct table 
     @staticmethod
     def updateaop(orderid, prodid, seller, amount, price):
         status = 'Order Placed'
@@ -188,6 +201,7 @@ class Cart:
             status=status)
         return True
 
+    #displays saved products and their information for a specific user
     @staticmethod
     def saved(account_id):
         rows = app.db.execute('''
@@ -198,6 +212,7 @@ class Cart:
             account_id=account_id)     
         return rows if rows is not None else None
     
+    #adds product to saved product table when save for later button is pressed
     @staticmethod
     def save(account_id, pid):
         rows = app.db.execute('''
@@ -209,6 +224,7 @@ class Cart:
             prod_id = pid)
         return rows if rows is not None else None
     
+    #checks if product already exists in saved table and returns false if it is there
     @staticmethod
     def can_save(account_id, pid):
         rows = app.db.execute('''
@@ -220,6 +236,7 @@ class Cart:
             prod_id = pid)
         return False if rows else True
 
+    #deletes a specific product from the cart
     @staticmethod
     def removeProduct(account_id, product):
         rows = app.db.execute('''
@@ -230,6 +247,7 @@ class Cart:
             )
         return rows if rows is not None else None
     
+    #deletes a specific product from the saved table
     @staticmethod
     def removeSaved(account_id, product):
         rows = app.db.execute('''
@@ -240,6 +258,7 @@ class Cart:
             )
         return rows if rows is not None else None
 
+    #deletes the quantity of items purchased from the seller's inventory
     @staticmethod
     def editseller(prod_id, quantity, amount, seller, cost): 
         rows = app.db.execute('''
@@ -266,6 +285,7 @@ class Cart:
 
         return rows if rows is not None else None
 
+    #gets the balance from account
     @staticmethod
     def get_balance(id):
         rows = app.db.execute('''
@@ -276,6 +296,7 @@ class Cart:
             id = id)
         return rows[0][0] if rows else 0.0
 
+    #updates the quantity of items in the cart based on user's input
     @staticmethod
     def editQuantity(account, product, quantity):
         rows = app.db.execute('''
