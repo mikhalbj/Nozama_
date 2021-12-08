@@ -2,7 +2,7 @@
 
 {% block content %}
 
-
+<!-- Header with tab navigation -->
 <div class="row">
   <div class="col-sm-6" style="display: flex; flex-direction: row;">
     <ul class="list-group list-group-horizontal nav nav-pills">
@@ -18,42 +18,47 @@
   </div>
 </div>
 
+<!-- Seller Analytics Body -->
 
+<p style="font-style: italic;">Welcome to your seller analytics page!</p>
+
+<!-- Row of Statistics -->
 <div class="row">
   {% for a in analytics%}
   <div style="display: flex; flex-direction: row;">
   <div class="card" align-items = "center";>
-      <div class="card-body">
+      <div class="card-body " align-items = "center">
         <h4 class="card-title">Number of Orders to Date:</h4>
-        <h2>{{a.count_order}}</h2>
+        <h2 style="text-align:center">{{a.count_order}}</h2>
       </div>
     </div>
     <div class="card" align-items = "center";>
       <div class="card-body">
         <h4 class="card-title">Number of Products Sold:</h4>
-        <h2>{{a.num_items}}</h2>
+        <h2 style="text-align:center">{{a.num_items}}</h2>
       </div>
     </div>
     <div class="card" align-items = "center";>
       <div class="card-body">
-        <h4 class="card-title">Number of Seller Reviews:</h4>
-        <h2></h2>
+        <h4 class="card-title">Number of Products Listed:</h4>
+        <h2 style="text-align:center"> {{listed}} </h2>
       </div>
     </div>
     <div class="card" align-items = "center";>
       <div class="card-body">
-        <h4 class="card-title">Average Seller Rating:</h4>
-        <h2></h2>
+        <h4 class="card-title">Total Revenue to Date:</h4>
+        <h2 style="text-align:center">$ {{a.total}}</h2>
       </div>
     </div>
   </div>
   {% endfor %}
+</div>
 
+<!-- Most popular items -->
 
+  <br>
 
-  <br><br>
-
-  <h2>Your most popular items: </h2>
+  <h2 style="text-align:center">Your most popular items: </h2>
   {% for p in popular_item%}
 
   <div class="container">
@@ -66,6 +71,27 @@
                 <br>
                 <p class = "card-text"> Product name: {{p.name}}</p>
                 <p class="card-text">Number of orders with this product: {{p.value_occurrence}}</p>
+                </div>
+        </div>
+    </div>
+</div>
+  {% endfor %}
+
+  <!-- Most loyal buyers -->
+
+  <h2 style="text-align:center">Your most loyal buyers: </h2>
+  {% for b in buyers%}
+
+  <div class="container">
+    <div class="row pb-2">
+      <div class="col-md-2 float-left">
+        <img src=https://hdclipartall.com/images/shopping-bags-clipart-set-of-colorful-empty-shopping-bags-isolated-vector-illustration-450x360.jpg class="img-fluid rounded-start" alt="...">
+    </div>
+        <div class="col-md-10">
+            <div class="container">
+                <br>
+                <p class = "card-text"> Buyer name: {{b.firstname}} {{b.lastname}}</p>
+                <p class="card-text">Number of orders from this buyer: {{b.value_occurrence}}</p>
                 </div>
         </div>
     </div>

@@ -49,6 +49,14 @@ WHERE account_order = :order_id
                               order_id=order_id)
         return cost[0][0] if cost else 0.0
 
+    @staticmethod
+    def check_status(id):
+        products = OrderProduct.get_all(id)
+        for x in products:
+            if x[3] == 'Order Placed':
+                return False
+        return True
+
 class Order:
     def __init__(self, id, account_id, placed_at, cost, products):
         self.id = id
@@ -56,6 +64,15 @@ class Order:
         self.placed_at = placed_at
         self.cost = cost
         self.products = products
+
+
+        status = 'fulfilled'
+        for prod in products:
+            if prod.status == 'placed':
+                status = 'progress'
+                break
+        
+        self.status = status
     
     def toJSON(self):
         products_json = [OrderProduct.toJSON(prod) for prod in self.products]
@@ -65,10 +82,11 @@ class Order:
             'account_id': str(self.account_id),
             'placed_at': self.placed_at,
             'cost': self.cost,
-            'products': products_json
+            'products': products_json,
+            'status': self.status
         }, default=lambda o: str(o))
         # return json.dumps('{{id: {}, account_id: {}, placed_at: {}, cost: {}, products: {} }}'.format(self.id, self.account_id, self.placed_at, self.cost, products_json))
-
+    
     @staticmethod
     def get(id):
         rows = app.db.execute('''
@@ -77,7 +95,7 @@ FROM AccountOrder
 WHERE id = :id
 ''',
                               id=id)
-        return Order(*(rows[0]), OrderProduct.order_cost(id), OrderProduct.get_all(id)) if rows is not None else None
+        return rows if rows is not None else None
 
 
     @staticmethod

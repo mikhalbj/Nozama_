@@ -3,6 +3,9 @@ from werkzeug.security import check_password_hash, generate_password_hash
 
 from .order import Order
 
+'''
+Object containing information about a user account and past orders
+'''
 class Account:
     def __init__(self, id, balance, vendor, orders):
         self.id = id
@@ -11,7 +14,9 @@ class Account:
         self.orders = orders
 
 
-
+    '''
+    Checks if an account is a seller
+    '''
     @staticmethod
     def is_seller(id):
         rows = app.db.execute('''
@@ -23,6 +28,9 @@ class Account:
 
         return True if len(rows) != 0 else False
 
+    '''
+    Gets the balance of an account
+    '''
     @staticmethod
     def get_balance(id):
         rows = app.db.execute('''
@@ -35,6 +43,10 @@ class Account:
 
         return rows[0][0] if len(rows) != 0 else 0
 
+
+    '''
+    Increase the balance of an account
+    '''
     @staticmethod
     def increase_balance(id, amount):
         try:
@@ -47,6 +59,9 @@ class Account:
             print(err)
         
 
+    '''
+    Decrease the balance of an account
+    '''
     @staticmethod
     def decrease_balance(id, amount):
         try:
@@ -58,6 +73,9 @@ class Account:
         except Exception as err:
             print(err)
 
+    '''
+    Mark the account as a seller
+    '''
     @staticmethod
     def become_vendor(id):
         try:
@@ -67,6 +85,9 @@ class Account:
         except Exception as err:
             print(err)
 
+    '''
+    Get all of the orders for a given account
+    '''
     @staticmethod
     def get_orders(id):
         rows = app.db.execute('''
@@ -78,18 +99,11 @@ class Account:
 
         return rows
 
+    '''
+    Get an account by its id
+    '''
     @staticmethod
     def get(id):
-
-        # print(app.db.execute('''
-        #     SELECT id, password
-        #     FROM Account
-        #     WHERE id = :id
-        #     ''',
-        #     id=id))
-
-        # print(generate_password_hash('test'))
-        # print(generate_password_hash('test2'))
 
         balance = Account.get_balance(id)
 
@@ -99,6 +113,9 @@ class Account:
         return Account(id, balance, seller, orders)
 
 
+    '''
+    Update the general information for an account
+    '''
     @staticmethod
     def update_information(id, firstname, lastname, email, address):
         try:
@@ -114,6 +131,9 @@ class Account:
             print(err)
 
 
+    '''
+    Update the password for an account
+    '''
     @staticmethod
     def update_password(id, old_password, new_password):
         try:

@@ -79,20 +79,28 @@
       <th scope="col">Product Name</th>
       <th scope="col">Quantity</th>
       <th scope="col">Total Price</th>
+      <th scope="col">Save</th>
       <th scope="col">Remove</th>
     </tr>
   </thead>
   <tbody>
     {% for cart in cart%}
       <tr>
-        <th scope="row">{{cart.id}}</th>
+        <td scope="row"><a href="/product_details/{{cart.id}}" class="link-unstyled" style="text-decoration: underline;">{{cart.id}}</a></th>
         <td>{{cart.name}}</td>
-        <td><button type="button" class="btn mr-2" data-bs-toggle="modal" data-bs-target="#quantModal">{{cart.quantity}}</button></td>
+        <td><button type="button" class="btn mr-2" data-bs-toggle="modal" data-bs-target="#quantModal"><u>{{cart.quantity}}</u></button></td>
         <td>{{cart.totalPrice}}</td>
         <td>
           <form action="" method="POST">
-          
-          
+          {{save.csrf_token}}
+          {{save.productx(value=cart.id)}}
+          {{save.submitx(class_='btn')}}
+          </form>
+        </td>
+        <td>
+          <form action="" method="POST">
+          {{remove.csrf_token}}
+          {{remove.delete(value=cart.id)}}
           {{remove.submit(class_='btn btn-danger btn-xs')}}
           </form>
         </td>
@@ -134,7 +142,7 @@
   <tbody>
     {% for product in saved%}
       <tr>
-        <td scope="row"><a href="/product/{{product.id}}" class="link-unstyled" style="text-decoration: underline;">{{product.id}}</a></th>
+        <td scope="row"><a href="/product_details/{{product.id}}" class="link-unstyled" style="text-decoration: underline;">{{product.id}}</a></th>
         <td>{{product.name}}</td>
         <td><button type="button" class="btn btn-primary mr-2" data-bs-toggle="modal" data-bs-target="#cModal">Add to Cart</button></td>
         <td><form action="" method="POST">

@@ -3,6 +3,8 @@
 {% block content %}
 
 <br><br>
+
+<!-- Display search form -->
 {% if presearch %}
 <div style="display: flexbox; margin-left: 40%; margin-right: 40%;">
   <h2>Search Nozama</h2>
@@ -38,11 +40,11 @@
   </div>
 </div>
 
-
+<!-- Display search results with no matches -->
 {% elif products|length == 0 %}
 <p> Your search returned no products on Nozama</p>
 
-
+<!-- Display search results -->
 {% else %}
 <h2>Products matching your search:</h2>
 <table class='table table-hover table-bordered container'>

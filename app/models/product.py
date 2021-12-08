@@ -14,27 +14,32 @@ class Product:
         if seller:
             self.seller = seller
 
+    # given a product id, returns the product's basic information
     @staticmethod
     def get(id):
         rows = app.db.execute('''
-SELECT id, name, price, available
-FROM Product
-WHERE id = :id
-''',
+        SELECT id, name, price, available
+        FROM Product
+        WHERE id = :id
+        ''',
                               id=id)
         return rows[0] if rows is not None else None
     
+    # given a product id, returns product information along with related review summaries
+    # used when displaying product details
     @staticmethod
     def fullget(id):
         rows = app.db.execute('''
-SELECT Product.id, name, price, available, Product.description, COALESCE(ROUND(AVG(T.rating), 2), NULL) AS rate, COUNT(T.rating) AS count
-FROM Product LEFT OUTER JOIN (SELECT * FROM Review, ProductReview WHERE Review.id = ProductReview.review) AS T ON Product.id = T.product
-WHERE Product.id = :id
-GROUP BY Product.id
-''',
+        SELECT Product.id, name, price, available, Product.description, COALESCE(ROUND(AVG(T.rating), 2), NULL) AS rate, COUNT(T.rating) AS count
+        FROM Product LEFT OUTER JOIN (SELECT * FROM Review, ProductReview WHERE Review.id = ProductReview.review) AS T ON Product.id = T.product
+        WHERE Product.id = :id
+        GROUP BY Product.id
+        ''',
                               id=id)
         return rows[0] if rows is not None else None
     
+    # given a product id, returns the product's image's url; if none exists, return a dummy url
+    # used when displaying search results, product details, and more
     @staticmethod
     def get_img(id):
         print(id)
@@ -44,6 +49,15 @@ GROUP BY Product.id
                         WHERE ProductImage.product = :id
                         ''', id=id)
         return rows[0][0] if rows else "https://cdn.w600.comps.canstockphoto.com/pile-of-random-stuff-eps-vector_csp24436545.jpg"
+    
+    @staticmethod
+    def get_tags(id):
+        rows = app.db.execute('''
+                        SELECT name
+                        FROM Tag, ProductTag
+                        WHERE ProductTag.product = :id AND Tag.id = ProductTag.tag
+                        ''', id=id)
+        return rows
 
     @staticmethod
     def get_all(available=True):
@@ -55,6 +69,8 @@ WHERE available = :available
                               available=available)
         return [Product(*row) for row in rows]
     
+    # returns the human-readable name of every category in database
+    # used when dispalying categories for searching
     @staticmethod
     def get_categories():
         rows = app.db.execute('''
@@ -64,26 +80,8 @@ WHERE available = :available
         print(rows)
         return [row[0] for row in rows]
     
-    @staticmethod
-    def get_inventory(id):
-        rows = app.db.execute('''
-        SELECT SUM(quantity)
-        FROM ProductInventory
-        WHERE product = :id
-        GROUP BY product''', id=id)
-        print(rows)
-        return rows[0] if rows else None
-    
-    @staticmethod
-    def search(strng):
-        rows = app.db.execute('''
-SELECT id, name, price, available
-FROM Product
-WHERE name LIKE '%' || :strng || '%'
-''',
-                              strng = strng)
-        return [Product(*row) for row in rows]
-
+    # constructs a query for the searching tools
+    # used to display results from the search page
     @staticmethod
     def advanced_search(strng="", searchName=True, searchDesc=False, sortBy=False, availOnly=False, priceMax=False, tag=False, page=1):
 
@@ -122,16 +120,18 @@ WHERE name LIKE '%' || :strng || '%'
         rows = app.db.execute(qry, strng="%"+strng+"%", tag=tag, pricemax=priceMax)
         return rows
     
+    # returns the four products with the highest sum of ratings
+    # used in the carousel on index page
     @staticmethod
     def popular():
         prods = app.db.execute('''
-        SELECT Product.name, Product.description, ProductImage.url, Sub.product, Sub.rate, Sub.count
+        SELECT Product.name, Product.description, ProductImage.url, Sub.product, Sub.rate, Sub.count, Product.id
         FROM (
-            SELECT ProductReview.product, AVG(Review.rating) AS rate, COUNT(ProductReview.product) AS count, (AVG(Review.rating)*COUNT(ProductReview.product)) AS score
+            SELECT ProductReview.product, SUM(Review.rating) AS rate, COUNT(ProductReview.product) AS count
             FROM Review, ProductReview 
             WHERE Review.id = ProductReview.review
             GROUP BY ProductReview.product
-            ORDER BY score DESC NULLS LAST
+            ORDER BY rate DESC NULLS LAST
             LIMIT 4
         ) AS Sub, Product, ProductImage
         WHERE ProductImage.product = Sub.product AND Product.id = Sub.product
@@ -139,6 +139,8 @@ WHERE name LIKE '%' || :strng || '%'
         print(prods)
         return prods
     
+    # given a user id and product id, returns true if user created the product, false otherwise
+    # used to conditionally display the "edit listing" on product details page
     @staticmethod
     def is_lister(pid, uid):
         rows = app.db.execute('''

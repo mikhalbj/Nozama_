@@ -27,6 +27,10 @@ class MoveToCart(FlaskForm):
     quantity = IntegerField("Quantity", validators=[DataRequired()])
     submit1 = SubmitField(_l('Submit'))
 
+class MoveToSaved(FlaskForm):
+    productx = HiddenField(_l('Product ID'), validators = [DataRequired()])
+    submitx = SubmitField(_l('X'))
+
 class RemoveItem(FlaskForm):
     delete = HiddenField(_l('Product ID'), validators = [DataRequired()])
     submit = SubmitField(_l('X'))
@@ -65,6 +69,7 @@ def cart():
     saved = Cart.saved(current_user.id)
     remove = RemoveItem()
     move = MoveToCart()
+    save = MoveToSaved()
     rfs = RemoveFromSaved()
     editquant = EditQuantity()
     
@@ -80,22 +85,39 @@ def cart():
         Cart.removeSaved(current_user.id, rfs.delete1.data)
         return redirect(url_for('carts.cart'))
 
+    if save.submitx.data and save.validate():
+        if Cart.can_save(current_user.id, save.productx.data) == False:
+            flash("Product already saved!")
+        else:
+            Cart.save(current_user.id, save.productx.data)
+            Cart.removeProduct(current_user.id, save.productx.data)
+        return redirect(url_for('carts.cart'))
+
     if move.submit1.data and move.validate():
-        Cart.add_cart(current_user.id, move.quantity.data, move.product.data)
+        if Cart.duplicate(current_user.id, move.product.data) == False:
+            flash("Product already added to cart!")
+        else:
+            Cart.add_cart(current_user.id, move.quantity.data, move.product.data)
         return redirect(url_for('carts.cart'))
 
     if order_form.is_submitted() and order_form.validate():
         time = datetime.datetime.now()
-        if Cart.check_inventory(current_user.id, time) == False:
+        #ensures the cart is not empty
+        if Cart.cartcount(current_user.id) == 0:
+            flash('Cannot Place Order - Cart is Empty')
+        #ensures there is enough inventory for the number of items in cart
+        elif Cart.check_inventory(current_user.id, time) == False:
             flash('Cannot Place Order - Insufficient Product Availability')
         else:
+            #ensures user has enough balance to place order
             if Cart.get_balance(current_user.id) < Cart.cart_total(current_user.id):
                 flash('Cannot Place Order - Insufficient Balance')
             else:
                 Cart.place_order(current_user.id, time)
+                flash('Order Placed! Check Account for Details')
         return redirect(url_for('carts.cart'))
 
-    return render_template('cart.html', title='Cart', cart=cart, total=total, saved=saved, order_form=order_form, remove=remove, move=move, rfs=rfs, editquant=editquant)
+    return render_template('cart.html', title='Cart', cart=cart, total=total, saved=saved, order_form=order_form, remove=remove, move=move, rfs=rfs, editquant=editquant, save=save)
 
 @bp.route('/order/<uuid:id>', methods=['GET', 'POST'])
 def order(id):
@@ -110,6 +132,14 @@ def order(id):
     author = current_user.id
     prodReviewed = Review.notReviewedProd
     #sellReviewed = Review.notReviewedSell
+
+    time_placed = Order.get(id)[0][2]
+    specificInfo = str(time_placed.year) + '/' + str(time_placed.month) + '/' + str(time_placed.day) + " " + str(time_placed.hour) + ":" + str(time_placed.minute) + ":" + str(time_placed.second)
+
+    if OrderProduct.check_status(id) == True:
+        s = "Fulfilled"
+    else:
+        s = "In Progress"
     
 #for products:
     if addReview.submitRev.data and addReview.validate():
@@ -129,6 +159,6 @@ def order(id):
         
         Review.add_sellrev(titleS, author, descriptionS, ratingS, seller)
 
-    return render_template('orderpage.html', title='Order', orderplaced=orderplaced, total=total, orderID = orderID, addReview=addReview, addSellReview=addSellReview, prodReviewed = prodReviewed)
+    return render_template('orderpage.html', title='Order', orderplaced=orderplaced, total=total, orderID = orderID, addReview=addReview, addSellReview=addSellReview, prodReviewed = prodReviewed, time_placed=time_placed, specificInfo=specificInfo, s=s)
 
     

@@ -15,6 +15,9 @@ from .models.account import Account
 from flask import Blueprint
 bp = Blueprint('api', __name__)
 
+'''
+Return the number of account orders placed in every month
+'''
 @bp.route('/api/purchases/dates', methods=['GET'])
 def purchase_dates():
     if not current_user.is_authenticated:
@@ -44,6 +47,9 @@ def purchase_dates():
     
     return json.dumps(results)
 
+'''
+Return the amount spent in every month
+'''
 @bp.route('/api/purchases/spending', methods=['GET'])
 def purchase_spending():
     if not current_user.is_authenticated:
@@ -73,6 +79,9 @@ def purchase_spending():
     
     return json.dumps(results)
 
+'''
+Return the number of purchases and the total spent per category each month
+'''
 @bp.route('/api/purchases/categories', methods=['GET'])
 def purchase_categories():
     if not current_user.is_authenticated:

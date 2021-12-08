@@ -118,6 +118,9 @@ def public(id):
 
     return render_template('public_account.html', count = count, review = review, user=user, account=account, rfs = removeProdRev, rss = removeSellRev, addRev = addReview, sellRevEd = editSell, prodReviews = prodReviews, sellReviews = sellReviews, avg=avg)
 
+'''
+Endpoint to get the orders for a given user with pagination
+'''
 @bp.route('/account/orders', methods=['GET'])
 def get_account_orders():
     if not current_user.is_authenticated:
@@ -144,10 +147,12 @@ def account():
     pass_form = PasswordForm()
 
     if deposit_form.deposit_submit.data and deposit_form.validate():
-        Account.increase_balance(current_user.id, deposit_form.deposit_amount.data)
+        if (deposit_form.deposit_amount.data > 0):
+            Account.increase_balance(current_user.id, deposit_form.deposit_amount.data)
 
     if withdraw_form.withdraw_submit.data and withdraw_form.validate():
-        Account.decrease_balance(current_user.id, withdraw_form.withdraw_amount.data)
+        if (withdraw_form.withdraw_amount.data > 0):
+            Account.decrease_balance(current_user.id, withdraw_form.withdraw_amount.data)
 
     if vendor_form.vendor_submit.data and vendor_form.validate():
         if (vendor_form.vendor_confirm.data):
@@ -161,5 +166,8 @@ def account():
 
     account = Account.get(current_user.id)
 
-    return render_template('account.html', title='Account', user=current_user, account=account, deposit_form=deposit_form, withdraw_form=withdraw_form, vendor_form=vendor_form, info_form=info_form, pass_form=pass_form)
+    if request.method == 'GET':
+        return render_template('account.html', title='Account', user=current_user, account=account, deposit_form=deposit_form, withdraw_form=withdraw_form, vendor_form=vendor_form, info_form=info_form, pass_form=pass_form)
+    else:
+        return redirect(url_for('accounts.account'))
 

@@ -50,7 +50,7 @@ const renderOrders = (orders) => {
                 </div>
             </div>
             <div class="card-body">
-                <h5 class="card-title pb-2">Order Products <span class="badge bg-secondary">Shipped</span></h5>
+                <h5 class="card-title pb-2">Order Products <span class="badge ${order.status === 'fulfilled' ? 'bg-success' : 'bg-secondary'}">${order.status === 'fulfilled' ? 'Fulfilled' : 'In Progress'}</span></h5>
                 
                 <div class="container" id="orderProducts${i}">
                     
@@ -71,7 +71,7 @@ const renderOrders = (orders) => {
                 </div>
                 <div class="col-md-10">
                     <div class="container">
-                        <div class="row"><div class="col float-left">${product.name} <span class="badge ${product.status === 'delivered' ? 'bg-success' : 'bg-secondary'}">${product.status === 'delivered' ? 'Delivered' : 'Shipped'}</span></div></div>
+                        <div class="row"><div class="col float-left">${product.name} <span class="badge ${product.status === 'delivered' ? 'bg-success' : 'bg-warning'}">${product.status === 'delivered' ? 'Delivered' : 'Shipped'}</span></div></div>
                         <div class="row"><div class="col float-left"><small class="text-muted">x${product.quantity}</small></div></div>
                     </div>
                 </div>
