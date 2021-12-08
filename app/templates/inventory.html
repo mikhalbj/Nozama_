@@ -35,7 +35,7 @@
   <tbody>
     {% for inventory in listed%}
       <tr>
-        <th scope="row">{{inventory.id}}</th>
+        <td scope="row">{{inventory.id}}</td>
         <td><a href="{{ url_for('product.product', id=inventory.id) }}">{{inventory.name}}</a></td>
         <td>{{inventory.description}}</td>
         <td style="max-width: 100px;"><img src={{inventory.url}} class="img-fluid rounded-start" alt="..."></td>
@@ -46,7 +46,7 @@
   {% if listed|length == 0 %}
     <div class="card text-white bg-secondary mb-3" style="max-width: 800px; display: flexbox; margin-left: 10%; margin-right: 10%;">
       <div class="card-body">
-        <p class="card-text"> You haven't created any products</p>
+        <p class="card-text"> You haven't listed any products yet</p>
       </div>
     </div>
   {% endif %}
