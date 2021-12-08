@@ -65,6 +65,8 @@
       <th scope="col">Quantity</th>
       <th scope="col">Total Price</th>
       <th scope="col">Status</th>
+      <th scope="col">Date Shipped</th>
+      <th scope="col">Date Delivered</th>
       <th scope="col">Write Review</th>
     </tr>
   </thead>
@@ -75,6 +77,8 @@
         <td>{{product.quantity}}</td>
         <td>{{product.totalPrice}}</td>
         <td>{{product.status}}</td>
+        <td>{{product.shipped_at}}</td>
+        <td>{{product.delivered_at}}</td>
         <td>{{product.status}}</td>
       </tr>
     {% endfor %}
