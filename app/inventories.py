@@ -22,6 +22,7 @@ bp = Blueprint('inventories', __name__)
 # This file controls the routes for 3 parts of the inventory/fulfillment section: 
 # seller analytics, order fullfillment history, and inventory
 
+# To view the seller analytics page
 @bp.route('/inventory/seller-analytics', methods = ['GET', 'POST'])
 def seller_analytics():
     id = current_user.id
@@ -42,9 +43,9 @@ def order_fulfillment():
         prod_name = searchform.prod_name.data
         order_num = searchform.order_num.data
         order_history = Inventory.get_order_history_search(id, prod_name= prod_name, order_num = order_num)
-    return render_template('order-fulfillment.html', order_history = order_history, searchform = searchform)
+    return render_template('order-fulfillment.html', order_history = order_history, searchform = searchform, is_fulfilled = "", single_order = False, total_items = 0)
 
-# To view order history cards all from the same order
+# To view order history cards all from the same order, revealing additional information about the order
 @bp.route('/inventory/order-fulfillment/<order>', methods = ['GET', 'POST'])
 def order_fulfillment_by_order(order):
     id = current_user.id
@@ -53,8 +54,16 @@ def order_fulfillment_by_order(order):
     print("Is prod name true?", prod_name)
     searchform = OrderSearchForm()
     order_history = Inventory.get_order_history_search(id, prod_name= prod_name, order_num = order_num)
-    return render_template('order-fulfillment.html', order_history = order_history, searchform = searchform)
+    is_fulfilled = True
+    total_items = 0
+    for prod in order_history:
+        total_items += prod.quantity
+        if prod.status == 'placed':
+            is_fulfilled = False
+            break
+    return render_template('order-fulfillment.html', order_history = order_history, searchform = searchform, is_fulfilled = is_fulfilled, single_order = True, total_items = total_items)
 
+# This route allows sellers to mark a line item as shipped
 # In shipped & delivered routes, not concerned about sellers being able to hover over the button to see account order/product id in URL.
 @bp.route('/inventory/shipped/<account_order>/<product>', methods=['GET', 'POST'])
 def shipped(account_order, product):
@@ -64,6 +73,7 @@ def shipped(account_order, product):
     print("It was shipped!")
     return redirect(url_for('inventories.order_fulfillment'))
 
+# This route allows sellers to mark a line item as delivered
 @bp.route('/inventory/delivered/<account_order>/<product>', methods=['GET', 'POST'])
 def delivered(account_order, product):
     seller = current_user.id
@@ -72,6 +82,7 @@ def delivered(account_order, product):
     print("It was delivered!")
     return redirect(url_for('inventories.order_fulfillment'))
     
+# This is the landing page for the "View Seller Account" button and shows the listed and selling tables    
 @bp.route('/inventory', methods=['GET', 'POST'])
 def inventory():
     id = current_user.id
@@ -82,13 +93,11 @@ def inventory():
     inventory = Inventory.get(id)
     listed = Inventory.get_listed(id)
     new_form = NewProdForm()
-    edit_form = EditInventoryForm()
     quantity_form = EditQuantityForm()
     remove_form = RemoveInventoryForm()
 
     # Event handling for all forms related to inventory
     if request.method == 'POST':
-        print(edit_form.submit2.data)
         
         if quantity_form.submit3.data and quantity_form.validate():
             prod_id = quantity_form.prod_id.data
@@ -100,19 +109,6 @@ def inventory():
         if remove_form.submit4.data and remove_form.validate():
             print(remove_form.delete.data)
             Inventory.remove(id, remove_form.delete.data)
-            return redirect(url_for('inventories.inventory', id = id))
-
-        if edit_form.submit2.data and edit_form.validate():
-            prod_id = edit_form.prod_id.data
-            name = edit_form.name.data
-            description = edit_form.description.data
-            price = edit_form.price.data
-            quantity = edit_form.quantity.data
-            url = edit_form.url.data
-            seller = id
-            inventory = Inventory.edit_inventory(prod_id = prod_id, name = name, description = description, price = price, quantity= quantity, url = url, seller = seller)
-            print('Inventory updated')
-            print(prod_id)
             return redirect(url_for('inventories.inventory', id = id))
 
         if new_form.submit1.data and new_form.validate():
@@ -127,8 +123,10 @@ def inventory():
             print('New product added')
             return redirect(url_for('inventories.inventory', id = id))
         
-    return render_template('inventory.html', title='See Inventory', inventory=inventory, listed = listed, new_form = NewProdForm(), edit_form = edit_form, quantity_form = quantity_form, remove = remove_form, id = id)
+    return render_template('inventory.html', title='See Inventory', inventory=inventory, listed = listed, new_form = NewProdForm(), quantity_form = quantity_form, remove = remove_form, id = id)
 
+# Below are all the forms which are used in inventory editing, order fulfillment, and seller analytics. 
+# Form names are self explanatory
 
 class NewProdForm(FlaskForm):
     name = StringField(_l('Product Name'), validators=[DataRequired()])
@@ -138,15 +136,6 @@ class NewProdForm(FlaskForm):
     url = URLField(validators=[url()])
     tag =  SelectField(u'Tag', choices=[(0, 'cooking'), (1, 'food'), (2, 'beauty'), (3, 'decor'), (4, 'furniture'), (5, 'education'), (6, 'office supplies'), (7, 'sports'), (8, 'technology'), (9, 'music'), (10, 'art')])
     submit1 = SubmitField(_l('Add Product'))
-
-class EditInventoryForm(FlaskForm):
-    prod_id = StringField(_l('Product ID'), validators = [DataRequired()])
-    name = StringField(_l('Product Name'), validators=[DataRequired()])
-    description = StringField(_l('Description'), validators=[DataRequired()])
-    price = DecimalField(_l('Price'), places = 2, validators=[InputRequired()])
-    quantity = IntegerField(_l('Quantity'), validators=[InputRequired()])
-    url = URLField(validators=[url()])
-    submit2 = SubmitField(_l('Edit Product'))
 
 class EditQuantityForm(FlaskForm):
     prod_id = StringField(_l('Product ID'), validators = [DataRequired()])
