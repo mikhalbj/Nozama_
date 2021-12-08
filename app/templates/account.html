@@ -240,7 +240,7 @@
                 </div>
                 <div class="card-body">
                 <h5 class="card-title pb-2">Order Products 
-                    <span class="badge {{'bg-success' if order.status == 'delivered' else 'bg-secondary' if order.status == 'placed' else 'bg-warning'}}">{{'Placed' if order.status == 'placed' else 'Shipped' if order.status == 'shipped' else 'Delivered'}}</span>
+                    <span class="badge {{'bg-success' if order.status == 'fulfilled' else 'bg-secondary'}}">{{'Fulfilled' if order.status == 'fulfilled' else 'In Progress'}}</span>
                 </h5>
                 
                 <div class="container">

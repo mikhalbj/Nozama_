@@ -56,12 +56,10 @@ class Order:
         self.products = products
 
 
-        status = 'delivered'
+        status = 'fulfilled'
         for prod in products:
-            if prod.status == 'shipped' and status != 'placed':
-                status = 'shipped'
-            elif prod.status == 'placed':
-                status = 'placed'
+            if prod.status == 'placed':
+                status = 'progress'
                 break
         
         self.status = status
