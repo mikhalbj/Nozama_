@@ -33,36 +33,55 @@ class Review:
 
 #add a PRODUCT review
     @staticmethod
-    def add_prodrev(title, author, description, rating, product): #I dont think that I need author here but will need to autoppopulate some how on entry
+    def add_prodrev(title, author, description, rating, product): 
         
-        try:
-                rows = app.db.execute('''
-                        INSERT INTO Review(title, author, description, rating)
-                        VALUES(:title, :author, :description, :rating)
-                        RETURNING id
-                        ''',
-                                                        title=title,
-                                                        author=author,
-                                                        description=description,
-                                                        rating=rating)
-                id = rows[0][0]
-                rows = app.db.execute('''
-                        INSERT INTO ProductReview(review, product)
-                        VALUES(:id, :product)
-                        RETURNING product
-                        ''',
-                                  product=product,
-                                  id = id)
-        except Exception as err:
-            print(err)
-            # likely email already in use; better error checking and
-            # reporting needed
+        test = app.db.execute('''
+                SELECT id, title, author, description, written_at, edited_at, rating
+                FROM Review, ProductReview
+                WHERE ProductReview.product = :product AND Review.author = :author
+                ''', product=product,
+                    author = author)
+        if len(test) != 0: 
+            print("err")
             return None
+        else:
+            try:
+                    rows = app.db.execute('''
+                            INSERT INTO Review(title, author, description, rating)
+                            VALUES(:title, :author, :description, :rating)
+                            RETURNING id
+                            ''',
+                                                            title=title,
+                                                            author=author,
+                                                            description=description,
+                                                            rating=rating)
+                    id = rows[0][0]
+                    rows = app.db.execute('''
+                            INSERT INTO ProductReview(review, product)
+                            VALUES(:id, :product)
+                            RETURNING product
+                            ''',
+                                    product=product,
+                                    id = id)
+                    return rows if rows is not None else None
+            except Exception as err:
+                print(err)
+                # likely email already in use; better error checking and
+                # reporting needed
+                return None
 
 #add a SELLER review
     @staticmethod
     def add_sellrev(title, author, description, rating, seller): #I dont think that I need author here but will need to autoppopulate some how on entry
-        
+        test = app.db.execute('''
+                SELECT id, title, author, description, written_at, edited_at, rating
+                FROM Review, SellerReview
+                WHERE SellerReview.seller = :seller AND Review.author = :author
+                ''', seller=seller,
+                    author = author)
+        if len(test) != 0: 
+            print("err")
+            return None
         try:
                 rows = app.db.execute('''
                         INSERT INTO Review(title, author, description, rating)
@@ -81,6 +100,7 @@ class Review:
                         ''',
                                   seller=seller,
                                   id = id)
+                return rows if rows is not None else None
         except Exception as err:
             print(err)
             # likely email already in use; better error checking and
