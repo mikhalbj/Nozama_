@@ -11,7 +11,6 @@ class Account:
         self.orders = orders
 
 
-
     @staticmethod
     def is_seller(id):
         rows = app.db.execute('''
