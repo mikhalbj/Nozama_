@@ -19,18 +19,20 @@ from .models.account import Account
 from flask import Blueprint
 bp = Blueprint('inventories', __name__)
 
+# This file controls the routes for 3 parts of the inventory/fulfillment section: 
+# seller analytics, order fullfillment history, and inventory
+
 @bp.route('/inventory/seller-analytics', methods = ['GET', 'POST'])
 def seller_analytics():
     id = current_user.id
+    # The 4 functions below provide the information for the seller analytics page's statistics bar
     analytics = Inventory.get_seller_analytics(id)
-    print(analytics)
     popular_item = Inventory.popular_item(id)
     buyers = Inventory.loyal_buyers(id)
-    #avg_ship = Inventory.avg_ship(id)
-    #num_reviews = Inventory.get_num_reviews(id)
-    #print(num_reviews)
-    return render_template('seller-analytics.html', analytics = analytics, popular_item = popular_item, buyers = buyers)
+    listed = len(Inventory.get_listed(id))
+    return render_template('seller-analytics.html', analytics = analytics, popular_item = popular_item, buyers = buyers, listed = listed)
 
+# To view all order history cards
 @bp.route('/inventory/order-fulfillment', methods = ['GET', 'POST'])
 def order_fulfillment():
     id = current_user.id
@@ -40,9 +42,9 @@ def order_fulfillment():
         prod_name = searchform.prod_name.data
         order_num = searchform.order_num.data
         order_history = Inventory.get_order_history_search(id, prod_name= prod_name, order_num = order_num)
-        #return redirect(url_for('inventories.order_fulfillment', order_history = order_history))
     return render_template('order-fulfillment.html', order_history = order_history, searchform = searchform)
 
+# To view order history cards all from the same order
 @bp.route('/inventory/order-fulfillment/<order>', methods = ['GET', 'POST'])
 def order_fulfillment_by_order(order):
     id = current_user.id
@@ -52,9 +54,8 @@ def order_fulfillment_by_order(order):
     searchform = OrderSearchForm()
     order_history = Inventory.get_order_history_search(id, prod_name= prod_name, order_num = order_num)
     return render_template('order-fulfillment.html', order_history = order_history, searchform = searchform)
-    #return redirect(url_for('inventories.order_fulfillment'))
 
-
+# In shipped & delivered routes, not concerned about sellers being able to hover over the button to see account order/product id in URL.
 @bp.route('/inventory/shipped/<account_order>/<product>', methods=['GET', 'POST'])
 def shipped(account_order, product):
     seller = current_user.id
@@ -75,28 +76,17 @@ def delivered(account_order, product):
 def inventory():
     id = current_user.id
     account = Account.get(current_user.id)
+    # Checking if account belongs to a verified seller
     if not Account.is_seller(id):
         return redirect(url_for(account.account, id = id))
     inventory = Inventory.get(id)
     listed = Inventory.get_listed(id)
-
     new_form = NewProdForm()
-    available_tags = Inventory.get_tags()
-    print(available_tags)
-    tags_list = [ (i.id) for i in available_tags]
-    print("tags created")
-    print(tags_list)
-    print(type(tags_list))
-    new_form.tag.choices = tags_list
     edit_form = EditInventoryForm()
     quantity_form = EditQuantityForm()
     remove_form = RemoveInventoryForm()
 
-    # initialdata = {'name': 'one', 'description': '', 'price': 0, 'quantity': 0, 'url': ''}
- 
-    # new_form = NewProdForm(**initialdata)
-    # edit_form = EditInventoryForm(**initialdata)
-
+    # Event handling for all forms related to inventory
     if request.method == 'POST':
         print(edit_form.submit2.data)
         
@@ -113,7 +103,6 @@ def inventory():
             return redirect(url_for('inventories.inventory', id = id))
 
         if edit_form.submit2.data and edit_form.validate():
-            
             prod_id = edit_form.prod_id.data
             name = edit_form.name.data
             description = edit_form.description.data
@@ -136,10 +125,8 @@ def inventory():
             seller = id
             inventory = Inventory.add_prod(name = name, description = description, price = price, quantity= quantity, seller = seller, url = url, tag = tag)
             print('New product added')
-            #return render_template('inventory.html', title='See Inventory', inventory=inventory, new_form = NewProdForm(), edit_form = EditInventoryForm(), id = id, order_history = order_history)
             return redirect(url_for('inventories.inventory', id = id))
         
-    print(new_form.name.data)
     return render_template('inventory.html', title='See Inventory', inventory=inventory, listed = listed, new_form = NewProdForm(), edit_form = edit_form, quantity_form = quantity_form, remove = remove_form, id = id)
 
 

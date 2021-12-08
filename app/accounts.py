@@ -44,6 +44,9 @@ class PasswordForm(FlaskForm):
                                            EqualTo('pass_newpass')])
     pass_submit = SubmitField("Submit")
 
+'''
+Renders the public account page
+'''
 @bp.route('/account/<id>', methods=['GET', 'POST'])
 def public(id):
 
@@ -52,6 +55,9 @@ def public(id):
 
     return render_template('public_account.html', user=user, account=account)
 
+'''
+Endpoint to get the orders for a given user with pagination
+'''
 @bp.route('/account/orders', methods=['GET'])
 def get_account_orders():
     if not current_user.is_authenticated:

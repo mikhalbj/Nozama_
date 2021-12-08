@@ -50,6 +50,25 @@ class Product:
                         ''', id=id)
         return rows[0][0] if rows else "https://cdn.w600.comps.canstockphoto.com/pile-of-random-stuff-eps-vector_csp24436545.jpg"
     
+    @staticmethod
+    def get_tags(id):
+        rows = app.db.execute('''
+                        SELECT name
+                        FROM Tag, ProductTag
+                        WHERE ProductTag.product = :id AND Tag.id = ProductTag.tag
+                        ''', id=id)
+        return rows
+
+    @staticmethod
+    def get_all(available=True):
+        rows = app.db.execute('''
+SELECT id, name, price, available, description
+FROM Product
+WHERE available = :available
+''',
+                              available=available)
+        return [Product(*row) for row in rows]
+    
     # returns the human-readable name of every category in database
     # used when dispalying categories for searching
     @staticmethod

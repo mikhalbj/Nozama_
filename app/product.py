@@ -69,7 +69,10 @@ def product(id):
     # instantiate and define behavior for adding to cart form
     form = CartAddForm()
     if form.submit.data and form.validate():
-        Cart.add_cart(current_user.id, form.quantity.data, id)
+        if Cart.duplicate(current_user.id, id) == False:
+            flash("Product already added to cart!")
+        else:
+            Cart.add_cart(current_user.id, form.quantity.data, id)
 
     # instantiate and define behavior for begin selling form
     sellForm = SellProdForm()
@@ -94,11 +97,13 @@ def product(id):
     
     # get data for product to dispaly
     product = Product.fullget(id)
+    tags = Product.get_tags(id)
+    print(tags)
     image = Product.get_img(id)
     reviews = Review.get(id)
     sellers = Inventory.all_sellers(id)
     
-    return render_template('product_details.html', title='See Product', product=product, imgurl=image, cartform=form, review=reviews, sf=sellForm, sb=sellBool, sellers=sellers, saveform=saveForm, edit_form=eForm, eb=editBool)
+    return render_template('product_details.html', title='See Product', product=product, imgurl=image, cartform=form, review=reviews, sf=sellForm, sb=sellBool, sellers=sellers, saveform=saveForm, edit_form=eForm, eb=editBool, tag=tags)
 
 # search results page
 @bp.route('/advanced_search/', methods=['GET', 'POST'])
