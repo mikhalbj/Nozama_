@@ -87,15 +87,19 @@ def cart():
 
     if order_form.is_submitted() and order_form.validate():
         time = datetime.datetime.now()
+        #ensures the cart is not empty
         if Cart.cartcount(current_user.id) == 0:
             flash('Cannot Place Order - Cart is Empty')
+        #ensures there is enough inventory for the number of items in cart
         elif Cart.check_inventory(current_user.id, time) == False:
             flash('Cannot Place Order - Insufficient Product Availability')
         else:
+            #ensures user has enough balance to place order
             if Cart.get_balance(current_user.id) < Cart.cart_total(current_user.id):
                 flash('Cannot Place Order - Insufficient Balance')
             else:
                 Cart.place_order(current_user.id, time)
+                flash('Order Placed! Check Account for Details')
         return redirect(url_for('carts.cart'))
 
     return render_template('cart.html', title='Cart', cart=cart, total=total, saved=saved, order_form=order_form, remove=remove, move=move, rfs=rfs, editquant=editquant, save=save)
