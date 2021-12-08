@@ -170,3 +170,18 @@ CREATE TRIGGER TG_WatchAvail_D
 AFTER DELETE ON ProductInventory
 FOR EACH ROW
 EXECUTE PROCEDURE TF_WatchAvail_D();
+
+-- Indexes --
+
+-- Product --
+CREATE INDEX product_available ON Product (available);
+CREATE INDEX product_desc ON Product (description);
+CREATE INDEX product_name ON Product (name);
+CREATE INDEX product_name_price ON Product (name, price);
+CREATE INDEX product_desc_price ON Product (description, price);
+
+-- AccountOrderProduct --
+CREATE INDEX account_order_product_order ON AccountOrderProduct (account_order);
+
+-- Product Inventory --
+CREATE INDEX prod_inventory_seller ON ProductInventory (seller);
