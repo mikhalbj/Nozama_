@@ -32,7 +32,7 @@ class OrderProduct:
     @staticmethod
     def get_all(order_id):
         rows = app.db.execute('''
-SELECT OP.account_order, OP.quantity, OP.price, OP.status, OP.shipped_at, OP.delivered_at, P.name, PI.url, CAST(OP.price*OP.quantity AS DECIMAL(10,2)) AS "totalPrice"
+SELECT OP.account_order, OP.quantity, OP.price, OP.status, OP.shipped_at, OP.delivered_at, P.name, PI.url, CAST(OP.price*OP.quantity AS DECIMAL(10,2)) AS "totalPrice", P.id
 FROM AccountOrderProduct AS OP, ProductImage AS PI, Product AS P
 WHERE OP.account_order = :order_id AND OP.product = PI.product AND P.id = OP.product
 ''',

@@ -31,7 +31,7 @@
 <script src="{{ url_for('static', filename='js/publicAccount.js') }}"></script>
 
 {% if account.vendor %}
-<h2>Reviews of your Products:</h2> 
+<h2>Reviews of Vendor Products:</h2> 
 
 <table class='table table-hover table-bordered container'>
   <thead><tr>
@@ -59,32 +59,41 @@
   </table>
 {% endif %}
 
-<h2>Products you have reviewed:</h2> 
+{% if current_user.id == user.id %}
+  <h2>Products you have reviewed:</h2> 
 
-<table class='table table-hover table-bordered container'>
-  <thead><tr>
-    <th>Review ID</th>
-    <th>Title</th>
-    <th>Author</th>
-    <th>Rating</th>
-    <th>Description</th>
-    <th>Time</th>
-    <th>Edited</th>
-  </tr></thead>
-  <tbody>
-    {% for r in prodReviews%}
-    <tr>
-      <td scope="row">{{r.id}}</td>
-      <td>{{r.title}}</td>
-      <td>{{r.author}}</td>
-      <td>{{r.rating}}</td>
-      <td>{{r.description}}</td>
-      <td>{{r.time}}</td>
-      <td>{{r.edited}}</td>
-    </tr>
-    {% endfor %}
-  </tbody>
-  </table>
+  <table class='table table-hover table-bordered container'>
+    <thead><tr>
+      <th>Review ID</th>
+      <th>Title</th>
+      <th>Author</th>
+      <th>Rating</th>
+      <th>Description</th>
+      <th>Time</th>
+      <th>Edited</th>
+      <th>Edit Your Review</th>
+    </tr></thead>
+    <tbody>
+      {% for r in prodReviews%}
+      <tr>
+        <td scope="row">{{r.id}}</td>
+        <td>{{r.title}}</td>
+        <td>{{r.author}}</td>
+        <td>{{r.rating}}</td>
+        <td>{{r.description}}</td>
+        <td>{{r.time}}</td>
+        <td>{{r.edited}}</td>
+        <td>
+          <form action="" method="POST">
+            {{ addRev.csrf_token }}
+          </form>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+    </table>
+
+  {% endif %}
 
 {% endblock %}
 

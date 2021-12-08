@@ -3,7 +3,7 @@ from flask import render_template, redirect, url_for, flash, request
 from werkzeug.urls import url_parse
 from flask_login import login_user, logout_user, current_user
 from flask_wtf import FlaskForm
-from wtforms import BooleanField, DecimalField, SubmitField, StringField, PasswordField
+from wtforms import BooleanField, DecimalField, SubmitField, StringField, PasswordField, HiddenField, RadioField
 from wtforms.validators import ValidationError, DataRequired, Email, EqualTo
 from flask_babel import _, lazy_gettext as _l
 import json
@@ -45,15 +45,32 @@ class PasswordForm(FlaskForm):
                                            EqualTo('pass_newpass')])
     pass_submit = SubmitField("Submit")
 
+class AddReviewForm(FlaskForm):
+    author = HiddenField(_l('User ID'), validators = [DataRequired()])
+    product = HiddenField(_l('Product ID'), validators = [DataRequired()])
+    title = StringField(_l('Title'), validators=[DataRequired()])
+    description = StringField(_l('Description'), validators=[DataRequired()])
+    rating = RadioField(_l('Rating'), choices=[1, 2, 3, 4, 5], validators=[DataRequired()])
+    submitRev = SubmitField(_l('Submit'))
+
+class RemoveReview(FlaskForm):
+    delete1 = HiddenField(_l('Product ID'), validators = [DataRequired()])
+    submitDeleteProdReview = SubmitField(_l('X'))
+
+
 @bp.route('/account/<id>', methods=['GET', 'POST'])
 def public(id):
 
     user = User.get(id)
     account = Account.get(id)
     review = Review.getSellRev(id)
+    addReview = AddReviewForm()
     prodReviews = Review.review_history(id)
+    if addReview.submitRev.data and addReview.validate():
+        Review.add_prodrev(addReview.title.data, current_user.id, addReview.description.data, addReview.rating.data, product.id)
 
-    return render_template('public_account.html', user=user, account=account)
+
+    return render_template('public_account.html', user=user, account=account, addRev = addReview)
 
 @bp.route('/account/orders', methods=['GET'])
 def get_account_orders():

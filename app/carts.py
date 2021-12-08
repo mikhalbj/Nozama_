@@ -2,7 +2,7 @@ from flask import render_template, redirect, url_for, flash, request
 from werkzeug.urls import url_parse
 from flask_login import login_user, logout_user, current_user
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, BooleanField, SubmitField, HiddenField, IntegerField
+from wtforms import StringField, PasswordField, BooleanField, SubmitField, HiddenField, IntegerField, RadioField
 from wtforms.validators import ValidationError, DataRequired, Email, EqualTo
 from flask_babel import _, lazy_gettext as _l
 
@@ -11,6 +11,7 @@ from .models.product import Product
 from .models.cart import Cart
 from .models.order import Order
 from .models.order import OrderProduct
+from .models.reviewsmod import Review
 
 
 from flask import Blueprint
@@ -38,6 +39,14 @@ class EditQuantity(FlaskForm):
     product1 = HiddenField(_l('Product ID'), validators = [DataRequired()])
     quantity1 = IntegerField("Quantity", validators=[DataRequired()])
     submit3 = SubmitField(_l('Save'))
+
+class AddReviewForm(FlaskForm):
+    author = HiddenField(_l('User ID'), validators = [DataRequired()])
+    productRev = HiddenField(_l('Product ID'), validators = [DataRequired()])
+    title = StringField(_l('Title'), validators=[DataRequired()])
+    description = StringField(_l('Description'), validators=[DataRequired()])
+    rating = RadioField(_l('Rating'), choices=[1, 2, 3, 4, 5], validators=[DataRequired()])
+    submitRev = SubmitField(_l('Submit'))
 
 @bp.route('/cart', methods=['GET', 'POST'])
 def cart():
@@ -87,9 +96,21 @@ def order(id):
     if not current_user.is_authenticated:
         return redirect(url_for('index.index'))
 
+    addReview = AddReviewForm()
     orderplaced = OrderProduct.get_all(id)
     total = OrderProduct.order_cost(id)
     orderID = id
-    return render_template('orderpage.html', title='Order', orderplaced=orderplaced, total=total, orderID = orderID)
+    author = current_user.id
+    
+
+    if addReview.submitRev.data and addReview.validate():
+        print("the button for review has been pressed")
+        title = addReview.title.data
+        product = addReview.productRev.data
+        description = addReview.description.data
+        rating = addReview.rating.data
+        Review.add_prodrev(title, author, description, rating, prod)
+
+    return render_template('orderpage.html', title='Order', orderplaced=orderplaced, total=total, orderID = orderID, addReview=addReview)
 
     
