@@ -84,10 +84,12 @@ def account():
     pass_form = PasswordForm()
 
     if deposit_form.deposit_submit.data and deposit_form.validate():
-        Account.increase_balance(current_user.id, deposit_form.deposit_amount.data)
+        if (deposit_form.deposit_amount.data > 0):
+            Account.increase_balance(current_user.id, deposit_form.deposit_amount.data)
 
     if withdraw_form.withdraw_submit.data and withdraw_form.validate():
-        Account.decrease_balance(current_user.id, withdraw_form.withdraw_amount.data)
+        if (withdraw_form.withdraw_amount.data > 0):
+            Account.decrease_balance(current_user.id, withdraw_form.withdraw_amount.data)
 
     if vendor_form.vendor_submit.data and vendor_form.validate():
         if (vendor_form.vendor_confirm.data):
