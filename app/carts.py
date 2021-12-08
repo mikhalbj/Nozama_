@@ -1,4 +1,5 @@
-from flask import render_template, redirect, url_for, flash, request
+from flask import render_template, redirect, url_for, request
+from flask import flash
 from werkzeug.urls import url_parse
 from flask_login import login_user, logout_user, current_user
 from flask_wtf import FlaskForm
@@ -133,6 +134,8 @@ def order(id):
     prodReviewed = Review.notReviewedProd
     #sellReviewed = Review.notReviewedSell
 
+    
+
     time_placed = Order.get(id)[0][2]
     specificInfo = str(time_placed.year) + '/' + str(time_placed.month) + '/' + str(time_placed.day) + " " + str(time_placed.hour) + ":" + str(time_placed.minute) + ":" + str(time_placed.second)
 
@@ -148,7 +151,10 @@ def order(id):
         product = addReview.productRev.data
         description = addReview.description.data
         rating = addReview.rating.data
-        Review.add_prodrev(title, author, description, rating, product)
+        if Review.add_prodrev(title, author, description, rating, product) == 0:
+            flash("You cannot review the same product twice.")
+
+        
 
 #for sellers:
     if addSellReview.submitSellRev.data and addSellReview.validate():    
@@ -156,8 +162,9 @@ def order(id):
         seller = addSellReview.sellerRev.data
         descriptionS = addSellReview.descriptionSell.data
         ratingS = addSellReview.ratingSell.data
-        
-        Review.add_sellrev(titleS, author, descriptionS, ratingS, seller)
+
+        if Review.add_sellrev(titleS, author, descriptionS, ratingS, seller) == 0:
+            flash("You cannot review the same seller twice.")
 
     return render_template('orderpage.html', title='Order', orderplaced=orderplaced, total=total, orderID = orderID, addReview=addReview, addSellReview=addSellReview, prodReviewed = prodReviewed, time_placed=time_placed, specificInfo=specificInfo, s=s)
 
