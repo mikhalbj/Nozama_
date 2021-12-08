@@ -41,12 +41,18 @@ class EditQuantity(FlaskForm):
     submit3 = SubmitField(_l('Save'))
 
 class AddReviewForm(FlaskForm):
-    author = HiddenField(_l('User ID'), validators = [DataRequired()])
     productRev = HiddenField(_l('Product ID'), validators = [DataRequired()])
     title = StringField(_l('Title'), validators=[DataRequired()])
     description = StringField(_l('Description'), validators=[DataRequired()])
     rating = RadioField(_l('Rating'), choices=[1, 2, 3, 4, 5], validators=[DataRequired()])
     submitRev = SubmitField(_l('Submit'))
+
+class AddSellReviewForm(FlaskForm):
+    sellerRev = HiddenField(_l('Seller ID'), validators = [DataRequired()])
+    titleSell = StringField(_l('Title'), validators=[DataRequired()])
+    descriptionSell = StringField(_l('Description'), validators=[DataRequired()])
+    ratingSell = RadioField(_l('Rating'), choices=[1, 2, 3, 4, 5], validators=[DataRequired()])
+    submitSellRev = SubmitField(_l('Submit'))
 
 @bp.route('/cart', methods=['GET', 'POST'])
 def cart():
@@ -97,19 +103,29 @@ def order(id):
         return redirect(url_for('index.index'))
 
     addReview = AddReviewForm()
+    addSellReview = AddSellReviewForm()
     orderplaced = OrderProduct.get_all(id)
     total = OrderProduct.order_cost(id)
     orderID = id
     author = current_user.id
     
-
+#for products:
     if addReview.submitRev.data and addReview.validate():
         print("the button for review has been pressed")
         title = addReview.title.data
         product = addReview.productRev.data
         description = addReview.description.data
         rating = addReview.rating.data
-        Review.add_prodrev(title, author, description, rating, prod)
+        Review.add_prodrev(title, author, description, rating, product)
+
+#for sellers:
+    if addSellReview.submitSellRev.data and addSellReview.validate():    
+        titleS = addSellReview.titleSell.data
+        seller = addSellReview.sellerRev.data
+        descriptionS = addSellReview.descriptionSell.data
+        ratingS = addSellReview.ratingSell.data
+        
+        Review.add_sellrev(titleS, author, descriptionS, ratingS, seller)
 
     return render_template('orderpage.html', title='Order', orderplaced=orderplaced, total=total, orderID = orderID, addReview=addReview)
 

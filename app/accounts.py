@@ -7,6 +7,7 @@ from wtforms import BooleanField, DecimalField, SubmitField, StringField, Passwo
 from wtforms.validators import ValidationError, DataRequired, Email, EqualTo
 from flask_babel import _, lazy_gettext as _l
 import json
+import datetime
 
 from .models.user import User
 from .models.order import Order
@@ -45,16 +46,16 @@ class PasswordForm(FlaskForm):
                                            EqualTo('pass_newpass')])
     pass_submit = SubmitField("Submit")
 
-class AddReviewForm(FlaskForm):
-    author = HiddenField(_l('User ID'), validators = [DataRequired()])
-    product = HiddenField(_l('Product ID'), validators = [DataRequired()])
+class EditReviewForm(FlaskForm):
+    productRev = HiddenField(_l('Product ID'), validators = [DataRequired()])
+    RevID = HiddenField(_l('Review ID'), validators = [DataRequired()])
     title = StringField(_l('Title'), validators=[DataRequired()])
     description = StringField(_l('Description'), validators=[DataRequired()])
     rating = RadioField(_l('Rating'), choices=[1, 2, 3, 4, 5], validators=[DataRequired()])
     submitRev = SubmitField(_l('Submit'))
 
 class RemoveReview(FlaskForm):
-    delete1 = HiddenField(_l('Product ID'), validators = [DataRequired()])
+    delete1 = HiddenField(_l('Review ID'), validators = [DataRequired()])
     submitDeleteProdReview = SubmitField(_l('X'))
 
 
@@ -64,13 +65,26 @@ def public(id):
     user = User.get(id)
     account = Account.get(id)
     review = Review.getSellRev(id)
-    addReview = AddReviewForm()
+    addReview = EditReviewForm()
     prodReviews = Review.review_history(id)
+    author = current_user.id
+    removeProdRev = RemoveReview()
+
+    if removeProdRev.submitDeleteProdReview.data and removeProdRev.validate():
+        Review.removeReview(current_user.id, removeProdRev.delete1.data)
+        
+
     if addReview.submitRev.data and addReview.validate():
-        Review.add_prodrev(addReview.title.data, current_user.id, addReview.description.data, addReview.rating.data, product.id)
+        print("the button for review has been pressed")
+        title = addReview.title.data
+        product = addReview.productRev.data
+        description = addReview.description.data
+        rating = addReview.rating.data
+        prodRevID = addReview.RevID.data
+        edit_time = datetime.datetime.now()
+        Review.edit_review(prodRevID, title, description, rating, edit_time)
 
-
-    return render_template('public_account.html', user=user, account=account, addRev = addReview)
+    return render_template('public_account.html', user=user, account=account, rfs = removeProdRev, addRev = addReview, prodReviews = prodReviews)
 
 @bp.route('/account/orders', methods=['GET'])
 def get_account_orders():

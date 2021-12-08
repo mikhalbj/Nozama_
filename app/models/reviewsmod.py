@@ -1,4 +1,5 @@
 from flask import current_app as app
+import datetime;
 
 
 class Review:
@@ -15,16 +16,7 @@ class Review:
         if edited:
             self.edited = edited
 
-#get all reviews for given product
-    @staticmethod
-    def getProdRev(id):
-        rows = app.db.execute('''
-                SELECT id, title, author, description, written_at, edited_at, rating
-                FROM Review, ProductReview
-                WHERE ProductReview.product = :id AND ProductReview.review = Review.id
-                ORDER BY rating
-                ''', id=id)
-        return rows if rows is not None else None
+
 
 
 
@@ -42,6 +34,7 @@ class Review:
 #add a PRODUCT review
     @staticmethod
     def add_prodrev(title, author, description, rating, product): #I dont think that I need author here but will need to autoppopulate some how on entry
+        
         try:
                 rows = app.db.execute('''
                         INSERT INTO Review(title, author, description, rating)
@@ -56,9 +49,37 @@ class Review:
                 rows = app.db.execute('''
                         INSERT INTO ProductReview(review, product)
                         VALUES(:id, :product)
-                        RETURNING id
+                        RETURNING product
                         ''',
                                   product=product,
+                                  id = id)
+        except Exception as err:
+            print(err)
+            # likely email already in use; better error checking and
+            # reporting needed
+            return None
+
+#add a SELLER review
+    @staticmethod
+    def add_sellrev(title, author, description, rating, seller): #I dont think that I need author here but will need to autoppopulate some how on entry
+        
+        try:
+                rows = app.db.execute('''
+                        INSERT INTO Review(title, author, description, rating)
+                        VALUES(:title, :author, :description, :rating)
+                        RETURNING id
+                        ''',
+                                                        title=title,
+                                                        author=author,
+                                                        description=description,
+                                                        rating=rating)
+                id = rows[0][0]
+                rows = app.db.execute('''
+                        INSERT INTO SellerReview(review, seller)
+                        VALUES(:id, :seller)
+                        RETURNING seller
+                        ''',
+                                  seller=seller,
                                   id = id)
         except Exception as err:
             print(err)
@@ -71,29 +92,31 @@ class Review:
 
 #edit an existing review
     @staticmethod
-    def edit_review(review_id, title, description, edited_at):
+    def edit_review(review_id, title, description, rating, edited_at):
         try:
                 rows = app.db.execute('''
                                 UPDATE Review
-                                SET title= :title, description= :description, edited_at=:edited_at
+                                SET title= :title, description= :description, rating= :rating, edited_at= :edited_at
                                 WHERE id = :review_id
                                 RETURNING *
                                 ''',
                                     review_id = review_id,
+                                    rating=rating,
                                     title=title,
                                     description=description,
-                                    edited_at=edited_at)
+                                    edited_at = edited_at)
                 print('updated')
         except Exception as err:
             print(err)
-        return Review.get(author)
+            return None
+        
 
 
 #get all reviews written by one user FOR ALL PRODUCTS
     @staticmethod
     def review_history(id):
             rows = app.db.execute('''
-                SELECT ProductReview.product, author, description, written_at, edited_at, rating
+                SELECT Review.id, ProductReview.product, title, author, description, written_at, edited_at, rating
                 FROM ProductReview, Review
                 WHERE author = :id
                 AND ProductReview.review = Review.id
@@ -102,6 +125,18 @@ class Review:
                                   id = id) 
             print(rows)      
             return rows if rows is not None else None
+
+
+#get all reviews for given product
+    @staticmethod
+    def getProdRev(id):
+        rows = app.db.execute('''
+                SELECT id, title, author, description, written_at, edited_at, rating
+                FROM Review, ProductReview
+                WHERE ProductReview.product = :id AND ProductReview.review = Review.id
+                ORDER BY rating
+                ''', id=id)
+        return rows if rows is not None else None
 
 #get all reviews written by one user FOR ONE PRODUCT
     @staticmethod
@@ -144,6 +179,23 @@ class Review:
                                   id=id) 
             print(rows)
             return True if len(rows) != 0 else False
+
+#Remove a product reviews:
+    @staticmethod
+    def removeReview(author, review):
+        rows = app.db.execute('''
+            DELETE FROM ProductReview WHERE review = :review RETURNING review
+            ''',
+            review = review
+            )
+        rows = app.db.execute('''
+            DELETE FROM Review WHERE author = :author AND id = :review RETURNING author
+            ''',
+            author = author,
+            review = review
+            )
+        
+        return rows if rows is not None else None
 
 #IF a user has bought from a seller
     @staticmethod
