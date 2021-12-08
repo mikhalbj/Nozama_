@@ -10,10 +10,7 @@ bp = Blueprint('index', __name__)
 
 @bp.route('/')
 def index():
-    # get all available products for sale:
-    products = Product.get_all(True)
-    # find the products current user has bought:
-    
+    # get most popular products
+    pops = Product.popular()
     # render the page by adding information to the index.html file
-    return render_template('index.html',
-                           avail_products=products)
+    return render_template('index.html', pop=pops)
