@@ -54,6 +54,14 @@ class EditReviewForm(FlaskForm):
     rating = RadioField(_l('Rating'), choices=[1, 2, 3, 4, 5], validators=[DataRequired()])
     submitRev = SubmitField(_l('Submit'))
 
+class EditSellReviewForm(FlaskForm):
+    sellerRev = HiddenField(_l('Seller ID'), validators = [DataRequired()])
+    RevIDSell = HiddenField(_l('Review ID'), validators = [DataRequired()])
+    titleS = StringField(_l('Title'), validators=[DataRequired()])
+    descriptionS = StringField(_l('Description'), validators=[DataRequired()])
+    ratingS = RadioField(_l('Rating'), choices=[1, 2, 3, 4, 5], validators=[DataRequired()])
+    submitRevSell = SubmitField(_l('Submit'))
+
 class RemoveReview(FlaskForm):
     delete1 = HiddenField(_l('Review ID'), validators = [DataRequired()])
     submitDeleteProdReview = SubmitField(_l('X'))
@@ -72,16 +80,19 @@ def public(id):
     addReview = EditReviewForm()
     prodReviews = Review.review_history(id)
     sellReviews = Review.review_historySell(id)
-    count = Review.countSell(id)
+    count = Review.countSell(id)[0]
+    avg = Review.averageSell(id)[0]
     author = current_user.id
     removeProdRev = RemoveReview()
     removeSellRev = RemoveSellReview()
+    editSell = EditSellReviewForm()
 
     if removeProdRev.submitDeleteProdReview.data and removeProdRev.validate():
         Review.removeReview(current_user.id, removeProdRev.delete1.data)
         
     if removeSellRev.submitDeleteSellReview.data and removeSellRev.validate():
         Review.removeSellReview(current_user.id, removeSellRev.delete2.data)
+
 
 
     if addReview.submitRev.data and addReview.validate():
@@ -94,7 +105,18 @@ def public(id):
         edit_time = datetime.datetime.now()
         Review.edit_review(prodRevID, title, description, rating, edit_time)
 
-    return render_template('public_account.html', count = count, review = review, user=user, account=account, rfs = removeProdRev, rss = removeSellRev, addRev = addReview, prodReviews = prodReviews, sellReviews = sellReviews)
+
+    if editSell.submitRevSell.data and editSell.validate():
+        print("the button for review has been pressed")
+        title = editSell.title.data
+        description = editSell.description.data
+        rating = editSell.rating.data
+        sellRevID = editSell.RevID.data
+        edit_time = datetime.datetime.now()
+        Review.edit_review(sellRevID, title, description, rating, edit_time)
+
+
+    return render_template('public_account.html', count = count, review = review, user=user, account=account, rfs = removeProdRev, rss = removeSellRev, addRev = addReview, sellRevEd = editSell, prodReviews = prodReviews, sellReviews = sellReviews, avg=avg)
 
 @bp.route('/account/orders', methods=['GET'])
 def get_account_orders():
