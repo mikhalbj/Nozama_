@@ -36,17 +36,13 @@
   <div class="modal-dialog">
   <div class="modal-content">
       <div class="modal-header">
-      <h5 class="modal-title" id="addModalLabel">Place Order</h5>
+      <h5 class="modal-title" id="addModalLabel">Are you sure you want to place this order?</h5>
       <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       
       <div class="modal-body">
           <form action="" method="post">
             {{order_form.csrf_token}}
-              <div class="d-flex justify-content-left mb-3">
-                  <p><h1>{{order_form.info_address(placeholder='Address')}}</h1></p>
-              </div>
-
               <div class="d-grid gap-2">
                   {{order_form.info_submit(class_='btn btn-success btn-large')}}
               </div>
@@ -83,24 +79,52 @@
       <th scope="col">Product Name</th>
       <th scope="col">Quantity</th>
       <th scope="col">Total Price</th>
+      <th scope="col">Save</th>
       <th scope="col">Remove</th>
     </tr>
   </thead>
   <tbody>
     {% for cart in cart%}
       <tr>
-        <th scope="row">{{cart.id}}</th>
+        <td scope="row"><a href="/product_details/{{cart.id}}" class="link-unstyled" style="text-decoration: underline;">{{cart.id}}</a></th>
         <td>{{cart.name}}</td>
-        <td>{{cart.quantity}}</td>
+        <td><button type="button" class="btn mr-2" data-bs-toggle="modal" data-bs-target="#quantModal"><u>{{cart.quantity}}</u></button></td>
         <td>{{cart.totalPrice}}</td>
         <td>
           <form action="" method="POST">
-          {{remove.csrf_token}}
-          <input id="productId" name="productId" type="hidden" value="{{cart.id}}">
-          <button class="btn btn-danger btn-xs" type="submit"> X </button>
+          {{save.csrf_token}}
+          {{save.productx(value=cart.id)}}
+          {{save.submitx(class_='btn')}}
           </form>
-  </td>
+        </td>
+        <td>
+          <form action="" method="POST">
+          {{remove.csrf_token}}
+          {{remove.delete(value=cart.id)}}
+          {{remove.submit(class_='btn btn-danger btn-xs')}}
+          </form>
+        </td>
       </tr>
+      <div class="modal fade" id="quantModal" tabindex="-1" aria-labelledby="quantModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+            <h5 class="modal-title" id="quantModalLabel">Edit Product Quantity</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            
+            <div class="modal-body">
+              <form action="" method="POST">
+              {{editquant.csrf_token}}
+              <div class="d-flex justify-content-left mb-3">
+                <p><h1>{{editquant.quantity1(placeholder='Quantity')}}</h1></p>
+            </div>
+              {{editquant.product1(value=cart.id)}}
+              <div class="d-grid gap-2">
+                {{editquant.submit3(class_='btn btn-success btn-large')}}
+              </div>
+              </form>
+            </div>
     {% endfor %}
   </tbody>
 </table>
@@ -111,19 +135,48 @@
     <tr>
       <th scope="col">Product ID</th>
       <th scope="col">Product Name</th>
+      <th scope="col">Add to Cart</th>
+      <th scope="col">Remove</th>
     </tr>
   </thead>
   <tbody>
     {% for product in saved%}
       <tr>
-        <td scope="row"><a href="/product/{{product.id}}" class="link-unstyled" style="text-decoration: underline;">{{product.id}}</a></th>
+        <td scope="row"><a href="/product_details/{{product.id}}" class="link-unstyled" style="text-decoration: underline;">{{product.id}}</a></th>
         <td>{{product.name}}</td>
+        <td><button type="button" class="btn btn-primary mr-2" data-bs-toggle="modal" data-bs-target="#cModal">Add to Cart</button></td>
+        <td><form action="" method="POST">
+          {{rfs.csrf_token}}
+          {{rfs.delete1(value=product.id)}}
+          {{rfs.submit2(class_='btn btn-danger btn-xs')}}
+        </form></td>
       </tr>
+      <div class="modal fade" id="cModal" tabindex="-1" aria-labelledby="cModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+            <h5 class="modal-title" id="cModalLabel">Add to Cart</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            
+            <div class="modal-body">
+              <form action="" method="POST">
+              {{move.csrf_token}}
+              <div class="d-flex justify-content-left mb-3">
+                <p><h1>{{move.quantity(placeholder='Quantity')}}</h1></p>
+            </div>
+              {{move.product(value=product.id)}}
+              <div class="d-grid gap-2">
+                {{move.submit1(class_='btn btn-success btn-large')}}
+              </div>
+              </form>
+            </div>
     {% endfor %}
   </tbody>
 </table>
 
 {% endblock %}
+
 
 
 

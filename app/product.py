@@ -61,7 +61,10 @@ def product(id):
     
     form = CartAddForm()
     if form.submit.data and form.validate():
-        Cart.add_cart(current_user.id, form.quantity.data, id)
+        if Cart.duplicate(current_user.id, id) == False:
+            flash("Product already added to cart!")
+        else:
+            Cart.add_cart(current_user.id, form.quantity.data, id)
 
     sellForm = SellProdForm()
     if sellForm.s.data and sellForm.validate():
