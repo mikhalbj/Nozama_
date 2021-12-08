@@ -2,7 +2,7 @@
 
 {% block content %}
 
-
+<!-- Header with tab navigation -->
 <div class="row">
   <div class="col-sm-6" style="display: flex; flex-direction: row;">
     <ul class="list-group list-group-horizontal nav nav-pills">
@@ -18,8 +18,11 @@
   </div>
 </div>
 
+<!-- Seller Analytics Body -->
+
 <p style="font-style: italic;">Welcome to your seller analytics page!</p>
 
+<!-- Row of Statistics -->
 <div class="row">
   {% for a in analytics%}
   <div style="display: flex; flex-direction: row;">
@@ -51,7 +54,7 @@
   {% endfor %}
 </div>
 
-
+<!-- Most popular items -->
 
   <br>
 
@@ -74,11 +77,16 @@
 </div>
   {% endfor %}
 
+  <!-- Most loyal buyers -->
+
   <h2 style="text-align:center">Your most loyal buyers: </h2>
   {% for b in buyers%}
 
   <div class="container">
     <div class="row pb-2">
+      <div class="col-md-2 float-left">
+        <img src=https://hdclipartall.com/images/shopping-bags-clipart-set-of-colorful-empty-shopping-bags-isolated-vector-illustration-450x360.jpg class="img-fluid rounded-start" alt="...">
+    </div>
         <div class="col-md-10">
             <div class="container">
                 <br>

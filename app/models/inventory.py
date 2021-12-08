@@ -3,7 +3,7 @@ import datetime;
 
 #
 #
-# This file contains all of the SQL queries related to inventory as well as product details.
+# This file contains all of the SQL queries related to inventory as well as some related to product details.
 #
 # They are split into three sections:
 # 1) Inventory -- listing new products, editing quantity, edit product details, start selling an existing item
@@ -19,6 +19,11 @@ class Inventory:
             self.name = name
             self.available = available
 
+#
+# Section 1) Inventory-related queries
+#
+
+        # Method returns the inventory for a given seller
         @staticmethod
         def get(id):
             rows = app.db.execute('''
@@ -31,8 +36,7 @@ class Inventory:
             print(rows)      
             return rows if rows is not None else None
 
-# Section 1) Inventory-related queries
-
+        # Method allows a seller to list a new product and add it to their inventory
         @staticmethod
         def add_prod(name, description, price, quantity, seller, url, tag):
             rows = app.db.execute('''
@@ -70,6 +74,7 @@ class Inventory:
                                 product = id)
             return Inventory.get(seller)
         
+        # Method checks if a seller sells a given product 
         @staticmethod
         def sells(uid, pid):
             rows = app.db.execute('''
@@ -79,6 +84,7 @@ class Inventory:
             uid=uid, pid=pid)
             return True if len(rows) != 0 else False
         
+        # Method finds all sellers with a given product in their inventory
         @staticmethod
         def all_sellers(pid):
             rows = app.db.execute('''
@@ -88,7 +94,7 @@ class Inventory:
             pid=pid)
             return rows
 
-        
+        # Method checks if a seller listed a given product
         @staticmethod
         def is_lister(id):
             rows = app.db.execute('''
@@ -100,6 +106,7 @@ class Inventory:
             print(rows)
             return True if len(rows) != 0 else False
 
+        # Method finds all the products that a given seller has listed
         @staticmethod
         def get_listed(id):
             rows = app.db.execute('''
@@ -112,6 +119,7 @@ class Inventory:
             print(rows)      
             return rows if rows is not None else None
         
+        # Method allows a seller to begin selling a product already listed by another seller on the website
         @staticmethod
         def start_selling(uid, q, pid):
             rows = app.db.execute('''
@@ -121,6 +129,7 @@ class Inventory:
             uid=uid, pid=pid, q=q)
             print("USERS NOW SELLING THIS PRODUCT")
 
+        # Method allows a seller to edit the quantity of a product in their inventory
         @staticmethod
         def edit_quantity(prod_id, quantity, seller):
             try: 
@@ -139,6 +148,7 @@ class Inventory:
                 print(err)
             return Inventory.get(seller)
 
+        # Method allows (the original lister) seller of an item to edit product information like price or description
         @staticmethod
         def edit_inventory(prod_id, name, description, price, url, tag):
             try:
@@ -174,8 +184,23 @@ class Inventory:
                 print(err)
             return True
 
-# Section 2) Order fulfillment history-related queries
+        # Method allows a seller to remove a product from inventory (not just set quantity to 0)
+        @staticmethod
+        def remove(uid, pid):
+            rows = app.db.execute( '''
+                DELETE FROM ProductInventory
+                WHERE seller = :uid AND product = :pid
+                RETURNING *
+            ''',
+                uid = uid, pid=pid)
+            print(rows)      
+            return rows if rows is not None else None
 
+#
+# Section 2) Order fulfillment history-related queries
+#
+
+        # Method returns a row for each of the products that a seller has sold
         @staticmethod
         def get_order_history(id):
             rows = app.db.execute('''
@@ -194,6 +219,7 @@ class Inventory:
             print(rows)      
             return rows if rows is not None else None
 
+        # Method returns a row for each of the products in a given order
         @staticmethod
         def get_order_history_search(id, prod_name, order_num):
             
@@ -214,6 +240,7 @@ class Inventory:
             print(rows)      
             return rows if rows is not None else None
 
+        # Method updates the shipped_at value for a given product with the current time
         @staticmethod
         def update_shipped(account_order, product, seller):
             try:
@@ -236,7 +263,8 @@ class Inventory:
             except Exception as err:
                 print(err)
             return Inventory.get(seller)
-    
+
+        # Method updates the delivered_at value for a given product with the current time
         @staticmethod
         def update_delivered(account_order, product, seller):
             try:
@@ -260,9 +288,12 @@ class Inventory:
             except Exception as err:
                 print(err)
             return Inventory.get(seller)
-            
-# Section 3) Seller analytics-related queries
 
+#            
+# Section 3) Seller analytics-related queries
+#
+
+        # Method returns several different seller statistics: number of orders, number of products sold, and total revenue to date
         @staticmethod
         def get_seller_analytics(id):
             rows = app.db.execute( '''
@@ -274,6 +305,7 @@ class Inventory:
             print(rows)      
             return rows if rows is not None else None
         
+        # Method returns the top 3 most popular items for a given seller
         @staticmethod
         def popular_item(id):
             rows = app.db.execute( '''
@@ -290,6 +322,7 @@ class Inventory:
             print(rows)      
             return rows if rows is not None else None
 
+        # Method returns top three most loyal buyers by number of orders placed with a product from this seller
         @staticmethod
         def loyal_buyers(id):
             rows = app.db.execute( '''
@@ -302,17 +335,6 @@ class Inventory:
                 LIMIT 3;
             ''',
                 id = id)
-            print(rows)      
-            return rows if rows is not None else None
-        
-        @staticmethod
-        def remove(uid, pid):
-            rows = app.db.execute( '''
-                DELETE FROM ProductInventory
-                WHERE seller = :uid AND product = :pid
-                RETURNING *
-            ''',
-                uid = uid, pid=pid)
             print(rows)      
             return rows if rows is not None else None
 

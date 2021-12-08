@@ -3,7 +3,7 @@
 
 {% block content %}
 
-
+<!-- Header with tab navigation -->
 <div class="row">
     <div style="display: flex; flex-direction: row;">
       <ul class="list-group list-group-horizontal nav nav-pills">
@@ -19,12 +19,14 @@
     </div>
 </div>
 
+<!-- Order Fulfillment Body -->
+
 <p style="font-style: italic;">Welcome to your order fulfillment page!</p>
 
-
 <h2>Your Order Fulfillment History:</h2>
-<body>Click on an Order ID to see all products from a given order.</body>
+<body>Click on an Order ID to see all products from a given order as well as overall order status.</body>
 
+<!-- Order Fulfillment Search -->
 <div class="card" style="width: 25rem;"></div>
 <form action="" method="post">
   {{ searchform.csrf_token }}
@@ -43,6 +45,8 @@
 </form>
 </div>
 <div class = "container">
+
+<!-- Order Fulfillment Table -->
 <table class='table table-hover table-bordered container ' >
   <tbody>
     {% for order in order_history%}
@@ -57,7 +61,15 @@
                     </div>
                 <div class="row">
                     <div class="col float-left"><small class="text-muted">{{order.placed_at.strftime("%B %d, %Y")}}</small></div>
-                </div>
+                    {% if single_order %}  
+                      <div class="col-5" class="text-muted float-end"> 
+                        {% if is_fulfilled %} 
+                          Overall Status = Fulfilled, Total number of items = {{total_items}}
+                        {% elif is_fulfilled != true %} 
+                          Overall Status = In Progress, Total number of items = {{total_items}}
+                        {% endif %}
+                    </div> {% endif %}
+                  </div>
             </div>
         </div>
         <div class="card-body">
@@ -100,13 +112,6 @@
   </tbody>
 </table>
 </div>
-
-{% if page and page > 1 %}
-<button type="button"><a href={{pp}}>❮Previous Page</a></button>
-{% endif %}
-{% if pages %}
-<button type="button"> <a href={{np}}> Next Page❯</a></button>
-{% endif %}
 
 
 
