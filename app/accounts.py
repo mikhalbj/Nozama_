@@ -58,6 +58,10 @@ class RemoveReview(FlaskForm):
     delete1 = HiddenField(_l('Review ID'), validators = [DataRequired()])
     submitDeleteProdReview = SubmitField(_l('X'))
 
+class RemoveSellReview(FlaskForm):
+    delete2 = HiddenField(_l('Review ID'), validators = [DataRequired()])
+    submitDeleteSellReview = SubmitField(_l('X'))
+
 
 @bp.route('/account/<id>', methods=['GET', 'POST'])
 def public(id):
@@ -71,10 +75,14 @@ def public(id):
     count = Review.countSell(id)
     author = current_user.id
     removeProdRev = RemoveReview()
+    removeSellRev = RemoveSellReview()
 
     if removeProdRev.submitDeleteProdReview.data and removeProdRev.validate():
         Review.removeReview(current_user.id, removeProdRev.delete1.data)
         
+    if removeSellRev.submitDeleteSellReview.data and removeSellRev.validate():
+        Review.removeSellReview(current_user.id, removeSellRev.delete2.data)
+
 
     if addReview.submitRev.data and addReview.validate():
         print("the button for review has been pressed")
@@ -86,7 +94,7 @@ def public(id):
         edit_time = datetime.datetime.now()
         Review.edit_review(prodRevID, title, description, rating, edit_time)
 
-    return render_template('public_account.html', count = count, review = review, user=user, account=account, rfs = removeProdRev, addRev = addReview, prodReviews = prodReviews, sellReviews = sellReviews)
+    return render_template('public_account.html', count = count, review = review, user=user, account=account, rfs = removeProdRev, rss = removeSellRev, addRev = addReview, prodReviews = prodReviews, sellReviews = sellReviews)
 
 @bp.route('/account/orders', methods=['GET'])
 def get_account_orders():

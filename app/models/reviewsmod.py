@@ -228,6 +228,23 @@ class Review:
         
         return rows if rows is not None else None
 
+#Remove a product review:
+    @staticmethod
+    def removeSellReview(author, review):
+        rows = app.db.execute('''
+            DELETE FROM SellerReview WHERE review = :review RETURNING review
+            ''',
+            review = review
+            )
+        rows = app.db.execute('''
+            DELETE FROM Review WHERE author = :author AND id = :review RETURNING author
+            ''',
+            author = author,
+            review = review
+            )
+        
+        return rows if rows is not None else None
+
 #IF a user has bought from a seller
     @staticmethod
     def hasBoughtSeller(UID, SID):
@@ -299,10 +316,9 @@ class Review:
     @staticmethod
     def countSell(SID): 
             rows = app.db.execute('''
-                        SELECT COUNT(Review.title)
-                        FROM Review, SellerReview
-                        WHERE SellerReview.seller = :SID 
-                        AND SellerReview.review = Review.id
+                        SELECT COUNT(SellerReview.review)
+                        FROM SellerReview
+                        WHERE SellerReview.seller = :SID
                         ''',
                                   SID=SID) 
             print(rows)

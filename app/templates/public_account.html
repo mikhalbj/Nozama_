@@ -36,6 +36,7 @@
 
 
 
+
 <h2>Reviews of Vendor Products:</h2> 
 
 <table class='table table-hover table-bordered container'>
@@ -153,9 +154,9 @@
           <td>{{r.edited_at}}</td>
           <td><button type="button" class="btn btn-outline-primary"  data-bs-toggle="modal" data-bs-target="#addModal">Edit Review</button> </td>
           <td><form action="" method="POST">
-            {{rfs.csrf_token}}
-            {{rfs.delete1(value=r.id)}}
-            {{rfs.submitDeleteProdReview(class_='btn btn-danger btn-xs')}}
+            {{rss.csrf_token}}
+            {{rss.delete2(value=r.id)}}
+            {{rss.submitDeleteSellReview(class_='btn btn-danger btn-xs')}}
           </form></td>
         </tr>
         <div class="modal fade" id="addModal" tabindex="-1" aria-labelledby="addModalLabel" aria-hidden="true">
