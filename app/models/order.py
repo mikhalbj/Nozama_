@@ -54,6 +54,17 @@ class Order:
         self.placed_at = placed_at
         self.cost = cost
         self.products = products
+
+
+        status = 'delivered'
+        for prod in products:
+            if prod.status == 'shipped' and status != 'placed':
+                status = 'shipped'
+            elif prod.status == 'placed':
+                status = 'placed'
+                break
+        
+        self.status = status
     
     def toJSON(self):
         products_json = [OrderProduct.toJSON(prod) for prod in self.products]

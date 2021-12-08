@@ -49,7 +49,7 @@
 <body>
   <div class="sidenav">
     {% block msg %}
-      <h1 style="color:aliceblue; font-family: 'Times New Roman', Times, serif; margin-left: 5%; display: inline-flex; flex-direction: row; float:left">Nozama</h1>
+      <a href="{{ url_for('index.index')}}"><h1 style="color:aliceblue; font-family: 'Times New Roman', Times, serif; margin-left: 5%; display: inline-flex; flex-direction: row; float:left">Nozama</h1></a>
       <div style="color: aliceblue; text-align: right; margin-bottom: 25px">
         
         <a href="{{ url_for('product.presearch') }}" type="button" class="btn btn-light">Search</a>
