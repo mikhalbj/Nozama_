@@ -33,36 +33,36 @@ class Review:
 
 #add a PRODUCT review
     @staticmethod
-    def add_prodrev(title, author, description, rating, product): #I dont think that I need author here but will need to autoppopulate some how on entry
-        
-        try:
-                rows = app.db.execute('''
-                        INSERT INTO Review(title, author, description, rating)
-                        VALUES(:title, :author, :description, :rating)
-                        RETURNING id
-                        ''',
-                                                        title=title,
-                                                        author=author,
-                                                        description=description,
-                                                        rating=rating)
-                id = rows[0][0]
-                rows = app.db.execute('''
-                        INSERT INTO ProductReview(review, product)
-                        VALUES(:id, :product)
-                        RETURNING product
-                        ''',
-                                  product=product,
-                                  id = id)
-        except Exception as err:
-            print(err)
-            # likely email already in use; better error checking and
-            # reporting needed
-            return None
+    def add_prodrev(title, author, description, rating, product): 
+            try:
+                    rows = app.db.execute('''
+                            INSERT INTO Review(title, author, description, rating)
+                            VALUES(:title, :author, :description, :rating)
+                            RETURNING id
+                            ''',
+                                                            title=title,
+                                                            author=author,
+                                                            description=description,
+                                                            rating=rating)
+                    id = rows[0][0]
+                    rows = app.db.execute('''
+                            INSERT INTO ProductReview(review, product)
+                            VALUES(:id, :product)
+                            RETURNING product
+                            ''',
+                                    product=product,
+                                    id = id)
+                    return rows
+            except Exception as err:
+                print(err)
+                # likely email already in use; better error checking and
+                # reporting needed
+                return None
 
 #add a SELLER review
     @staticmethod
     def add_sellrev(title, author, description, rating, seller): #I dont think that I need author here but will need to autoppopulate some how on entry
-        
+            
         try:
                 rows = app.db.execute('''
                         INSERT INTO Review(title, author, description, rating)
@@ -81,11 +81,41 @@ class Review:
                         ''',
                                   seller=seller,
                                   id = id)
+                return rows
         except Exception as err:
             print(err)
             # likely email already in use; better error checking and
             # reporting needed
             return None
+
+
+#tells when a review already exists for a given author and seller
+    @staticmethod
+    def sellRevExists(author, seller):
+        test = app.db.execute('''
+                SELECT id, title, author, description, written_at, edited_at, rating
+                FROM Review, SellerReview
+                WHERE Seller.product = :seller AND Review.author = :author
+                ''', seller=seller,
+                    author = author)
+        if len(test) >= 1:
+            return True
+        else: 
+            return False
+
+#tells when a review already exists for a given author and seller
+    @staticmethod
+    def prodRevExists(author, product):
+        test = app.db.execute('''
+                SELECT id, title, author, description, written_at, edited_at, rating
+                FROM Review, ProductReview
+                WHERE ProductReview.product = :product AND Review.author = :author
+                ''', product=product,
+                    author = author)
+        if len(test) >= 1:
+            return True
+        else: 
+            return False
 
 
 
@@ -157,11 +187,11 @@ class Review:
     @staticmethod
     def review_history_sell(UID, SID):
             rows = app.db.execute('''
-                SELECT ProductReview.product, author, description, written_at, edited_at, rating
-                FROM ProductReview, Review
+                SELECT SellerReview.product, author, description, written_at, edited_at, rating
+                FROM SellerReview, Review
                 WHERE author = :UID
-                AND ProductReview.review = Review.id
-                AND ProductReview.product = :SID
+                AND SellerReview.review = Review.id
+                AND SellerReview.seller = :SID
                 ORDER BY rating
                 ''',
                                   UID = UID,

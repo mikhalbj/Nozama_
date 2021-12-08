@@ -81,15 +81,9 @@
         <td>{{product.shipped_at}}</td>
         <td>{{product.delivered_at}}</td>
         
-        {% if not prodReviewed(current_user.id, product.id) %}
           <td><button type="button" class="btn btn-outline-primary"  data-bs-toggle="modal" data-bs-target="#addModal">Add Product Review</button></td>
-        {% endif %}
         <!--Disables button when one has already written a review-->
-        {% if prodReviewed(current_user.id, product.id) %}
-           
-          <td><button type="button" class="btn btn-outline-primary"  data-bs-toggle="modal" data-bs-target="#addModal" disabled>Add Product Review</button></td>
-        {% endif %}
-        <td><button type="button" class="btn btn-outline-primary"  data-bs-toggle="modal" data-bs-target="#addSellerModal">Add Seller Review</button></td>
+          <td><button type="button" class="btn btn-outline-primary"  data-bs-toggle="modal" data-bs-target="#addSellerModal">Add Seller Review</button></td>
 
 
         
@@ -153,6 +147,8 @@
     {% endfor %}
   </tbody>
 </table>
+
+
 
 
 {% endblock %}
