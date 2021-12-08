@@ -153,7 +153,38 @@ class Review:
             print(rows)      
             return rows if rows is not None else None
 
+#get all reviews written by one user FOR ONE PRODUCT
+    @staticmethod
+    def review_history_sell(UID, SID):
+            rows = app.db.execute('''
+                SELECT ProductReview.product, author, description, written_at, edited_at, rating
+                FROM ProductReview, Review
+                WHERE author = :UID
+                AND ProductReview.review = Review.id
+                AND ProductReview.product = :SID
+                ORDER BY rating
+                ''',
+                                  UID = UID,
+                                  SID = SID) 
+            print(rows)      
+            return rows if rows is not None else None
 
+
+#get all reviews written by one user FOR ALL SELLERS
+    @staticmethod
+    def review_historySell(id):
+            rows = app.db.execute('''
+                SELECT Review.id, SellerReview.seller, title, author, description, written_at, edited_at, rating
+                FROM SellerReview, Review
+                WHERE author = :id
+                AND SellerReview.review = Review.id
+                ORDER BY rating
+                ''',
+                                  id = id) 
+            print(rows)      
+            return rows if rows is not None else None
+
+#check if person is lister of given product
     @staticmethod
     def is_lister(id):
             rows = app.db.execute('''
@@ -180,7 +211,7 @@ class Review:
             print(rows)
             return True if len(rows) != 0 else False
 
-#Remove a product reviews:
+#Remove a product review:
     @staticmethod
     def removeReview(author, review):
         rows = app.db.execute('''
@@ -214,27 +245,29 @@ class Review:
 
 ##Check If a person has reviewed a product:
     @staticmethod
-    def hasReviewedProd(UID, PID): 
+    def notReviewedProd(UID, PID): 
             rows = app.db.execute('''
-                SELECT UID
+                SELECT Review.id
                 FROM Review, ProductReview
                 WHERE Review.author = :UID AND ProductReview.product = :PID
                 ''',
-                                  id=id) 
+                                  UID=UID,
+                                  PID=PID) 
             print(rows)
-            return True if len(rows) != 0 else False
+            return False if len(rows) != 0 else True
 
     ##If a person has reviewed a Seller:
     @staticmethod
-    def hasReviewedProd(UID, SID): 
+    def notReviewedSell(UID, SID): 
             rows = app.db.execute('''
-                        SELECT UID
+                        SELECT Review.id
                         FROM Review, SellerReview
                         WHERE Review.author = :UID AND SellerReview.seller = :SID
                         ''',
-                                  id=id) 
+                                  UID=UID,
+                                  SID=SID) 
             print(rows)
-            return True if len(rows) != 0 else False
+            return False if len(rows) != 0 else True
 
     
     #find the average rating for a given product
@@ -257,7 +290,21 @@ class Review:
     FROM Review, SellerReview
     WHERE SellerReview.seller = :SID
     ''',
-                                  id=id) 
+                                  SID=SID) 
+            print(rows)
+            return rows if rows is not None else None
+
+
+#get number of reviews for one seller
+    @staticmethod
+    def countSell(SID): 
+            rows = app.db.execute('''
+                        SELECT COUNT(Review.title)
+                        FROM Review, SellerReview
+                        WHERE SellerReview.seller = :SID 
+                        AND SellerReview.review = Review.id
+                        ''',
+                                  SID=SID) 
             print(rows)
             return rows if rows is not None else None
 

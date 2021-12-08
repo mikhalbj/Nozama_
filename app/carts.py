@@ -108,6 +108,8 @@ def order(id):
     total = OrderProduct.order_cost(id)
     orderID = id
     author = current_user.id
+    prodReviewed = Review.notReviewedProd
+    #sellReviewed = Review.notReviewedSell
     
 #for products:
     if addReview.submitRev.data and addReview.validate():
@@ -127,6 +129,6 @@ def order(id):
         
         Review.add_sellrev(titleS, author, descriptionS, ratingS, seller)
 
-    return render_template('orderpage.html', title='Order', orderplaced=orderplaced, total=total, orderID = orderID, addReview=addReview)
+    return render_template('orderpage.html', title='Order', orderplaced=orderplaced, total=total, orderID = orderID, addReview=addReview, addSellReview=addSellReview, prodReviewed = prodReviewed)
 
     

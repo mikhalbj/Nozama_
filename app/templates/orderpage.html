@@ -74,8 +74,17 @@
         <td>{{product.quantity}}</td>
         <td>{{product.totalPrice}}</td>
         <td>{{product.status}}</td>
-        <td><button type="button" class="btn btn-outline-primary"  data-bs-toggle="modal" data-bs-target="#addModal">Add Product Review</button></td>
+        {% if not prodReviewed(current_user.id, product.id) %}
+          <td><button type="button" class="btn btn-outline-primary"  data-bs-toggle="modal" data-bs-target="#addModal">Add Product Review</button></td>
+        {% endif %}
+        <!--Disables button when one has already written a review-->
+        {% if  prodReviewed(current_user.id, product.id) %}
+        <td><button type="button" class="btn btn-outline-primary"  data-bs-toggle="modal" data-bs-target="#addModal" disabled>Add Product Review</button></td>
+        {% endif %}
         <td><button type="button" class="btn btn-outline-primary"  data-bs-toggle="modal" data-bs-target="#addSellerModal">Add Seller Review</button></td>
+
+
+        
       </tr>
     <!--MODAL FOR A PRODUCT REVIEW-->
       <div class="modal fade" id="addModal" tabindex="-1" aria-labelledby="addModalLabel" aria-hidden="true">
@@ -105,32 +114,32 @@
         </div>
     </div>
 <!--MODAL FOR A SELLER REVIEW-->
-    <div class="modal fade" id="addSellerModal" tabindex="-1" aria-labelledby="addModalLabel" aria-hidden="true">
-      <div class="modal-dialog modal-dialog-scrollable">
-          <div class="modal-content">
-              <div class="modal-header">
-              <h5 class="modal-title" id="addModalLabel">Add a new review</h5>
-              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-              </div>
-              
-              <div class="modal-body">
-                  <form action="" method="POST">
-                      {{ addReview.csrf_token }}
-                      <div class="d-flex justify-content-left mb-3">
-                          <p>Title: {{addReview.title}}</p>
-                          <p>Rating: {{addReview.rating}}</p>
-                          <p>Description: {{addReview.description}}</p>
-                      </div>
-                      {{addReview.productRev(value=product.id)}}
+<div class="modal fade" id="addModal" tabindex="-1" aria-labelledby="addModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable">
+      <div class="modal-content">
+          <div class="modal-header">
+          <h5 class="modal-title" id="addModalLabel">Add a new review</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          
+          <div class="modal-body">
+              <form action="" method="POST">
+                  {{ addReview.csrf_token }}
+                  <div class="d-flex justify-content-left mb-3">
+                      <p>Title: {{addReview.title}}</p>
+                      <p>Rating: {{addReview.rating}}</p>
+                      <p>Description: {{addReview.description}}</p>
+                  </div>
+                  {{addReview.productRev(value=product.id)}}
 
-                      <div class="d-grid gap-2">
-                          {{addReview.submitRev(class_='btn btn-success btn-large')}}
-                      </div>
-                  </form>
-              </div>
+                  <div class="d-grid gap-2">
+                      {{addReview.submitRev(class_='btn btn-success btn-large')}}
+                  </div>
+              </form>
           </div>
       </div>
   </div>
+</div>
     {% endfor %}
   </tbody>
 </table>
