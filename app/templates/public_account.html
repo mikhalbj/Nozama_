@@ -31,8 +31,8 @@
 <script src="{{ url_for('static', filename='js/publicAccount.js') }}"></script>
 
 {% if account.vendor %}
-<h2>Rating:</h2>
-<h2>Number of Reviews:</h2>
+<h2>Rating: {{avg[0]}} </h2>
+<h2>Number of Reviews: {{count[0]}}</h2>
 
 
 

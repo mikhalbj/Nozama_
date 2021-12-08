@@ -286,9 +286,10 @@ class Review:
     @staticmethod
     def averageSell(SID): 
             rows = app.db.execute('''
-    SELECT AVG(Review.rating)
+    SELECT COALESCE(ROUND(AVG(Review.rating),2),NULL) AS avg
     FROM Review, SellerReview
     WHERE SellerReview.seller = :SID
+    AND SellerReview.review = Review.id
     ''',
                                   SID=SID) 
             print(rows)
@@ -299,7 +300,7 @@ class Review:
     @staticmethod
     def countSell(SID): 
             rows = app.db.execute('''
-                        SELECT COUNT(Review.title)
+                        SELECT COALESCE(COUNT(*),NULL) AS count
                         FROM Review, SellerReview
                         WHERE SellerReview.seller = :SID 
                         AND SellerReview.review = Review.id
