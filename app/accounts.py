@@ -68,8 +68,7 @@ def public(id):
     addReview = EditReviewForm()
     prodReviews = Review.review_history(id)
     sellReviews = Review.review_historySell(id)
-    count = Review.countSell(id)[0]
-    avg = Review.averageSell(id)[0]
+    count = Review.countSell(id)
     author = current_user.id
     removeProdRev = RemoveReview()
 
@@ -87,7 +86,7 @@ def public(id):
         edit_time = datetime.datetime.now()
         Review.edit_review(prodRevID, title, description, rating, edit_time)
 
-    return render_template('public_account.html', count = count, review = review, user=user, account=account, rfs = removeProdRev, addRev = addReview, prodReviews = prodReviews, sellReviews = sellReviews, avg=avg)
+    return render_template('public_account.html', count = count, review = review, user=user, account=account, rfs = removeProdRev, addRev = addReview, prodReviews = prodReviews, sellReviews = sellReviews)
 
 @bp.route('/account/orders', methods=['GET'])
 def get_account_orders():
