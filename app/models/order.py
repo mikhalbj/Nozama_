@@ -2,8 +2,8 @@ import json
 from flask import current_app as app
 
 class OrderProduct:
-    def __init__(self, account_id, order_id, product_id, quantity, price, status, shipped_at, delivered_at, url):
-        self.account_id = account_id
+    def __init__(self, order_id, product_id, quantity, price, status, shipped_at, delivered_at, name, url):
+        # self.account_id = account_id
         self.order_id = order_id
         self.product_id = product_id
         self.quantity = quantity
@@ -11,6 +11,7 @@ class OrderProduct:
         self.status = status
         self.shipped_at = shipped_at
         self.delivered_at = delivered_at
+        self.name = name
         self.url = url
 
     def toJSON(self):
