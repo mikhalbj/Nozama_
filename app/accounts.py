@@ -101,5 +101,8 @@ def account():
 
     account = Account.get(current_user.id)
 
-    return render_template('account.html', title='Account', user=current_user, account=account, deposit_form=deposit_form, withdraw_form=withdraw_form, vendor_form=vendor_form, info_form=info_form, pass_form=pass_form)
+    if request.method == 'GET':
+        return render_template('account.html', title='Account', user=current_user, account=account, deposit_form=deposit_form, withdraw_form=withdraw_form, vendor_form=vendor_form, info_form=info_form, pass_form=pass_form)
+    else:
+        return redirect(url_for('accounts.account'))
 
