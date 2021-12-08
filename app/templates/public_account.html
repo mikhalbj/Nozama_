@@ -5,7 +5,7 @@
 <br><br>
 
 <div class="col-lg-8 mx-auto" id="publicContainer">
-    <header class="d-flex align-items-center pb-3 mb-3"><h2>Ben Stiller <span class="badge bg-secondary">Vendor</span></h2></header>
+    <header class="d-flex align-items-center pb-3 mb-3"><h2>{{user.firstname}} {{user.lastname}} {% if account.vendor %} <span class="badge bg-secondary">Vendor</span>{% endif %} </h2></header>
     
     <!-- Account Info -->
     <div class="col-sm-6">

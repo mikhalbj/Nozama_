@@ -27,7 +27,7 @@ WHERE id = :id
     @staticmethod
     def fullget(id):
         rows = app.db.execute('''
-SELECT Product.id, name, price, available, Product.description, COALESCE(ROUND(AVG(T.rating), 2), NULL) AS rate, Product.seller
+SELECT Product.id, name, price, available, Product.description, COALESCE(ROUND(AVG(T.rating), 2), NULL) AS rate, COUNT(T.rating) AS count
 FROM Product LEFT OUTER JOIN (SELECT * FROM Review, ProductReview WHERE Review.id = ProductReview.review) AS T ON Product.id = T.product
 WHERE Product.id = :id
 GROUP BY Product.id
@@ -39,9 +39,18 @@ GROUP BY Product.id
     def get_img(id):
         print(id)
         rows = app.db.execute('''
-                        SELECT *
+                        SELECT url
                         FROM ProductImage
                         WHERE ProductImage.product = :id
+                        ''', id=id)
+        return rows[0][0] if rows else "https://cdn.w600.comps.canstockphoto.com/pile-of-random-stuff-eps-vector_csp24436545.jpg"
+    
+    @staticmethod
+    def get_tags(id):
+        rows = app.db.execute('''
+                        SELECT name
+                        FROM Tag, ProductTag
+                        WHERE ProductTag.product = :id AND Tag.id = ProductTag.tag
                         ''', id=id)
         return rows
 
@@ -67,20 +76,21 @@ WHERE available = :available
     @staticmethod
     def get_inventory(id):
         rows = app.db.execute('''
-        SELECT quantity
+        SELECT SUM(quantity)
         FROM ProductInventory
-        WHERE product = :id''', id=id)
+        WHERE product = :id
+        GROUP BY product''', id=id)
         print(rows)
-        return [row[0] for row in rows]
+        return rows[0] if rows else None
     
     @staticmethod
     def search(strng):
         rows = app.db.execute('''
 SELECT id, name, price, available
 FROM Product
-WHERE name LIKE :strng
+WHERE name LIKE '%' || :strng || '%'
 ''',
-                              strng="%"+strng+"%")
+                              strng = strng)
         return [Product(*row) for row in rows]
 
     @staticmethod
@@ -120,4 +130,32 @@ WHERE name LIKE :strng
         print(qry)
         rows = app.db.execute(qry, strng="%"+strng+"%", tag=tag, pricemax=priceMax)
         return rows
+    
+    @staticmethod
+    def popular():
+        prods = app.db.execute('''
+        SELECT Product.name, Product.description, ProductImage.url, Sub.product, Sub.rate, Sub.count
+        FROM (
+            SELECT ProductReview.product, AVG(Review.rating) AS rate, COUNT(ProductReview.product) AS count, (AVG(Review.rating)*COUNT(ProductReview.product)) AS score
+            FROM Review, ProductReview 
+            WHERE Review.id = ProductReview.review
+            GROUP BY ProductReview.product
+            ORDER BY score DESC NULLS LAST
+            LIMIT 4
+        ) AS Sub, Product, ProductImage
+        WHERE ProductImage.product = Sub.product AND Product.id = Sub.product
+        ''')
+        print(prods)
+        return prods
+    
+    @staticmethod
+    def is_lister(pid, uid):
+        rows = app.db.execute('''
+        SELECT *
+        FROM Product
+        WHERE lister = :uid AND id = :pid
+        ''',
+                              pid=pid, uid=uid)
+        return True if len(rows) > 0 else False
+
 

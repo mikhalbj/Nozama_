@@ -2,52 +2,94 @@ from flask import render_template, redirect, url_for, flash, request
 from werkzeug.urls import url_parse
 from flask_login import login_user, logout_user, current_user
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, BooleanField, SubmitField, RadioField, DecimalField, SelectMultipleField, IntegerField
-from wtforms.validators import ValidationError, DataRequired, Email, EqualTo
+from wtforms import StringField, PasswordField, BooleanField, SubmitField, RadioField, DecimalField, SelectMultipleField, IntegerField, SelectField
+from wtforms.validators import ValidationError, DataRequired, Email, EqualTo, url, InputRequired
+from flask_wtf.html5 import URLField
+from wtforms.widgets.html5 import URLInput, Input
 from flask_babel import _, lazy_gettext as _l
 
 from .models.product import Product
 from .models.reviewsmod import Review
 from .models.cart import Cart
+from .models.account import Account
+from .models.inventory import Inventory
 
 
 from flask import Blueprint
 bp = Blueprint('product', __name__)
 
 class SearchForm(FlaskForm):
-    searchterm = StringField('Search here')
-    tag = RadioField('Filter by category')
-    avail = BooleanField('Only find available items')
+    searchterm = StringField('Search for:')
+    tag = RadioField('Filter by category:')
+    avail = BooleanField('Only find available items:')
     maxprice = DecimalField('Only find items cheaper than:')
-    searchdesc = BooleanField('Match ketwords in description:')
-    sort = RadioField('Sort by price or rating:', choices=['price', 'rating'])
+    searchdesc = BooleanField('Match keywords in description:')
+    sort = RadioField('Sort products by:', choices=['price', 'rating'])
     submit = SubmitField()
 
 class CartAddForm(FlaskForm):
     quantity = IntegerField('How many of this item?', validators=[DataRequired()])
     submit = SubmitField()
 
-class NextPageForm(FlaskForm):
-    submit = SubmitField(_l('Next Page'), validators=[DataRequired()])
+class SaveProdForm(FlaskForm):
+    save = SubmitField(_l('Save For Later'), validators=[DataRequired()])
 
-class PrevPageForm(FlaskForm):
-    submit = SubmitField(_l('Previous Page'), validators=[DataRequired()])
+class SellProdForm(FlaskForm):
+    q = IntegerField(_l('Quantity'), validators=[InputRequired()])
+      # we will also need to change the schema for this to work
+    optin = BooleanField(_l('I confirm I am selling this product'), validators=[DataRequired()])
+    s = SubmitField(_l('Sell Product'))
+
+class EditListingForm(FlaskForm):
+    name = StringField(_l('Product Name'), validators=[DataRequired()])
+    description = StringField(_l('Description'), validators=[DataRequired()])
+    price = DecimalField(_l('Price'), places = 2, validators=[InputRequired()])
+    url = URLField(validators=[url()])
+    tag =  SelectField(u'Tag', choices=[(0, 'cooking'), (1, 'food'), (2, 'beauty'), (3, 'decor'), (4, 'furniture'), (5, 'education'), (6, 'office supplies'), (7, 'sports'), (8, 'technology'), (9, 'music'), (10, 'art')])
+    submit2 = SubmitField(_l('Edit Product'))
 
 @bp.route('/product_details/<uuid:id>', methods=['GET', 'POST'])
 def product(id):
+    if not current_user.is_authenticated:
+        saveBool = False
+        sellBool = False
+        editBool = False
+    else:
+        saveBool = Cart.can_save(current_user.id, id)
+        sellBool = Account.is_seller(current_user.id) and not Inventory.sells(current_user.id, id)
+        editBool = Product.is_lister(id, current_user.id)
+    
     form = CartAddForm()
-    product = Product.fullget(id)
-    image = Product.get_img(id)
     if form.submit.data and form.validate():
         Cart.add_cart(current_user.id, form.quantity.data, id)
-        print("YAY")
-    if image:
-        image = image[0][1]
-    else:
-        image = "https://cdn.w600.comps.canstockphoto.com/pile-of-random-stuff-eps-vector_csp24436545.jpg"
-    quantity = Product.get_inventory(id)[0]
+
+    sellForm = SellProdForm()
+    if sellForm.s.data and sellForm.validate():
+        Inventory.start_selling(current_user.id, sellForm.q.data, id)
+        return redirect(url_for('product.product', id=id))
+
+    eForm = EditListingForm()
+    if eForm.submit2.data and eForm.validate():
+        print("FORM SUBMITTED")
+        Inventory.edit_inventory(id, eForm.name.data, eForm.description.data, eForm.price.data, eForm.url.data, eForm.tag.data)
+        return redirect(url_for('product.product', id=id))
+    
+    saveForm = SaveProdForm()
+    if saveForm.save.data and saveForm.validate():
+        if saveBool:
+            Cart.save(current_user.id, id)
+            flash('The product is saved for later!')
+        else:
+            flash('You\'ve already saved this product!')
+    
+    product = Product.fullget(id)
+    tags = Product.get_tags(id)
+    print(tags)
+    image = Product.get_img(id)
     reviews = Review.get(id)
-    return render_template('product_details.html', title='See Product', product=product, imgurl=image, num=quantity, cartform=form, review=reviews)
+    sellers = Inventory.all_sellers(id)
+    
+    return render_template('product_details.html', title='See Product', product=product, imgurl=image, cartform=form, review=reviews, sf=sellForm, sb=sellBool, sellers=sellers, saveform=saveForm, edit_form=eForm, eb=editBool, tag=tags)
 
 @bp.route('/search/<argterm>', methods=['GET', 'POST'])
 def search(argterm):

@@ -4,53 +4,62 @@
 
 <br><br>
 {% if presearch %}
-<form action="" method="post">
-  <p>
-    <p>Search for items with keyword:</p>
-    {{ form.searchterm(size=32, placeholder='Search for...') }}<br/>
-    <p>Only search for items in category:</p>
-    {{ form.tag() }} <br/>
-    <p>Only search for available items:</p>
-    {{ form.avail() }} <br/>
-    <p>Only search for items cheaper than:</p>
-    {{ form.maxprice() }} <br/>
-    <p>Search for keyword in descriptions:</p>
-    {{ form.searchdesc() }} <br/>
-    <p>Sort by price or rating:</p>
-    {{ form.sort() }}
-    
-    {% for error in form.searchterm.errors %}
-    <span style="color: red;">[{{ error }}]</span>
-    {% endfor %}
-    
-    {{ form.submit() }}
-  </p>
-</form>
+<div style="display: flexbox; margin-left: 40%; margin-right: 40%;">
+  <h2>Search Nozama</h2>
+  <div class="card" style="width: 25rem;">
+    <form action="" method="post">
+      <ul class="list-group list-group-flush">
+        <li class="list-group-item"> 
+          {{form.searchterm.label}} <br>
+          {{ form.searchterm(size=26) }} </li>
+        <li class="list-group-item"> 
+          {{ form.tag.label }}
+          {{ form.tag() }}  </li>
+        <li class="list-group-item"> 
+          {{ form.avail.label }}
+          {{ form.avail() }}  </li>
+        <li class="list-group-item"> 
+          {{ form.maxprice.label }} <br>
+          {{ form.maxprice() }}  </li>
+        <li class="list-group-item"> 
+          {{ form.searchdesc.label }}
+          {{ form.searchdesc() }}  </li>
+        <li class="list-group-item"> 
+          {{ form.sort.label }}
+          {{ form.sort() }}  </li>
+      </ul>
+      <div class="card-body">
+        {{ form.submit(class_='btn btn-success btn-large') }}
+        {% for error in form.searchterm.errors %}
+        <span style="color: red;">[{{ error }}]</span>
+        {% endfor %}
+      </div>
+    </form>
+  </div>
+</div>
 
 
 {% elif products|length == 0 %}
-<p> Your search for "{{term}}" returned no products on Nozama</p>
+<p> Your search returned no products on Nozama</p>
 
 
 {% else %}
-<h2>Products matching your search for "{{term}}":</h2>
+<h2>Products matching your search:</h2>
 <table class='table table-hover table-bordered container'>
   <thead class="thead-dark">
     <tr>
-      <th scope="col">Product ID</th>
+      <th scope="col">Thumbnail</th>
       <th scope="col">Product Name</th>
       <th scope="col">Price</th>
-      <th scope="col">Thumbnail</th>
       <th scope="col">Rating</th>
     </tr>
   </thead>
   <tbody>
     {% for product in products%}
       <tr>
-        <th scope="row">{{product.id}}</th>
+        <td style="max-width: 100px;"><img src={{product.url}} class="img-fluid rounded-start" alt="..."></td>
         <td><a href="{{ url_for('product.product', id=product.id) }}">{{product.name}}</a></td>
         <td>{{product.price}}</td>
-        <td><img src={{product.url}} class="img-fluid rounded-start" alt="..."></td>
         <td>{{product.rate}}</td>
       </tr>
     {% endfor %}
@@ -58,10 +67,10 @@
 </table>
 
 {% if page and page > 1 %}
-<button type="button"><a href={{pp}}>❮Previous Page</a></button>
+<button type="button" class="btn btn-primary mr-2"><a href={{pp}}>❮Previous Page</a></button>
 {% endif %}
 {% if pages %}
-<button type="button"> <a href={{np}}> Next Page❯</a></button>
+<button type="button" class="btn btn-primary mr-2"> <a href={{np}}> Next Page❯</a></button>
 {% endif %}
 
 {% endif %}

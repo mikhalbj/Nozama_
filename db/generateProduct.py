@@ -48,7 +48,6 @@ def genProductsAndTags(n):
     newProdTags = []
 
     #read data from other files with helper method
-    sellers = readCSVs()
     existingTags = {}
     tagIndex = 0
     existingPTs = []
@@ -56,7 +55,7 @@ def genProductsAndTags(n):
     while len(newProds) < n:
         newprod = []
         index = uuid.uuid4()
-        newprod.append(index) # add UUID
+        newprod.append(index) # add UUID as 0th element
         mod = random.choice(modifier) 
         prod = random.choice(list(prods.keys()))
         
@@ -74,11 +73,15 @@ def genProductsAndTags(n):
                 newProdTags.append([currPT, index])
             
         prodstring = mod + ' ' + prod
-        newprod.append(prodstring) # add product name
-        newprod.append(genDesc(prodstring)) # add product description with helper method
-        newprod.append(str(random.randint(5,200)) + random.choice(ends)) # add price
-        newprod.append(random.choices([True, False], weights=[0.8, 0.2])[0]) # add randomly generated availability
-        newprod.append(random.choice(sellers)[0]) # add ID of seller
+        newprod.append(prodstring) # add product name as 1st element
+        newprod.append(genDesc(prodstring)) # add product description with helper method as 2nd element
+        newprod.append(str(random.randint(5,200)) + random.choice(ends)) # add price as 3rd element
+        newprod.append(random.choices([True, False], weights=[0.8, 0.2])[0]) # add randomly generated availability as 4th element
+
+        sellers = readCSVs()
+        seller = random.choice(sellers)
+        newprod.append(seller[0]) #add "lister" as 5th element
+
         # print(newprod)
         newProds.append(newprod)
     
@@ -145,13 +148,32 @@ def genImage(newprods):
 
 
 def genInventory(prods):
+    sellers = readCSVs()
+    newProdInv = []
+    for prod in prods:
+        #each product is sold by 1-4 sellers and its original lister
+        numSellers = random.randint(1,4)
+        sells = random.sample([s[0] for s in sellers], k=numSellers)
+        ogseller = prod[5]
+        sells.append(ogseller)
+        sells = list(set(sells))
+        for s in sells:
+            currProdInv = []
+            currProdInv.append(prod[0])
+            currProdInv.append(s)
+            if prod[4]:
+                currProdInv.append(random.randint(1,300))
+            else:
+                currProdInv.append(0)
+            newProdInv.append(currProdInv)
+        
+        
+
+
     with open('data/ProductInventory.csv', 'w') as pifile:
         piwriter = csv.writer(pifile, dialect='unix')
-        for row in prods:
-            if row[4] == False:
-                piwriter.writerow([row[0], 0])
-            else:
-                piwriter.writerow([row[0], random.randint(1, 300)])
+        for row in newProdInv:
+            piwriter.writerow(row)
     return True
 
 

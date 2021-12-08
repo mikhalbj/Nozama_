@@ -27,7 +27,7 @@ def genReview(n):
     while len(newReview) < n:
         vote = []
         review = []
-        index += 1
+        index = uuid.uuid4()
         review.append(index)
         review.append(random.choice(accountuuids))
         if random.choice([True, False]): # add image for half of reviews
@@ -58,7 +58,7 @@ def genReview(n):
             vote.append(index)
             vote.append(random.choice([-1, 1]))
             newReviewVote.append(vote)
-        print(review)
+        #print(review)
         newReview.append(review)
     
     writereviews(newReview, newReviewVote, newSellerReview, newProductReview, newProductImg)
