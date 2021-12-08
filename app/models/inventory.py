@@ -89,7 +89,7 @@ class Inventory:
             return rows
 
         
-                @staticmethod
+        @staticmethod
         def is_lister(id):
             rows = app.db.execute('''
             SELECT id
@@ -266,7 +266,7 @@ class Inventory:
         @staticmethod
         def get_seller_analytics(id):
             rows = app.db.execute( '''
-                SELECT count(account_order) as count_order, sum(quantity) as num_items, SUM(quantity*price) as total
+                SELECT count(account_order) as count_order, sum(quantity) as num_items, CAST(SUM(quantity*price) as DECIMAL(14,2)) as total
                 FROM AccountOrderProduct
                 WHERE seller = :id
             ''',
@@ -318,7 +318,7 @@ class Inventory:
 
 # Method below not used in inventory pages
 
-                    @staticmethod
+        @staticmethod
         def get_tags():
             rows = app.db.execute('''
                 SELECT id, name
