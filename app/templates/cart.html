@@ -16,6 +16,7 @@
 <div class="col-lg-8 mx-auto">
     <header class="d-flex align-items-center pb-3 mb-3"><h2>Your Cart:</h2></header>
 
+    <!-- Additional navigation buttons -->
     <div class="row">
       <div class="col-sm-6">
         <ul class="list-group list-group-horizontal nav nav-pills">
@@ -52,7 +53,7 @@
   </div>
 </div>
 
-
+<!-- Order Total -->
       <div class="col-sm-6">
       <div class="card">
           <div class="card-body">
@@ -71,7 +72,7 @@
       </div>
     </div>
   
- 
+ <!-- Products in Cart -->
 <table class="table table-hover table-bordered container">
   <thead class="thread-muted text-muted">
     <tr>
@@ -91,6 +92,7 @@
         <td><button type="button" class="btn mr-2" data-bs-toggle="modal" data-bs-target="#quantModal"><u>{{cart.quantity}}</u></button></td>
         <td>{{cart.totalPrice}}</td>
         <td>
+          <!-- Move item to saved -->
           <form action="" method="POST">
           {{save.csrf_token}}
           {{save.productx(value=cart.id)}}
@@ -98,6 +100,7 @@
           </form>
         </td>
         <td>
+          <!-- Delete button -->
           <form action="" method="POST">
           {{remove.csrf_token}}
           {{remove.delete(value=cart.id)}}
@@ -105,6 +108,7 @@
           </form>
         </td>
       </tr>
+      <!-- Modal for editing product quantity -->
       <div class="modal fade" id="quantModal" tabindex="-1" aria-labelledby="quantModalLabel" aria-hidden="true">
         <div class="modal-dialog">
         <div class="modal-content">
@@ -129,6 +133,7 @@
   </tbody>
 </table>
 
+<!-- Products Saved for Later -->
 <header class="d-flex align-items-center pb-3 mb-3 mt-5"><h2>Saved for Later:</h2></header>
 <table class="table table-hover table-bordered container-fluid">
   <thead class="thread-muted text-muted">
@@ -145,12 +150,14 @@
         <td scope="row"><a href="/product_details/{{product.id}}" class="link-unstyled" style="text-decoration: underline;">{{product.id}}</a></th>
         <td>{{product.name}}</td>
         <td><button type="button" class="btn btn-primary mr-2" data-bs-toggle="modal" data-bs-target="#cModal">Add to Cart</button></td>
+        <!-- Delete button -->
         <td><form action="" method="POST">
           {{rfs.csrf_token}}
           {{rfs.delete1(value=product.id)}}
           {{rfs.submit2(class_='btn btn-danger btn-xs')}}
         </form></td>
       </tr>
+      <!-- Modal for adding item to cart from Saved -->
       <div class="modal fade" id="cModal" tabindex="-1" aria-labelledby="cModalLabel" aria-hidden="true">
         <div class="modal-dialog">
         <div class="modal-content">
