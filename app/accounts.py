@@ -133,6 +133,7 @@ def get_account_orders():
 
     orders = Order.get_paginated(current_user.id, limit=limit, offset=offset)
 
+
     return json.dumps([Order.toJSON(order) for order in orders])
 
 @bp.route('/account', methods=['GET', 'POST'])

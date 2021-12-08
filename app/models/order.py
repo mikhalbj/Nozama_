@@ -68,7 +68,7 @@ class Order:
 
         status = 'fulfilled'
         for prod in products:
-            if prod.status == 'placed':
+            if prod.status == 'Order Placed':
                 status = 'progress'
                 break
         

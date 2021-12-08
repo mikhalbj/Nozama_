@@ -58,7 +58,7 @@ def order_fulfillment_by_order(order):
     total_items = 0
     for prod in order_history:
         total_items += prod.quantity
-        if prod.status == 'placed':
+        if prod.status == 'Order Placed':
             is_fulfilled = False
             break
     return render_template('order-fulfillment.html', order_history = order_history, searchform = searchform, is_fulfilled = is_fulfilled, single_order = True, total_items = total_items)

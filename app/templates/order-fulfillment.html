@@ -62,11 +62,13 @@
                 <div class="row">
                     <div class="col float-left"><small class="text-muted">{{order.placed_at.strftime("%B %d, %Y")}}</small></div>
                     {% if single_order %}  
-                      <div class="col-5" class="text-muted float-end"> 
+                      <div class="col-4" class="text-muted float-end"> 
                         {% if is_fulfilled %} 
-                          Overall Status = Fulfilled, Total number of items = {{total_items}}
+                        <span class="badge bg-success"> Overall Status = Fulfilled </span>
+                           Number of items in order = {{total_items}}
                         {% elif is_fulfilled != true %} 
-                          Overall Status = In Progress, Total number of items = {{total_items}}
+                        <span class = "badge bg-secondary"> Overall Status = In Progress </span>
+                          Number of items in order = {{total_items}}
                         {% endif %}
                     </div> {% endif %}
                   </div>
