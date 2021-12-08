@@ -170,11 +170,3 @@ CREATE TRIGGER TG_WatchAvail_D
 AFTER DELETE ON ProductInventory
 FOR EACH ROW
 EXECUTE PROCEDURE TF_WatchAvail_D();
-
--- 
--- View that maps new db design to template schema. Should be replaced once python code is rewritten
--- 
-CREATE VIEW Purchase AS
-    SELECT AccountOrder.id AS id, AccountOrder.account AS uid, AccountOrderProduct.product AS pid, AccountOrder.placed_at AS time_purchased
-    FROM AccountOrder, AccountOrderProduct
-    WHERE AccountOrder.id = AccountOrderProduct.account_order;
